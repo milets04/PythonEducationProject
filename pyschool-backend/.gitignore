@@ -1,0 +1,44 @@
+# Dependencias
+/node_modules
+/npm-debug.log*
+/yarn-error.log*
+/pnpm-debug.log*
+
+# Compilación y Transpilación
+/dist
+/build
+/out
+
+# Entorno y Configuración
+.env
+.env.*
+.DS_Store
+Thumbs.db
+*.log
+
+# Seguridad y Claves
+*.key
+*.pem
+*.pfx
+
+# Archivos de Pruebas y Cobertura (si se usan)
+/coverage
+/.nyc_output
+
+# IDEs (Entornos de Desarrollo Integrados)
+# Visual Studio Code
+.vscode/
+
+# JetBrains (WebStorm, IntelliJ IDEA, etc.)
+.idea/
+
+# Otros
+# Archivos de volcado de memoria de Node
+*.tgz
+
+# Archivos temporales
+*~
+#*#
+
+# Archivos de caché de ESLint
+.eslintcache
