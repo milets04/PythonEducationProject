@@ -1,15 +1,14 @@
- 
-import React from 'react';
+ import React from 'react';
 import Link from 'next/link';
 
-interface SignInLinkProps {
+interface SignLinkProps {
   text?: string;
   onClick?: () => void;
   href?: string;
   className?: string;
 }
 
-const SignInLink: React.FC<SignInLinkProps> = ({
+const SignLink: React.FC<SignLinkProps> = ({
   text = 'Sign in',
   onClick,
   href,
@@ -35,4 +34,4 @@ const SignInLink: React.FC<SignInLinkProps> = ({
   );
 };
 
-export default SignInLink;
+export default SignLink;
