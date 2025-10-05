@@ -1,68 +1,38 @@
-import React, { useState } from 'react';
+ 
+import React from 'react';
+import Link from 'next/link';
 
-interface EditableSignInTextProps {
-  initialText?: string;
-  onTextChange?: (newText: string) => void;
+interface SignInLinkProps {
+  text?: string;
+  onClick?: () => void;
+  href?: string;
   className?: string;
-  editable?: boolean;
 }
 
-const EditableSignInText: React.FC<EditableSignInTextProps> = ({
-  initialText = 'Sign in',
-  onTextChange,
+const SignInLink: React.FC<SignInLinkProps> = ({
+  text = 'Sign in',
+  onClick,
+  href,
   className = '',
-  editable = true,
 }) => {
-  const [text, setText] = useState(initialText);
-  const [isEditing, setIsEditing] = useState(false);
+  const baseClasses = `text-sm text-sign hover:text-blue-700 cursor-pointer transition-colors ${className}`;
 
-  const handleBlur = () => {
-    setIsEditing(false);
-    if (onTextChange) {
-      onTextChange(text);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleBlur();
-    }
-  };
-
-  if (!editable) {
+  if (href) {
     return (
-      <span className={`text-4xl font-light text-blue-600 ${className}`}>
+      <Link href={href} className={baseClasses} onClick={onClick}>
         {text}
-      </span>
+      </Link>
     );
   }
 
   return (
-    <>
-      {isEditing ? (
-        <input
-          type="text"
-          value={text}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          autoFocus
-          className={`text-4xl font-light text-blue-600 bg-transparent border-b-2 border-blue-400 outline-none ${className}`}
-        />
-      ) : (
-        <span
-          onClick={() => setIsEditing(true)}
-          className={`text-4xl font-tituloPrin font-light text-blue-600 cursor-pointer hover:opacity-80 transition-opacity ${className}`}
-        >
-          {text}
-        </span>
-      )}
-    </>
+    <button
+      onClick={onClick}
+      className={`${baseClasses} bg-transparent border-none p-0`}
+    >
+      {text}
+    </button>
   );
 };
 
-export default EditableSignInText;
+export default SignInLink;
