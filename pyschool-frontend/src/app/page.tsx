@@ -1,13 +1,11 @@
+"use client";
 import Image from "next/image";
-import { MdAlternateEmail } from 'react-icons/md'; // @ símbolo
-import { FiLock } from 'react-icons/fi'; // Candado
-import InputIcon from "@/ui/components/atoms/icons";
+import GoogleButton from "@/ui/components/atoms/btnGoogle";
 
 export default function Home() {
   return (
     <div>
-      <InputIcon icon={MdAlternateEmail} />
-      <InputIcon icon={FiLock} />
+      <GoogleButton onClick={() => console.log('Google login')} />
     </div>
   );
 }
