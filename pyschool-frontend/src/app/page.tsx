@@ -1,11 +1,11 @@
 "use client";
 import Image from "next/image";
-import GoogleButton from "@/ui/components/atoms/btnGoogle";
+import Subtitle from "@/ui/components/atoms/subtLog";
 
 export default function Home() {
   return (
     <div>
-      <GoogleButton onClick={() => console.log('Google login')} />
+      <Subtitle text="Email" />
     </div>
   );
 }
