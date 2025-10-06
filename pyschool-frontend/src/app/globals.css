@@ -43,7 +43,7 @@ body {
 @theme {
   --color-sign: #2F7CBB;
   --font-sign: 'Roboto', sans-serif;
-
+/*btnHeader*/
   --color-btn-sign: #61B3F6;
   --color-btn-hover-sign: #61B3F6;
   --color-btn-active-sign: #61B3F6;
@@ -51,9 +51,12 @@ body {
   --color-btn-login-hover: #0B1D75; 
   --color-btn-login-active: #0B1D75;
   --font-btn: 'Inter', sans-serif;
-
+/*coverText*/
   --color-cover-text: #1D1B20;
   --font-cover-text: 'Roboto', sans-serif;
+/*coverDescriptionText*/
+  --color-cover-description: #000000;
+  --font-cover-description: 'Roboto', sans-serif;
 }
 
 @font-face {
