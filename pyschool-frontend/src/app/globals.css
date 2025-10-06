@@ -51,6 +51,9 @@ body {
   --color-btn-login-hover: #0B1D75; 
   --color-btn-login-active: #0B1D75;
   --font-btn: 'Inter', sans-serif;
+
+  --color-cover-text: #1D1B20;
+  --font-cover-text: 'Roboto', sans-serif;
 }
 
 @font-face {
