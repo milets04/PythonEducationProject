@@ -3,8 +3,8 @@
 import React from "react";
 import Image from "next/image";
 
-interface AtomImageProps {
-  src: "public/images/logoPySon.png"; 
+interface ImgProps {
+  src: string; 
   alt: string;
   width?: number;
   height?: number;
@@ -12,7 +12,7 @@ interface AtomImageProps {
   rounded?: boolean;
 }
 
-const AtomImage: React.FC<AtomImageProps> = ({
+const Img: React.FC<ImgProps> = ({
   src,
   alt,
   width = 200,
@@ -39,4 +39,4 @@ const AtomImage: React.FC<AtomImageProps> = ({
   );
 };
 
-export default AtomImage;
+export default Img;
