@@ -23,7 +23,7 @@ const CoverText: React.FC<CoverTextProps> = ({
     <p
       className={`
         ${sizeClasses}
-        font-normal
+        font-semibold
         leading-tight
         ${className}
       `}
