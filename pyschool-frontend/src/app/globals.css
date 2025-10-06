@@ -5,6 +5,7 @@
   --foreground: #171717;
 }
 
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -42,6 +43,14 @@ body {
 @theme {
   --color-sign: #2F7CBB;
   --font-sign: 'Roboto', sans-serif;
+
+  --color-btn-sign: #61B3F6;
+  --color-btn-hover-sign: #61B3F6;
+  --color-btn-active-sign: #61B3F6;
+  --color-btn-login: #0B1D75;
+  --color-btn-login-hover: #0B1D75; 
+  --color-btn-login-active: #0B1D75;
+  --font-btn: 'Inter', sans-serif;
 }
 
 @font-face {
@@ -60,11 +69,6 @@ body {
   font-display: swap;
 }
 
-@theme {
-  --color-sign: #61B3F6;
-  --color-brand: #0B1D75;
-  --font-inter: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
 
 /*
 Ejemplo de uso de variables CSS en un componente
