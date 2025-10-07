@@ -1,4 +1,3 @@
- 
 import React from 'react';
 import Link from 'next/link';
 
@@ -10,7 +9,7 @@ interface SignInLinkProps {
 }
 
 const SignInLink: React.FC<SignInLinkProps> = ({
-  text = 'Sign in',
+  text = 'Sign in.',
   onClick,
   href,
   className = '',
