@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 
 interface CoverTextProps {
@@ -21,20 +20,15 @@ const CoverText: React.FC<CoverTextProps> = ({
 
   return (
     <p
-      className={`
-        ${sizeClasses}
-        font-semibold
-        leading-tight
-        ${className}
-      `}
+      className={`${sizeClasses} font-semibold leading-tight ${className}`}
       style={{
         color: "var(--color-cover-text)",
         fontFamily: "var(--font-cover-text)",
       }}
-    >
-      {text}
-    </p>
+      dangerouslySetInnerHTML={{ __html: text }}
+    />
   );
 };
 
 export default CoverText;
+
