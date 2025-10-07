@@ -1,4 +1,4 @@
-name: Auto Release on Push to Main
+name: Auto Release (Cross-Platform)
 
 on:
   push:
@@ -7,8 +7,10 @@ on:
 
 jobs:
   create_release:
-    name: Create Release
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout repository
@@ -19,19 +21,40 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
+      # Linux & Debian: instalación segura con reintentos
+      - name: Install jq on Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -y
+          for i in 1 2 3; do
+            sudo apt-get install -y jq && break || sleep 10
+          done
 
+      # Windows: instalación segura con reintentos
+      - name: Install jq on Windows
+        if: runner.os == 'Windows'
+        run: |
+          for /l %%i in (1,1,3) do (
+            choco install jq -y && exit /b 0
+            timeout /t 10
+          )
+
+      # Obtener versión desde package.json
       - name: Get version from package.json
         id: get_version
-        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+        shell: bash
+        run: |
+          VERSION=$(jq -r .version package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+      # Crear el release
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.VERSION }}
           name: Release v${{ env.VERSION }}
           body: |
-            Nueva versión automática generada tras push a main.
+            🚀 Nueva versión automática tras push/merge en main.
+            Compatibilidad con Windows, Debian y Ubuntu.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
