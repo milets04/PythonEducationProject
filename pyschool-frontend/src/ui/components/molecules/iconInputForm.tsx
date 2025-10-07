@@ -1,6 +1,5 @@
 import React from 'react';
 import { IconType } from 'react-icons';
-import Input from '@/ui/components/atoms/input';
 import InputIcon from '@/ui/components/atoms/icons';
 
 interface InputWithIconProps {

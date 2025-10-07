@@ -6,28 +6,13 @@ import GoogleButton from '@/ui/components/atoms/btnGoogle';
 import Subtitle from '@/ui/components/atoms/subtLog';
 import SignLink from '@/ui/components/atoms/txtSign';
 
-interface LoginContainerProps {
-  onSignIn?: () => void;
-  onGoogleSignIn?: () => void;
-}
-
-const LoginContainer: React.FC<LoginContainerProps> = ({
-  onSignIn,
-  onGoogleSignIn,
-}) => {
+const LoginContainer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSignIn = () => {
-    if (onSignIn) {
-      onSignIn();
-    }
-  };
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex w-full items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-2xl p-8 shadow-lg">
-        {/* Email Input */}
         <div className="mb-6">
           <InputWithIcon
             id="email"
@@ -35,6 +20,7 @@ const LoginContainer: React.FC<LoginContainerProps> = ({
             label="Email"
             placeholder="Enter your Email"
             icon={MdAlternateEmail}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -45,11 +31,11 @@ const LoginContainer: React.FC<LoginContainerProps> = ({
             label="Contraseña"
             placeholder="Enter your Password"
             icon={FiLock}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
         <button
-          onClick={handleSignIn}
           className="w-full bg-blue-900 text-white font-bold py-3 rounded-lg hover:bg-blue-800 transition-colors mb-6"
         >
           Sign In
@@ -70,7 +56,7 @@ const LoginContainer: React.FC<LoginContainerProps> = ({
         </div>
 
         <div className="flex justify-center">
-          <GoogleButton onClick={onGoogleSignIn} />
+          <GoogleButton/>
         </div>
       </div>
     </div>
