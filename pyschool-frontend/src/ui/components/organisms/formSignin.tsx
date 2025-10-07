@@ -71,7 +71,9 @@ const LoginContainer: React.FC<LoginContainerProps> = ({
           <Subtitle text="Or With" className="justify-center" />
         </div>
 
-        <GoogleButton onClick={onGoogleSignIn} />
+        <div className="flex justify-center">
+          <GoogleButton onClick={onGoogleSignIn} />
+        </div>
       </div>
     </div>
   );
