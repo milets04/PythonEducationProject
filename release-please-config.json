@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "",
+  "include-component-in-tag": true,
+  "tag-separator": "-",
+  "release-type": "node",
+  "packages": {
+    "pyschool-frontend": {
+      "path": "pyschool-frontend",
+      "release-type": "node"
+    },
+    "pyschool-backend": {
+      "path": "pyschool-backend",
+      "release-type": "node"
+    }
+  }
+}
