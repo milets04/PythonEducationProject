@@ -14,8 +14,8 @@ const CoverText: React.FC<CoverTextProps> = ({
 }) => {
   const sizeClasses = {
     small: "text-sm",
-    medium: "text-lg",
-    large: "text-2xl",
+    medium: "text-2x1",
+    large: "text-5xl",
   }[size];
 
   return (
