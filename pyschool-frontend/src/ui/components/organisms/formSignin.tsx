@@ -35,7 +35,6 @@ const LoginContainer: React.FC<LoginContainerProps> = ({
             label="Email"
             placeholder="Enter your Email"
             icon={MdAlternateEmail}
-            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -46,7 +45,6 @@ const LoginContainer: React.FC<LoginContainerProps> = ({
             label="Contraseña"
             placeholder="Enter your Password"
             icon={FiLock}
-            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 

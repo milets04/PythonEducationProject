@@ -9,7 +9,7 @@ interface InputWithIconProps {
   label?: string;
   placeholder?: string;
   icon: IconType;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
 }
 
