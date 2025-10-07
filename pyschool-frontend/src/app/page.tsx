@@ -1,7 +1,12 @@
+"use client";
 import Image from "next/image";
-//prueba 2 para release
+import LandingpageTemplate from "@/ui/components/templates/landingpageTemplate";
+
 export default function Home() {
   return (
-    <div>prueba</div>    
+    <div>
+      <LandingpageTemplate />
+    </div>    
   );
 }
+/*prueba lp*/
