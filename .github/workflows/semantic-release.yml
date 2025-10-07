@@ -34,7 +34,10 @@ jobs:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
       - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: 'npm' }
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'pyschool-frontend/package-lock.json'   # 👈 agregado
       - run: cd pyschool-frontend && npm ci
       - run: cd pyschool-frontend && npx semantic-release
         env:
@@ -48,7 +51,10 @@ jobs:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
       - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: 'npm' }
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'pyschool-backend/package-lock.json'
       - run: cd pyschool-backend && npm ci
       - run: cd pyschool-backend && npx semantic-release
         env:
