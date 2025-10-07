@@ -31,9 +31,8 @@ const CoverDescriptionText: React.FC<CoverDescriptionTextProps> = ({
         color: "var(--color-cover-description)",
         fontFamily: "var(--font-cover-description)",
       }}
-    >
-      {text}
-    </p>
+      dangerouslySetInnerHTML={{ __html: text }}
+    />
   );
 };
 
