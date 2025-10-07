@@ -1,4 +1,4 @@
-name: Auto Release (Cross-Platform)
+name: Auto Release Front
 
 on:
   push:
@@ -6,7 +6,8 @@ on:
       - main
 
 jobs:
-  create_release:
+  release_frontend:
+    name: Create Frontend Release
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -21,40 +22,48 @@ jobs:
         with:
           node-version: 20
 
-      # Linux & Debian: instalación segura con reintentos
-      - name: Install jq on Linux
-        if: runner.os == 'Linux'
+      # 🔹 Verificar que el archivo package.json existe
+      - name: Verify package.json exists
         run: |
-          sudo apt-get update -y
-          for i in 1 2 3; do
-            sudo apt-get install -y jq && break || sleep 10
-          done
+          if [ ! -f pyschool-frontend/package.json ]; then
+            echo "No se encontró pyschool-frontend/package.json"
+            exit 1
+          fi
 
-      # Windows: instalación segura con reintentos
-      - name: Install jq on Windows
-        if: runner.os == 'Windows'
-        run: |
-          for /l %%i in (1,1,3) do (
-            choco install jq -y && exit /b 0
-            timeout /t 10
-          )
-
-      # Obtener versión desde package.json
-      - name: Get version from package.json
-        id: get_version
+      # 🔹 Obtener versión directamente con Node.js
+      - name: Get version from pyschool-frontend/package.json
+        id: get_front_version
         shell: bash
         run: |
-          VERSION=$(jq -r .version package.json)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          VERSION=$(node -p "require('./pyschool-frontend/package.json').version")
+          if [ -z \"$VERSION\" ]; then
+            echo \"No se pudo obtener versión desde package.json\"
+            exit 1
+          fi
+          echo \"FRONT_VERSION=$VERSION\" >> $GITHUB_ENV
+          echo \"Versión detectada: $VERSION\"
 
-      # Crear el release
-      - name: Create GitHub Release
+      # 🔹 Verificar si el release ya existe antes de crearlo
+      - name: Check if release already exists
+        id: check_release
+        run: |
+          EXISTING=$(gh release view frontend-v${{ env.FRONT_VERSION }} --json tagName -q .tagName || echo "")
+          if [ -n "$EXISTING" ]; then
+            echo "Release ya existe: frontend-v${{ env.FRONT_VERSION }}"
+            echo "SKIP_RELEASE=true" >> $GITHUB_ENV
+          else
+            echo "SKIP_RELEASE=false" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 🔹 Crear release solo si no existe
+      - name: Create Frontend Release
+        if: env.SKIP_RELEASE == 'false'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ env.VERSION }}
-          name: Release v${{ env.VERSION }}
+          tag_name: frontend-v${{ env.FRONT_VERSION }}
+          name: Frontend Release v${{ env.FRONT_VERSION }}
           body: |
-            🚀 Nueva versión automática tras push/merge en main.
-            Compatibilidad con Windows, Debian y Ubuntu.
+            Nueva versión del FRONTEND generada automáticamente.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
