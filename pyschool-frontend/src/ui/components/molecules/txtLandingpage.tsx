@@ -21,13 +21,13 @@ const TxtLandingpage: React.FC<TxtLandingpageProps> = ({
 }) => {
   return (
     <section
-      className={`w-full flex flex-col-reverse md:flex-row items-center justify-center gap-8 px-8 py-8 bg-transparent`}
+      className={`w-full flex flex-col-reverse md:flex-row items-center justify-between gap-6 px-6 md:px-12 py-8 bg-transparent`}
     >
-      <div className="flex flex-col items-center text-center max-w-lg">
+      <div className="flex flex-col items-center text-center max-w-md md:-ml-2">
         <CoverText text={title} size="large" />
         <CoverDescriptionText text={description} size="medium" />
       </div>
-      <div className="flex justify-center w-full md:w-auto">
+      <div className="flex justify-center md:justify-end w-full md:w-auto md:mr-8">
         <Img src={imageSrc} alt={imageAlt} width={420} height={300} />
       </div>
     </section>
