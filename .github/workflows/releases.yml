@@ -1,0 +1,58 @@
+name: Create Release on Merge to Main
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Obtener el código del repositorio
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Obtiene todo el historial para comparar commits
+      
+      # Leer la versión actual del package.json del root (o puedes especificar backend/frontend)
+      - name: Read version from package.json
+        id: read-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Version encontrada: ${VERSION}"
+      
+      # Obtener el último commit message
+      - name: Get commit message
+        id: commit-message
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "message=${COMMIT_MSG}" >> $GITHUB_OUTPUT
+      
+      # Crear un tag basado en la versión
+      - name: Create tag
+        id: create-tag
+        run: |
+          TAG="v${{ steps.read-version.outputs.version }}"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag $TAG
+          git push origin $TAG
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+      
+      # Crear el release con el changelog
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.create-tag.outputs.tag }}
+          release_name: Release ${{ steps.read-version.outputs.version }}
+          body: |
+            ## Cambios en esta versión
+            
+            ${{ steps.commit-message.outputs.message }}
+            
+            Creado automáticamente desde merge a main
+          draft: false
+          prerelease: false
