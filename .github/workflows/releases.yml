@@ -9,50 +9,131 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # Obtener el código del repositorio
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Obtiene todo el historial para comparar commits
-      
-      # Leer la versión actual del package.json del root (o puedes especificar backend/frontend)
-      - name: Read version from package.json
-        id: read-version
+          fetch-depth: 0
+
+      # Verificar si ya existe un release con el commit actual
+      - name: Check if release already exists
+        id: check-release
         run: |
-          VERSION=$(node -p "require('./package.json').version")
+          COMMIT_SHA=${{ github.sha }}
+          COMMIT_SHORT=${COMMIT_SHA:0:7}
+          
+          # Obtener todos los releases y verificar si este commit ya tiene uno
+          EXISTING_RELEASE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases" \
+            | grep -i "$COMMIT_SHORT" || true)
+          
+          if [ -z "$EXISTING_RELEASE" ]; then
+            echo "release_needed=true" >> $GITHUB_OUTPUT
+          else
+            echo "release_needed=false" >> $GITHUB_OUTPUT
+            echo "Release ya existe para este commit"
+          fi
+        shell: bash
+
+      # Si no existe release, continuar
+      - name: Generate version and timestamp
+        if: steps.check-release.outputs.release_needed == 'true'
+        id: version-info
+        run: |
+          # Generar versión basada en timestamp (YYYY.MM.DD.HHmmss)
+          VERSION=$(date +'%Y.%m.%d.%H%M%S')
+          COMMIT_SHORT=${{ github.sha }}
+          COMMIT_SHORT=${COMMIT_SHORT:0:7}
+          TAG="v${VERSION}"
+          
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "Version encontrada: ${VERSION}"
-      
-      # Obtener el último commit message
-      - name: Get commit message
-        id: commit-message
-        run: |
-          COMMIT_MSG=$(git log -1 --pretty=%B)
-          echo "message=${COMMIT_MSG}" >> $GITHUB_OUTPUT
-      
-      # Crear un tag basado en la versión
-      - name: Create tag
-        id: create-tag
-        run: |
-          TAG="v${{ steps.read-version.outputs.version }}"
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git tag $TAG
-          git push origin $TAG
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
-      
-      # Crear el release con el changelog
+          echo "commit_short=${COMMIT_SHORT}" >> $GITHUB_OUTPUT
+          echo "Version generada: ${VERSION}"
+        shell: bash
+
+      # Obtener información de qué cambió (backend, frontend, o ambos)
+      - name: Detect changes
+        if: steps.check-release.outputs.release_needed == 'true'
+        id: detect-changes
+        run: |
+          # Obtener el último tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          if [ -z "$LAST_TAG" ]; then
+            # Si no hay tags previos, comparar con el primer commit
+            RANGE="HEAD"
+          else
+            RANGE="${LAST_TAG}..HEAD"
+          fi
+          
+          # Verificar qué carpetas tienen cambios
+          BACKEND_CHANGED=false
+          FRONTEND_CHANGED=false
+          
+          if git diff --name-only $RANGE | grep -q "^pyschool-backend/"; then
+            BACKEND_CHANGED=true
+          fi
+          
+          if git diff --name-only $RANGE | grep -q "^pyschool-frontend/"; then
+            FRONTEND_CHANGED=true
+          fi
+          
+          echo "backend_changed=${BACKEND_CHANGED}" >> $GITHUB_OUTPUT
+          echo "frontend_changed=${FRONTEND_CHANGED}" >> $GITHUB_OUTPUT
+          
+          echo "Backend cambió: ${BACKEND_CHANGED}"
+          echo "Frontend cambió: ${FRONTEND_CHANGED}"
+        shell: bash
+
+      # Obtener información de los commits
+      - name: Get commits info
+        if: steps.check-release.outputs.release_needed == 'true'
+        id: commits-info
+        run: |
+          # Obtener commits desde el último tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          if [ -z "$LAST_TAG" ]; then
+            COMMITS=$(git log --oneline -20 --pretty=format:"- %h: %s (%an)")
+          else
+            COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --pretty=format:"- %h: %s (%an)")
+          fi
+          
+          # Escapar saltos de línea para usarlo en GitHub Output
+          COMMITS="${COMMITS//'%'/'%25'}"
+          COMMITS="${COMMITS//$'\n'/'%0A'}"
+          echo "commits=${COMMITS}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      # Crear el tag y hacer push
+      - name: Create and push tag
+        if: steps.check-release.outputs.release_needed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.version-info.outputs.tag }} -m "Release ${{ steps.version-info.outputs.version }}"
+          git push origin ${{ steps.version-info.outputs.tag }}
+        shell: bash
+
+      # Crear el release
       - name: Create Release
+        if: steps.check-release.outputs.release_needed == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.create-tag.outputs.tag }}
-          release_name: Release ${{ steps.read-version.outputs.version }}
+          tag_name: ${{ steps.version-info.outputs.tag }}
+          release_name: Release ${{ steps.version-info.outputs.version }}
           body: |
-            ## Cambios en esta versión
+            ## Resumen de cambios
             
-            ${{ steps.commit-message.outputs.message }}
+            **Commit:** ${{ steps.version-info.outputs.commit_short }}
+            **Cambios en Backend:** ${{ steps.detect-changes.outputs.backend_changed }}
+            **Cambios en Frontend:** ${{ steps.detect-changes.outputs.frontend_changed }}
             
-            Creado automáticamente desde merge a main
+            ## Commits incluidos:
+            ${{ steps.commits-info.outputs.commits }}
+            
+            ---
+            *Release generado automáticamente desde merge a main*
           draft: false
           prerelease: false
