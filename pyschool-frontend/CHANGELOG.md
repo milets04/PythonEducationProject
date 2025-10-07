@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-frontend-v1.0.0...pyschool-frontend-v1.1.0) (2025-10-07)
+
+
+### Features
+
+* **frontend:** Landingpage funcionando en page ([51ca37d](https://github.com/milets04/PythonEducationProject/commit/51ca37de07cbb47604363ec644aabf6c062dcc0f))
+
 # 1.0.0 (2025-10-07)
 
 
