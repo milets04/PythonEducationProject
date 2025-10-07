@@ -57,6 +57,9 @@ body {
 /*coverDescriptionText*/
   --color-cover-description: #000000;
   --font-cover-description: 'Roboto', sans-serif;
+/*background landingpage*/
+  --color-landing-bg: #9ED3D0;
+  --color-landing-bg-38: rgba(158, 211, 208, 0.38);
 }
 
 @font-face {
