@@ -23,13 +23,13 @@ const InputWithIcon: React.FC<InputWithIconProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`w-390px ${className}`}>
+    <div className={`w-490px ${className}`}>
       {label && (
         <label htmlFor={id} className="block text-sm font-tLog text-tLog mb-2">
           {label}
         </label>
       )}
-      <div className="relative w-390px">
+      <div className="relative w-490px">
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
           <InputIcon icon={icon} />
         </div>
@@ -38,7 +38,7 @@ const InputWithIcon: React.FC<InputWithIconProps> = ({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className={`w-390px border border-gray-300 rounded-md pl-12 pr-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-300`}
+          className={`w-490px border border-gray-300 rounded-md pl-12 pr-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-300`}
         />
       </div>
     </div>
