@@ -22,29 +22,12 @@ jobs:
         with:
           node-version: 20
 
-      # Linux: instalación con reintentos
-      - name: Install jq on Linux
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update -y
-          for i in 1 2 3; do
-            sudo apt-get install -y jq && break || sleep 10
-          done
-
-      # Windows: instalación con reintentos
-      - name: Install jq on Windows
-        if: runner.os == 'Windows'
-        run: |
-          for /l %%i in (1,1,3) do (
-            choco install jq -y && exit /b 0
-            timeout /t 10
-          )
-          
+      # Obtener versión directamente con Node.js (sin jq)
       - name: Get version from pyschool-frontend/package.json
         id: get_front_version
         shell: bash
         run: |
-          VERSION=$(jq -r .version pyschool-frontend/package.json)
+          VERSION=$(node -p "require('./pyschool-frontend/package.json').version")
           echo "FRONT_VERSION=$VERSION" >> $GITHUB_ENV
 
       # Crear release del frontend
@@ -54,6 +37,6 @@ jobs:
           tag_name: frontend-v${{ env.FRONT_VERSION }}
           name: Frontend Release v${{ env.FRONT_VERSION }}
           body: |
-            Nueva versión del FRONTEND generada automáticamente.
+            🚀 Nueva versión del FRONTEND generada automáticamente.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
