@@ -48,6 +48,8 @@ body {
 @theme {
   --color-sign: #2F7CBB;
   --font-sign: 'Roboto', sans-serif;
+/*fondo*/
+  --color-fondo: #C9DDDC;
 /*btnHeader*/
   --color-btn-sign: #61B3F6;
   --color-btn-hover-sign: #61B3F6;

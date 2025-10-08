@@ -4,13 +4,23 @@
     "dev": "node --watch index.js"
   },
   "dependencies": {
-    "express": "^5.1.0"
+<<<<<<< HEAD
+    "express": "^5.1.0",
+    "react-icons": "^5.5.0"
+=======
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "joi": "^18.0.1",
+    "pg": "^8.16.3"
+>>>>>>> 74433947a1f6c23d206bcc31751d9dc35b41caf8
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.6",
     "conventional-changelog-conventionalcommits": "^9.1.0",
+    "nodemon": "^3.1.10",
     "semantic-release": "^24.2.9",
     "standard": "^17.1.2"
   },

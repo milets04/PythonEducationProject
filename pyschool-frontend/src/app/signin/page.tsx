@@ -1,3 +1,4 @@
+"use client";
 import Image from 'next/image';
 import LoginContainer from '@/ui/components/organisms/formSignin';
 
@@ -14,10 +15,11 @@ const LoginPage: React.FC = () => {
         />
       </div>
       <div>
-        <LoginContainer/>
+        <LoginContainer />
       </div>
     </div>
   );
 };
 
 export default LoginPage;
+

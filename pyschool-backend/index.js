@@ -4,7 +4,7 @@ import { PORT } from './config.js'
 const app = express()
 
 app.get('/', (req, res) => {
-  res.send(`Hello PySon!`)
+  res.send('Hello PySon!')
 })
 
 app.post('/login', (req, res) => {})
