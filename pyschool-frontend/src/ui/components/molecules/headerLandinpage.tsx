@@ -19,6 +19,7 @@ const HeaderLandingpage: React.FC<HeaderLandingpageProps> = ({
 
   const handleSignIn = () => {
     router.push("/signin")
+    router.push("/signup")
   }
   return (
     <header className="w-full bg-transparent">
@@ -27,8 +28,8 @@ const HeaderLandingpage: React.FC<HeaderLandingpageProps> = ({
           <Img src={logoSrc} alt={logoAlt} width={180} height={58} rounded />
         </div>
         <div className="flex items-center gap-3">
-          <BtnHeader text="Sign in" variant="default" onClick={() => router.push("/signin")} />
-          <BtnHeader text="Log in" variant="login" onClick={onLogIn} />
+          <BtnHeader text="Register" variant="default" onClick={() => router.push("/signup")} />
+          <BtnHeader text="Sign in" variant="login" onClick={() => router.push("/signin")} />
         </div>
       </div>
     </header>
