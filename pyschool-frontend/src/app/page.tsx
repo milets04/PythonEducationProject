@@ -6,6 +6,7 @@ import Input from "@/ui/components/atoms/input";
 import { useState } from "react";
 import Title from "@/ui/components/atoms/title";
 import Descp from "@/ui/components/atoms/description";
+import TitleAndDescr from "@/ui/components/molecules/titDesc";
 
 const FormExample = () => {
   const [name, setName] = useState('');
@@ -21,6 +22,7 @@ const FormExample = () => {
       <GoogleButton text="Sign in with Google" />
       <Title text="Welcome to PySchool" />
       <Descp text="Learn Python the fun way!" />
+      <TitleAndDescr title="Welcome to PySchool" descr="Learn Python the fun way!"/>
       
       <Input
         label="Nombre"

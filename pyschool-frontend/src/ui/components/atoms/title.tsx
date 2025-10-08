@@ -10,7 +10,7 @@ const Title: React.FC<titleProps> = ({
   className = '',
 }) => {
   return (
-    <h1 className={`text-2xl text-cyan-600 ${className}`} style={{ fontFamily: 'var(--font-tLog)' }}>      
+    <h1 className={`text-2xl text-cyan-600 ${className}`} style={{ fontFamily: 'var(--font-sign)', fontWeight: 600 }}>      
         {text}
     </h1>
     );  

@@ -10,7 +10,7 @@ const descp: React.FC<descriptionProps> = ({
   className = '',
 }) => {
   return (
-    <h1 className={` text-gray-400 ${className}`} style={{ fontFamily: 'var(--font-sign)' }}>      
+    <h1 className={` text-gray-400 ${className}`} style={{ fontFamily: 'var(--font-sign)', fontWeight:400 }}>      
         {text}
     </h1>
     );  
