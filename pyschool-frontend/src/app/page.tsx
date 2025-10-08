@@ -1,13 +1,9 @@
-"use client";
-import LoginPage from "@/ui/components/templates/formSignPage";
-import Image from "next/image";
-import React, { useState } from "react";
+import LandingpageTemplate from "@/ui/components/templates/landingpageTemplate";
 
 export default function Page() {
   return (
-    <div>
-      <LoginPage />
+    <div>   
+      <LandingpageTemplate />
     </div>
   );
 }
-/*prueba lp*/
