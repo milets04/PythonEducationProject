@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #C9DDDC;
   --foreground: #171717;
 }
+
 
 @theme inline {
   --color-background: var(--background);
@@ -12,12 +13,12 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+/*@media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+*/
 
 body {
   background: var(--background);
@@ -44,29 +45,37 @@ body {
   font-weight: 600;
   font-style: normal;
 }
-
 @theme {
   --color-sign: #2F7CBB;
   --font-sign: 'Roboto', sans-serif;
-  --font-sign1: 'Roboto', semi-bold;
-}
-
-@theme {
-  --color-tLog: #000000;
-  --font-tLog: 'Roboto2', sans-serif;
-}
-
-/*
-Ejemplo de uso de variables CSS en un componente
-@theme {
-  --color-texto1: #0000;
-  --font-texto1: "fuenteTitulo";
+/*btnHeader*/
+  --color-btn-sign: #61B3F6;
+  --color-btn-hover-sign: #61B3F6;
+  --color-btn-active-sign: #61B3F6;
+  --color-btn-login: #0B1D75;
+  --color-btn-login-hover: #0B1D75; 
+  --color-btn-login-active: #0B1D75;
+  --font-btn: 'Inter', sans-serif;
+/*coverText*/
+  --color-cover-text: #1D1B20;
+  --font-cover-text: 'Roboto', sans-serif;
+/*coverDescriptionText*/
+  --color-cover-description: #000000;
+  --font-cover-description: 'Roboto', sans-serif;
 }
 
 @font-face {
-  font-family: "fuenteTitulo";
-  src: url("/fonts/Morado.woff2") format("woff2"); 
+  font-family: 'Inter';
+  src: url('/fonts/Inter/Inter_24pt-Regular.ttf') format('truetype');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
-  */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter/Inter_18pt-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
