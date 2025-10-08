@@ -10,13 +10,15 @@
   },
   "dependencies": {
     "next": "15.5.4",
-    "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-icons": "^5.5.0"
+    "react-hook-form": "^7.64.0",
+    "react-icons": "^5.5.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@hookform/resolvers": "^5.2.2",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.6",
