@@ -39,7 +39,12 @@ body {
   font-weight: 700;
   font-style: normal;
 } 
-
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto/Roboto-SemiBold.ttf')format('ttf');
+  font-weight: 600;
+  font-style: normal;
+}
 @theme {
   --color-sign: #2F7CBB;
   --font-sign: 'Roboto', sans-serif;
