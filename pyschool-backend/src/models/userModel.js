@@ -1,7 +1,9 @@
 import pool from '../config/db.js'
+import dotenv from 'dotenv'
 import bcrypt from 'bcrypt'
 
-const SALT_ROUNDS = 10
+dotenv.config()
+const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS, 10)
 
 export const getAllUserService = async () => {
   const result = await pool.query(`
@@ -15,7 +17,8 @@ export const getAllUserService = async () => {
       "idStudent", 
       "isActive", 
       "createdAt", 
-      "lastLogin"
+      "lastLogin",
+      "passwordUser"
     FROM "Users"
     ORDER BY "idUser"
   `)
@@ -34,7 +37,8 @@ export const getUserByIdService = async (id) => {
       "idStudent", 
       "isActive", 
       "createdAt", 
-      "lastLogin"
+      "lastLogin",
+      "passwordUser"  
     FROM "Users" 
     WHERE "idUser" = $1
   `, [id])
