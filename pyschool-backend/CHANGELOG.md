@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-backend-v1.0.0...pyschool-backend-v1.1.0) (2025-10-08)
+
+
+### Features
+
+* register Template ([5726c44](https://github.com/milets04/PythonEducationProject/commit/5726c4482142854ba1ddb6ff06e70fdd0a0afbc4))
+
 # 1.0.0 (2025-10-08)
 
 
