@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: 'pyschool-frontend/package-lock.json'   # 👈 agregado
+          cache-dependency-path: 'pyschool-frontend/package-lock.json'   
       - run: cd pyschool-frontend && npm ci
       - run: cd pyschool-frontend && npx semantic-release
         env:

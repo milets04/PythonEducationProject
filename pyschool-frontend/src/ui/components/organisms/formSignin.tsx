@@ -11,7 +11,7 @@ const LoginContainer: React.FC = () => {
   const [password, setPassword] = useState('');
 
   return (
-    <div className="flex w-full items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex w-full items-center justify-center min-h-screen">
       <div className="w-full max-w-md bg-white rounded-2xl p-8 shadow-lg">
         <div className="mb-6">
           <InputWithIcon
