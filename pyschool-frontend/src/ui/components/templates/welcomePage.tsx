@@ -5,6 +5,7 @@ import CoverDescriptionText from "../atoms/coverDescriptionText";
 import BackgroundClouds from "../atoms/backgroundClouds";
 import UserIcon from '../atoms/userIcon';   
 import CustomButton from '../atoms/btnOthers';
+import Link from 'next/link';
 
 type WelcomepageProps = {
   title?: string;
@@ -25,14 +26,16 @@ const Welcomepage: React.FC<WelcomepageProps> = ({
     >
       <BackgroundClouds />
 
-      <div className="absolute top-5 left-5 flex items-center gap-2">
-        <Image
-          src="/images/pysonlogo.png"
-          alt="Decoration"
-          width={200}
-          height={200}
-          priority
-        />
+      <div className="absolute top-5 left-5">
+        <Link href="/landingpageTemplate" className="cursor-pointer">
+          <Image
+            src="/images/pysonlogo.png"
+            alt="PY Son Logo"
+            width={200}
+            height={200}
+            priority
+          />
+        </Link>
       </div>
       <div className="absolute top-6 right-5 flex items-center gap-2">
         <UserIcon size={32} />
