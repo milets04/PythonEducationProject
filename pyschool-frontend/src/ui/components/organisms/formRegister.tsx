@@ -3,10 +3,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "@/ui/components/atoms/input";
 import TitleAndDescr from "@/ui/components/molecules/titDesc"
-import Descp from "@/ui/components/atoms/description"
-import RadioButton from "@/ui/components/atoms/radioButton"
 import { useState } from "react";
 import SignLink from '@/ui/components/atoms/txtSign';
+import GoogleButton from "@/ui/components/atoms/btnGoogle";
 
 const schema = z.object({
   firstname: z.string().min(3, "Firstname must be at least 3 characters"),
@@ -14,7 +13,6 @@ const schema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Confirm Password must be at least 6 characters"),
-  role: z.enum(["STUDENT", "TEACHER"]), 
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -33,7 +31,6 @@ const RegisterForm: React.FC = () => {
       email: "",
       password: "",
       confirmPassword: "",
-      role: "STUDENT"
     }
   });
 
@@ -130,31 +127,7 @@ const RegisterForm: React.FC = () => {
           {errors.confirmPassword && (
             <p className="text-xs text-red-700 mb-3 -mt-4 ml-1">{errors.confirmPassword.message}</p>
             )}
-
-          <Descp text="Select an option:"/>
-          <div className="space-y-2">
-            <Controller
-                name="role" control={control} render={({ field }) => (
-                <div className="space-y-2">
-                    <RadioButton
-                    name="role"
-                    value="STUDENT"
-                    label="STUDENT"
-                    checked={field.value === "STUDENT"}
-                    onChange={() => field.onChange("STUDENT")}
-                    />
-                    <RadioButton
-                    name="role"
-                    value="TEACHER"
-                    label="TEACHER"
-                    checked={field.value === "TEACHER"}
-                    onChange={() => field.onChange("TEACHER")}
-                    />
-                </div>
-                )}
-            />
-            {errors.role && <p className="text-xs text-red-700">{errors.role.message}</p>}
-            </div>
+          
           {/* Submit */}
           <button
             type="submit"
@@ -162,6 +135,9 @@ const RegisterForm: React.FC = () => {
           >
             Submit
           </button>
+          <div className="flex justify-center">
+            <GoogleButton/>
+          </div>
           <div className="text-center mb-4">
             <span className="text-sm text-gray-600">
                 Already have an account?{' '}
