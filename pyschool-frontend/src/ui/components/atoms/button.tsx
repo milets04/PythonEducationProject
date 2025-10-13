@@ -10,10 +10,10 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-[#0B1D75] text-white hover:bg-blue-700',
+        default: 'bg-[#0B1D75] text-white hover:bg-[#09175e]',
         destructive: 'bg-[#5F9C40] text-white hover:bg-red-700',
         outline: 'border bg-white text-gray-900 hover:bg-gray-50',
-        secondary: 'bg-[#485C6D]  text-white hover:bg-black',
+        secondary: 'bg-[#485C6D]  text-white hover:bg-gray-700',
         tertiary: 'bg-[#61B3F6]/20  text-black-900 hover:bg-gray-200',
         ghost: 'hover:bg-gray-100',
         link: 'text-[#F8FC8D] underline-offset-4 hover:underline',

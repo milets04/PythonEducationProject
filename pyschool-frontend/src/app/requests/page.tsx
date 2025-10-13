@@ -7,7 +7,6 @@ import RequestPageTemplate from "@/ui/components/templates/requestPage";
 const RequestsPage: React.FC = () => {
   return (
     <div>
-      {/* Logo que redirige al home */}
       <div>
         <Link href="/" className="cursor-pointer inline-block">
           <Image
