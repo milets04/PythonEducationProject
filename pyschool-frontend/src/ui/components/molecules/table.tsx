@@ -2,6 +2,7 @@
 import React from "react";
 import Select from "@/ui/components/atoms/select";
 import CoverDescriptionText from "@/ui/components/atoms/coverDescriptionText";
+import Checkbox from "../atoms/check";
 
 interface TableProps {
   data: {
@@ -15,7 +16,7 @@ interface TableProps {
 const Table: React.FC<TableProps> = ({ data }) => {
   return (
     <div className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-sm p-4 sm:p-6 overflow-x-auto">
-      <div className="w-full border-b border-gray-400 pb-2 grid grid-cols-3 gap-4 text-center">
+      <div className="w-full border-b border-gray-400 pb-2 grid grid-cols-[1.5fr_2fr_1fr_0.5fr] gap-4 text-center">
         <CoverDescriptionText
           text="Nombre"
           size="small"
@@ -31,6 +32,11 @@ const Table: React.FC<TableProps> = ({ data }) => {
           size="small"
           className="text-sm font-semibold"
         />
+        <CoverDescriptionText
+          text="acciones"
+          size="small"
+          className="text-sm font-semibold"
+        />
       </div>
 
       {/* Filas dinámicas */}
@@ -40,7 +46,7 @@ const Table: React.FC<TableProps> = ({ data }) => {
             <div
               key={item.id}
               className="
-                grid grid-cols-3 gap-4 text-center items-center
+                grid grid-cols-[1.5fr_2fr_1fr_0.5fr] gap-4 text-center items-center
                 py-3 sm:py-4
                 hover:bg-gray-50 transition
               "
@@ -59,6 +65,9 @@ const Table: React.FC<TableProps> = ({ data }) => {
               </p>
               <div className="flex justify-center">
                 <Select />
+              </div>
+              <div className="flex justify-center">
+                <Checkbox />
               </div>
             </div>
           ))
