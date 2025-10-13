@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-frontend-v1.3.0...pyschool-frontend-v1.4.0) (2025-10-13)
+
+
+### Features
+
+* **frontend:** Requests page implementada ([239535a](https://github.com/milets04/PythonEducationProject/commit/239535ad972b04d87adeea9f9898b1fefe1458c8))
+
 # [1.3.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-frontend-v1.2.0...pyschool-frontend-v1.3.0) (2025-10-12)
 
 
