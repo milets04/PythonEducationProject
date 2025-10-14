@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import Img from "../atoms/img";
 import BtnHeader from "../atoms/btnHeader";
 import { useRouter } from "next/navigation";

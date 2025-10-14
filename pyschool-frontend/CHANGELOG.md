@@ -1,3 +1,18 @@
+# [1.4.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-frontend-v1.3.0...pyschool-frontend-v1.4.0) (2025-10-13)
+
+
+### Features
+
+* **frontend:** Requests page implementada ([239535a](https://github.com/milets04/PythonEducationProject/commit/239535ad972b04d87adeea9f9898b1fefe1458c8))
+
+# [1.3.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-frontend-v1.2.0...pyschool-frontend-v1.3.0) (2025-10-12)
+
+
+### Features
+
+* **frontend:** Molecula de table creada, probada con datos de prueba ([8b083e0](https://github.com/milets04/PythonEducationProject/commit/8b083e09372a5b787f7127cddc78cadc236a99b4))
+* register Template ([5726c44](https://github.com/milets04/PythonEducationProject/commit/5726c4482142854ba1ddb6ff06e70fdd0a0afbc4))
+
 # [1.2.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-frontend-v1.1.0...pyschool-frontend-v1.2.0) (2025-10-08)
 
 

@@ -10,7 +10,7 @@ interface BtnHeaderProps {
 }
 
 const BtnHeader: React.FC<BtnHeaderProps> = ({
-  text = "Sign in",
+  text = "Sign up",
   onClick,
   className = "",
   type = "button",

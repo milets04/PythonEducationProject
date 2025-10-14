@@ -16,7 +16,7 @@ const TxtLandingpage: React.FC<TxtLandingpageProps> = ({
   title = "Let's learn python<br />with us",
   description = "A good software developer works with discipline and<br /> perseverance from the first day",
   imageSrc = "/images/Landingpage.png",
-  imageAlt = "Python learning illustration",
+  imageAlt = "Python learning ilustration",
 
 }) => {
   return (
