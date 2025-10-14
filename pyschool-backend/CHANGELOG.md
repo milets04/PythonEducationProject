@@ -1,3 +1,11 @@
+# [1.2.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-backend-v1.1.0...pyschool-backend-v1.2.0) (2025-10-14)
+
+
+### Features
+
+* **frontend:** Molecula de table creada, probada con datos de prueba ([8b083e0](https://github.com/milets04/PythonEducationProject/commit/8b083e09372a5b787f7127cddc78cadc236a99b4))
+* **frontend:** Requests page implementada ([239535a](https://github.com/milets04/PythonEducationProject/commit/239535ad972b04d87adeea9f9898b1fefe1458c8))
+
 # [1.1.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-backend-v1.0.0...pyschool-backend-v1.1.0) (2025-10-08)
 
 
