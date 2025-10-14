@@ -1,3 +1,4 @@
+"use client"
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,6 +7,7 @@ import TitleAndDescr from "@/ui/components/molecules/titDesc"
 import { useState } from "react";
 import SignLink from '@/ui/components/atoms/txtSign';
 import GoogleButton from "@/ui/components/atoms/btnGoogle";
+import {signIn} from 'next-auth/react';
 
 const schema = z.object({
   firstname: z.string().min(3, "Firstname must be at least 3 characters"),
@@ -135,6 +137,11 @@ const RegisterForm: React.FC = () => {
           >
             Submit
           </button>
+          <div className="flex justify-center">
+            <button onClick={()=> signIn()}>
+              Sign in with google
+            </button>
+          </div>
           <div className="flex justify-center">
             <GoogleButton/>
           </div>

@@ -2,6 +2,8 @@
 import Img from "../atoms/img";
 import BtnHeader from "../atoms/btnHeader";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 type HeaderLandingpageProps = {
   logoSrc?: string;         
@@ -20,16 +22,26 @@ const HeaderLandingpage: React.FC<HeaderLandingpageProps> = ({
     router.push("/signin")
     router.push("/signup")
   }
+  const{data: session}=useSession();
+  console.log(session)
   return (
     <header className="w-full bg-transparent">
       <div className="w-full flex items-center justify-between py-3 px-4">
         <div className="flex items-center gap-3">
           <Img src={logoSrc} alt={logoAlt} width={180} height={58} rounded />
         </div>
-        <div className="flex items-center gap-3">
+        {session?.user ?(
+          <div className="flex items-center gap-3">
+              <p>{session.user.name} {session.user.email}</p>
+              <BtnHeader text="Log out" variant="login" onClick={() => {signOut()}} />
+        </div>
+        ):(
+          <div className="flex items-center gap-3">
           <BtnHeader text="Register" variant="default" onClick={() => router.push("/signup")} />
           <BtnHeader text="Sign in" variant="login" onClick={() => router.push("/signin")} />
         </div>
+        )}
+        
       </div>
     </header>
   );

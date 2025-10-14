@@ -1,11 +1,15 @@
+"use client"
 import LandingpageTemplate from "@/ui/components/templates/landingpageTemplate";
+import {Providers} from './providers'
 
 
 export default function Page() {
-  
   return (
-    <div>   
-      <LandingpageTemplate />
-    </div>
+    <Providers>
+        <div>   
+          <LandingpageTemplate />
+        </div>
+    </Providers>
+    
   );
 }
