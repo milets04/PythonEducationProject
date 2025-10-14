@@ -12,7 +12,8 @@ import { authenticateToken, authorizeRoles } from '../middlewares/authMiddleware
 const router = express.Router()
 
 // Solo usuarios autenticados pueden ver teachers
-router.get('/teachers', authenticateToken, getAllTeachers)
+// router.get('/teachers', authenticateToken, getAllTeachers)
+router.get('/teachers', getAllTeachers)
 router.get('/teachers/:id', authenticateToken, getTeacherById)
 
 // Solo TEACHER_EDITOR puede crear, actualizar y eliminar
