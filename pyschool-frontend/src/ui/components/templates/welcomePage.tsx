@@ -26,7 +26,7 @@ const Welcomepage: React.FC<WelcomepageProps> = ({
     >
       <BackgroundClouds />
 
-      <div className="absolute top-5 left-5">
+      {/* <!--<div className="absolute top-5 left-5">
         <Link href="/landingpageTemplate" className="cursor-pointer">
           <Image
             src="/images/pysonlogo.png"
@@ -36,8 +36,8 @@ const Welcomepage: React.FC<WelcomepageProps> = ({
             priority
           />
         </Link>
-      </div>
-      <div className="absolute top-6 right-5 flex items-center gap-2">
+      </div>--> */}
+      {/* <div className="absolute top-6 right-5 flex items-center gap-2">
         <UserIcon size={32} />
       </div>
       <div className="absolute top-5 right-18 flex items-center gap-2">
@@ -45,7 +45,7 @@ const Welcomepage: React.FC<WelcomepageProps> = ({
         text="Log out" 
         textColor="#ffffff"
         />
-      </div>
+      </div> */}
       <div className="flex flex-col items-center text-center max-w-md mx-auto">
         <CoverText text={title} size="large" />
         <CoverDescriptionText text={description} size="medium" />

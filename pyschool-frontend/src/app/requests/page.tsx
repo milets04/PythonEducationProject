@@ -7,7 +7,7 @@ import RequestPageTemplate from "@/ui/components/templates/requestPage";
 const RequestsPage: React.FC = () => {
   return (
     <div>
-      <div>
+      {/* <div>
         <Link href="/" className="cursor-pointer inline-block">
           <Image
             src="/images/pysonlogo.png"
@@ -17,7 +17,7 @@ const RequestsPage: React.FC = () => {
             priority
           />
         </Link>
-      </div>
+      </div> */}
 
       {/* Contenido principal */}
       <div>

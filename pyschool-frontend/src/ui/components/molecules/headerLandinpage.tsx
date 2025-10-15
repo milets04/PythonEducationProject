@@ -4,6 +4,7 @@ import BtnHeader from "../atoms/btnHeader";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 type HeaderLandingpageProps = {
   logoSrc?: string;         
@@ -28,7 +29,10 @@ const HeaderLandingpage: React.FC<HeaderLandingpageProps> = ({
     <header className="w-full bg-transparent">
       <div className="w-full flex items-center justify-between py-3 px-4">
         <div className="flex items-center gap-3">
-          <Img src={logoSrc} alt={logoAlt} width={180} height={58} rounded />
+          <Link href="/welcome" className="cursor-pointer">
+            <Img src={logoSrc} alt={logoAlt} width={160} height={58} rounded />
+          </Link>
+          
         </div>
         {session?.user ?(
           <div className="flex items-center gap-3">

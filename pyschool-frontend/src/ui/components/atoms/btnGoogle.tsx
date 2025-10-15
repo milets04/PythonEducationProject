@@ -1,5 +1,7 @@
 "use client";
 import { FcGoogle } from 'react-icons/fc';
+import {signIn} from 'next-auth/react';
+import router, { useRouter } from 'next/navigation';
 
 interface GoogleButtonProps {
   onClick?: () => void;
@@ -8,13 +10,21 @@ interface GoogleButtonProps {
 }
 
 const GoogleButton: React.FC<GoogleButtonProps> = ({
-  onClick,
+  //onClick,
   text = 'Google',
   className = '',
 }) => {
+  const router = useRouter ();
+
+  const handleGoogleLogin = () => {
+    signIn("google", {callbackUrl:'/welcome'});
+    //router.push("/welcome")
+  }
+
   return (
     <button
-      onClick={onClick}
+      //onClick={()=> signIn()}
+      onClick={handleGoogleLogin}
       className={`flex items-center gap-3 px-15 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors ${className}`}
     >
       <FcGoogle size={20} />

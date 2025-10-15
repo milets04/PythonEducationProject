@@ -8,6 +8,7 @@ import { useState } from "react";
 import SignLink from '@/ui/components/atoms/txtSign';
 import GoogleButton from "@/ui/components/atoms/btnGoogle";
 import {signIn} from 'next-auth/react';
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   firstname: z.string().min(3, "Firstname must be at least 3 characters"),
@@ -25,6 +26,7 @@ type FormData = z.infer<typeof schema>;
 
 
 const RegisterForm: React.FC = () => {
+  const router = useRouter();
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -36,10 +38,16 @@ const RegisterForm: React.FC = () => {
     }
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log("Form Data:", data);
+    try {
+      await       
+      console.log(data); // tu lógica de registro
+      router.push("/welcome");
+    } catch (error) {
+      console.error("Error en registro:", error);
+    }
   };
-  const [selected, setSelected] = useState("option1");
 
     return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -137,11 +145,6 @@ const RegisterForm: React.FC = () => {
           >
             Submit
           </button>
-          <div className="flex justify-center">
-            <button onClick={()=> signIn()}>
-              Sign in with google
-            </button>
-          </div>
           <div className="flex justify-center">
             <GoogleButton/>
           </div>

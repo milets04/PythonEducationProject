@@ -6,7 +6,7 @@ import Link from 'next/link';
 const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br bg-fondo items-center justify-center relative overflow-hidden">
-      <div className="absolute top-5 left-5">
+      {/* <div className="absolute top-5 left-5">
         <Link href="/" className="cursor-pointer">
           <Image
             src="/images/pysonlogo.png"
@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
             priority
           />
         </Link>
-      </div>
+      </div> */}
       <div>
         <LoginContainer />
       </div>
