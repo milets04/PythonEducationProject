@@ -1,0 +1,301 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// src/prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String?
+  users       User[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("roles")
+}
+
+model Course {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String?
+  units       Unit[]
+  userCourses UserCourse[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("courses")
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String       @unique
+  passwordHash String
+  roleId      Int
+  isActive    Boolean      @default(true)
+  
+  role        Role         @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  teacher     Teacher?
+  student     Student?
+  userCourses UserCourse[]
+  
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("users")
+}
+
+model UserCourse {
+  userId         Int
+  courseId       Int
+  enrollmentDate DateTime @default(now())
+  
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@id([userId, courseId])
+  @@map("userCourses")
+}
+
+model Teacher {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique
+  specialization String?
+  
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("teachers")
+}
+
+model Student {
+  id           Int           @id @default(autoincrement())
+  userId       Int           @unique
+  checkpoint   String?
+  history      String?
+  
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  labStudents   LabStudent[]
+  questStudents QuestStudent[]
+  
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("students")
+}
+
+model Unit {
+  id        Int        @id @default(autoincrement())
+  courseId  Int
+  name      String
+  position  Int?
+  
+  course    Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  contents  Content[]
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("units")
+}
+
+model Topic {
+  id                 Int                @id @default(autoincrement())
+  contentExternalId  String?
+  name               String
+  
+  transcriptTopics   TranscriptTopic[]
+  topicMultimedias   TopicMultimedia[]
+  contents           Content[]
+  
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@map("topics")
+}
+
+model Multimedia {
+  id               Int               @id @default(autoincrement())
+  url              String
+  name             String?
+  type             String?
+  
+  topicMultimedias TopicMultimedia[]
+  
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@map("multimedia")
+}
+
+model TopicMultimedia {
+  topicId      Int
+  multimediaId Int
+  
+  topic        Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  multimedia   Multimedia @relation(fields: [multimediaId], references: [id], onDelete: Cascade)
+  
+  @@id([topicId, multimediaId])
+  @@map("topicMultimedia")
+}
+
+model Text {
+  id               Int               @id @default(autoincrement())
+  content          String
+  type             String?
+  
+  transcriptTopics TranscriptTopic[]
+  
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@map("texts")
+}
+
+model TranscriptTopic {
+  textId  Int
+  topicId Int
+  
+  text    Text  @relation(fields: [textId], references: [id], onDelete: Cascade)
+  topic   Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  
+  @@id([textId, topicId])
+  @@map("transcriptTopics")
+}
+
+model Questionnaire {
+  id                 Int          @id @default(autoincrement())
+  contentExternalId  String?
+  
+  questions          Question[]
+  contents           Content[]
+  questStudents      QuestStudent[]
+  
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  @@map("questionnaires")
+}
+
+model Content {
+  id               Int            @id @default(autoincrement())
+  unitId           Int
+  questionnaireId  Int?
+  topicId          Int?
+  position         Int?
+  score            Decimal?       @db.Decimal(5, 2)
+  
+  unit             Unit           @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  questionnaire    Questionnaire? @relation(fields: [questionnaireId], references: [id], onDelete: SetNull)
+  topic            Topic?         @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  labs             Lab[]
+  
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@map("contents")
+}
+
+model Lab {
+  id                Int        @id @default(autoincrement())
+  contentId         Int
+  contentExternalId String?
+  
+  content           Content    @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  hints             Hint[]
+  labStudents       LabStudent[]
+  
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  @@map("labs")
+}
+
+model Hint {
+  id        Int     @id @default(autoincrement())
+  labId     Int
+  name      String?
+  text      String?
+  
+  lab       Lab     @relation(fields: [labId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("hints")
+}
+
+model Question {
+  id               Int          @id @default(autoincrement())
+  questionnaireId  Int
+  text             String
+  
+  questionnaire    Questionnaire @relation(fields: [questionnaireId], references: [id], onDelete: Cascade)
+  answers          Answer[]
+  
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@map("questions")
+}
+
+model Answer {
+  id        Int     @id @default(autoincrement())
+  questionId Int
+  text      String?
+  isCorrect Boolean @default(false)
+  
+  question  Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("answers")
+}
+
+model LabStudent {
+  id             Int      @id @default(autoincrement())
+  labId          Int
+  studentId      Int
+  name           String?
+  comment        String?
+  submissionDate DateTime @default(now())
+  
+  lab            Lab      @relation(fields: [labId], references: [id], onDelete: Cascade)
+  student        Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("labStudents")
+}
+
+model QuestStudent {
+  id               Int          @id @default(autoincrement())
+  questionnaireId  Int
+  studentId        Int
+  completionDate   DateTime     @default(now())
+  score            Decimal?     @db.Decimal(5, 2)
+  
+  questionnaire    Questionnaire @relation(fields: [questionnaireId], references: [id], onDelete: Cascade)
+  student          Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@map("questStudents")
+}
