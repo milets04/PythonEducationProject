@@ -18,7 +18,8 @@ router.get('/users', getAllUser)
 router.post('/users', validateUser, createUser)
 
 // Rutas protegidas - Usuario puede ver su propio perfil o TEACHER_EDITOR puede ver cualquiera
-router.get('/users/:id', authenticateToken, authorizeOwnerOrAdmin, getUserById)
+// router.get('/users/:id', authenticateToken, authorizeOwnerOrAdmin, getUserById)
+router.get('/users/:id', getUserById)
 
 // Rutas protegidas - Usuario puede actualizar su propio perfil o TEACHER_EDITOR puede actualizar cualquiera
 router.put('/users/:id', authenticateToken, authorizeOwnerOrAdmin, validateUserUpdate, updateUser)
