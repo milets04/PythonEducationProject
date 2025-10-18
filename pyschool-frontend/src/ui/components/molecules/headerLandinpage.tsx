@@ -12,14 +12,14 @@ type HeaderLandingpageProps = {
 const HeaderLandingpage: React.FC<HeaderLandingpageProps> = ({
   logoSrc = "/images/logoPySon.png",
   logoAlt = "PY Son",
-  onLogIn,
+  //onLogIn,
 }) => {
   const router = useRouter();
 
-  const handleSignIn = () => {
+ /* const handleSignIn = () => {
     router.push("/signin")
     router.push("/signup")
-  }
+  }*/
   return (
     <header className="w-full bg-transparent">
       <div className="w-full flex items-center justify-between py-3 px-4">
