@@ -1,232 +1,173 @@
-import jwt from 'jsonwebtoken'
+// src/controllers/authController.js
+// Maneja las peticiones HTTP para autenticación
+// Es la capa que conecta las rutas con los servicios
+
 import {
-  createUserService,
-  getUserByEmailService,
-  verifyPasswordService,
-  updateLastLoginService
-} from '../models/userModel.js'
+  registerUser,
+  loginUser,
+  getCurrentUser,
+  getAllUsers
+} from '../services/authService.js'
 
-const handleResponse = (res, status, message, data = null) => {
-  res.status(status).json({
-    status,
-    message,
-    data
-  })
-}
-
-// Funcion para generar JWT
-const generateToken = (userId, userRole, userEmail) => {
-  return jwt.sign(
-    {
-      userId,
-      userRole,
-      userEmail
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
-  )
-}
-
-// Funcion para generar Refresh Token
-const generateRefreshToken = (userId) => {
-  return jwt.sign(
-    { userId },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
-  )
-}
-
-// REGISTRO DE USUARIO
-export const register = async (req, res, next) => {
-  const { nameUser, lastnameUser, mailUser, passwordUser, userRole, idTeacher, idStudent } = req.body
-
+/**
+ * Controlador para registro de nuevos usuarios
+ * POST /api/auth/register
+ */
+export const register = async (req, res) => {
   try {
-    // Verificar si el email ya existe
-    const existingUser = await getUserByEmailService(mailUser)
-    if (existingUser) {
-      return handleResponse(res, 409, 'Email already registered')
+    const { firstName, lastName, email, password, passwordConfirm, roleId } = req.body
+
+    // Validaciones básicas
+    if (!firstName || !lastName || !email || !password || !passwordConfirm || !roleId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Todos los campos son obligatorios'
+      })
     }
 
-    // Validar coherencia entre rol y referencias
-    if (userRole === 'STUDENT' && !idStudent) {
-      return handleResponse(res, 400, 'Student role requires idStudent')
+    // Validar que las contraseñas coincidan
+    if (password !== passwordConfirm) {
+      return res.status(400).json({
+        success: false,
+        message: 'Las contraseñas no coinciden'
+      })
     }
 
-    if ((userRole === 'TEACHER_EDITOR' || userRole === 'TEACHER_EXECUTOR') && !idTeacher) {
-      return handleResponse(res, 400, 'Teacher role requires idTeacher')
+    // Validar longitud mínima de contraseña
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'La contraseña debe tener al menos 6 caracteres'
+      })
     }
 
-    const userData = {
-      nameUser,
-      lastnameUser,
-      mailUser,
-      passwordUser,
-      userRole,
-      idTeacher: idTeacher || null,
-      idStudent: idStudent || null
+    // Validar formato de email básico
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'El formato del email es inválido'
+      })
     }
 
-    // Crear usuario (la contraseña se encripta en el modelo)
-    const newUser = await createUserService(userData)
-
-    // Generar tokens
-    const token = generateToken(newUser.idUser, newUser.userRole, newUser.mailUser)
-    const refreshToken = generateRefreshToken(newUser.idUser)
-
-    // Enviar refresh token en cookie httpOnly
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dias
+    // Llamar al servicio
+    const result = await registerUser({
+      firstName,
+      lastName,
+      email,
+      password,
+      roleId: parseInt(roleId)
     })
 
-    handleResponse(res, 201, 'User registered successfully', {
-      user: {
-        idUser: newUser.idUser,
-        nameUser: newUser.nameUser,
-        lastnameUser: newUser.lastnameUser,
-        mailUser: newUser.mailUser,
-        userRole: newUser.userRole,
-        isActive: newUser.isActive
-      },
-      token
+    return res.status(201).json({
+      success: true,
+      message: 'Usuario registrado exitosamente',
+      data: result
     })
   } catch (error) {
-    next(error)
+    console.error('Register error:', error)
+    return res.status(400).json({
+      success: false,
+      message: error.message || 'Error al registrar el usuario'
+    })
   }
 }
 
-// LOGIN DE USUARIO
-export const login = async (req, res, next) => {
-  const { mailUser, passwordUser } = req.body
-
+/**
+ * Controlador para login de usuarios
+ * POST /api/auth/login
+ */
+export const login = async (req, res) => {
   try {
-    // Validar que se proporcionen email y password
-    if (!mailUser || !passwordUser) {
-      return handleResponse(res, 400, 'Email and password are required')
+    const { email, password } = req.body
+
+    // Validaciones básicas
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email y contraseña son obligatorios'
+      })
     }
 
-    // Buscar usuario por email
-    const user = await getUserByEmailService(mailUser)
-    if (!user) {
-      return handleResponse(res, 401, 'Invalid credentials')
-    }
+    // Llamar al servicio
+    const result = await loginUser(email, password)
 
-    // Verificar si el usuario esta activo
-    if (!user.isActive) {
-      return handleResponse(res, 403, 'User account is inactive')
-    }
-
-    // Verificar contraseña
-    const isValidPassword = await verifyPasswordService(passwordUser, user.passwordUser)
-    if (!isValidPassword) {
-      return handleResponse(res, 401, 'Invalid credentials')
-    }
-
-    // Actualizar ultimo login
-    await updateLastLoginService(user.idUser)
-
-    // Generar tokens
-    const token = generateToken(user.idUser, user.userRole, user.mailUser)
-    const refreshToken = generateRefreshToken(user.idUser)
-
-    // Enviar refresh token en cookie httpOnly
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dias
-    })
-
-    handleResponse(res, 200, 'Login successful', {
-      user: {
-        idUser: user.idUser,
-        nameUser: user.nameUser,
-        lastnameUser: user.lastnameUser,
-        mailUser: user.mailUser,
-        userRole: user.userRole,
-        isActive: user.isActive,
-        lastLogin: new Date()
-      },
-      token
+    return res.status(200).json({
+      success: true,
+      message: 'Inicio de sesión exitoso',
+      data: result
     })
   } catch (error) {
-    next(error)
+    console.error('Login error:', error)
+    return res.status(401).json({
+      success: false,
+      message: error.message || 'Error al iniciar sesión'
+    })
   }
 }
 
-// LOGOUT DE USUARIO
-export const logout = async (req, res, next) => {
+/**
+ * Controlador para logout
+ * POST /api/auth/logout
+ * Este es principalmente un endpoint para que el frontend sepa que debe
+ * limpiar el token almacenado localmente
+ */
+export const logout = async (req, res) => {
   try {
-    // Limpiar cookie del refresh token
-    res.clearCookie('refreshToken', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+    return res.status(200).json({
+      success: true,
+      message: 'Sesión cerrada exitosamente. Elimina el token del lado del cliente.'
     })
-
-    handleResponse(res, 200, 'Logout successful')
   } catch (error) {
-    next(error)
+    console.error('Logout error:', error)
+    return res.status(500).json({
+      success: false,
+      message: 'Error al cerrar sesión'
+    })
   }
 }
 
-// REFRESH TOKEN - Renovar el token de acceso
-export const refreshToken = async (req, res, next) => {
+/**
+ * Controlador para obtener información del usuario autenticado
+ * GET /api/auth/me
+ * Ruta protegida - requiere autenticación
+ */
+export const getMe = async (req, res) => {
   try {
-    const { refreshToken } = req.cookies
+    // req.user viene del authMiddleware
+    const user = await getCurrentUser(req.user.userId)
 
-    if (!refreshToken) {
-      return handleResponse(res, 401, 'Refresh token not found')
-    }
-
-    // Verificar refresh token
-    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET)
-
-    // Buscar usuario
-    const user = await getUserByEmailService(decoded.userEmail)
-    if (!user || !user.isActive) {
-      return handleResponse(res, 401, 'Invalid refresh token')
-    }
-
-    // Generar nuevo access token
-    const newToken = generateToken(user.idUser, user.userRole, user.mailUser)
-
-    handleResponse(res, 200, 'Token refreshed successfully', {
-      token: newToken
+    return res.status(200).json({
+      success: true,
+      data: user
     })
   } catch (error) {
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      return handleResponse(res, 401, 'Invalid or expired refresh token')
-    }
-    next(error)
+    console.error('Get me error:', error)
+    return res.status(404).json({
+      success: false,
+      message: error.message || 'Error al obtener información del usuario'
+    })
   }
 }
 
-// OBTENER PERFIL DEL USUARIO AUTENTICADO
-export const getProfile = async (req, res, next) => {
+/**
+ * Controlador para obtener todos los usuarios
+ * GET /api/auth/users
+ * Ruta protegida - solo administrador
+ */
+export const getUsers = async (req, res) => {
   try {
-    // El usuario ya esta disponible en req.user gracias al middleware de autenticacion
-    const user = await getUserByEmailService(req.user.userEmail)
+    const users = await getAllUsers()
 
-    if (!user) {
-      return handleResponse(res, 404, 'User not found')
-    }
-
-    handleResponse(res, 200, 'Profile fetched successfully', {
-      idUser: user.idUser,
-      nameUser: user.nameUser,
-      lastnameUser: user.lastnameUser,
-      mailUser: user.mailUser,
-      userRole: user.userRole,
-      idTeacher: user.idTeacher,
-      idStudent: user.idStudent,
-      isActive: user.isActive,
-      createdAt: user.createdAt,
-      lastLogin: user.lastLogin
+    return res.status(200).json({
+      success: true,
+      data: users
     })
   } catch (error) {
-    next(error)
+    console.error('Get users error:', error)
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener usuarios'
+    })
   }
 }

@@ -42,3 +42,6 @@ Thumbs.db
 
 # Archivos de caché de ESLint
 .eslintcache
+/src/generated/prisma
+
+/src/generated/prisma
