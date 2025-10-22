@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import RegisterForm from "@/ui/components/organisms/formRegister";
 import { useRouter } from 'next/navigation';
 
