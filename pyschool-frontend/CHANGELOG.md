@@ -1,3 +1,13 @@
+# [1.5.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-frontend-v1.4.0...pyschool-frontend-v1.5.0) (2025-10-22)
+
+
+### Features
+
+* **frontend:** Correccion de cache ([92f7756](https://github.com/milets04/PythonEducationProject/commit/92f77560af16d07414b991ee283ac699e38113e6))
+* **frontend:** Correciones de eslint en semantic release ([ae87136](https://github.com/milets04/PythonEducationProject/commit/ae871369edf206f7cf6fc31d172dfe5696828b9b))
+* **frontend:** prueba de semantic-release con eslint ([6951004](https://github.com/milets04/PythonEducationProject/commit/6951004351675b739227ea10843695395449b836))
+* **frontend:** Semantic release sin eslint ([7f2a233](https://github.com/milets04/PythonEducationProject/commit/7f2a2337021a94e99e2bcbfe7ba9d60620052f67))
+
 # [1.4.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-frontend-v1.3.0...pyschool-frontend-v1.4.0) (2025-10-13)
 
 
