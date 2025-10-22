@@ -33,119 +33,180 @@ const RegisterForm: React.FC = () => {
     }
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form Data:", data);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
+    setApiError(null);
+    setSuccessMessage(null);
+
+    const apiRequestBody = {
+      firstName: data.firstname,       
+      lastName: data.lastname,       
+      email: data.email,
+      password: data.password,
+      passwordConfirm: data.confirmPassword,
+      roleId: 1
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(apiRequestBody),
+      });
+
+      // Obtener la respuesta del servidor
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Error al registrar. Inténtalo de nuevo.');
+      }
+      console.log('Usuario registrado:', result);
+      setSuccessMessage(result.message || '¡Registro exitoso!');
+
+      localStorage.setItem('token', result.data.token);
+      localStorage.setItem('userRole', result.data.user.role);
+
+      // Redirigir al usuario al dashboard o al login
+      // setTimeout(() => {
+      //   router.push('/login'); // O '/dashboard'
+      // }, 2000);
+
+
+    } catch (error: any) {
+      // Capturar errores (de red o de la API)
+      console.error('Error en el registro:', error);
+      setApiError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const [selected, setSelected] = useState("option1");
 
     return (
     <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="w-full max-w-lg bg-white rounded-2xl p-8 shadow-lg space-y-4">
-            <TitleAndDescr title="Register" descr="SingUp now to get full access to our app." />
+      <div className="w-full max-w-lg bg-white rounded-2xl p-8 shadow-lg space-y-4">
+        <TitleAndDescr title="Register" descr="SingUp now to get full access to our app." />
 
-          {/* Firstname + Lastname*/}
-          <div className="flex gap-x-4">
-            <div className=" w-1/2">
-                <Controller
-                    name="firstname" control={control} render={({ field }) => (
-                    <Input
-                        label="Firstname"
-                        placeholder="Firstname"
-                        value={field.value}
-                        onChange={field.onChange}
-                    />
-                    )}
+        {/* Firstname + Lastname*/}
+        <div className="flex flex-col sm:flex-row gap-x-4 gap-y-4">
+          <div className="w-full sm:w-1/2">
+            <Controller
+              name="firstname" control={control} render={({ field }) => (
+                <Input
+                  label="Firstname"
+                  placeholder="Firstname"
+                  {...field}
                 />
-                {errors.firstname && (
-                    <p className="text-xs text-red-700 mb-0 -mt-0 ml-1">{errors.firstname.message}</p>
-                    )}
-            </div>
-            <div className="relative w-1/2">
-                <Controller
-                    name="lastname" control={control} render={({ field }) => (
-                    <Input
-                        label="Lastname"
-                        placeholder="Lastname"
-                        value={field.value}
-                        onChange={field.onChange}
-                    />
-                    )}
-                />
-                {errors.lastname && (
-                    <p className="text-xs text-red-700 mb-0 -mt-0 ml-1">{errors.lastname.message}</p>
-                    )}
-            </div>
+              )}
+            />
+            {errors.firstname && (
+              <p className="text-xs text-red-700 mt-1 ml-1">{errors.firstname.message}</p>
+            )}
           </div>
-
-          {/* Email */}
-          <Controller
-            name="email" control={control} render={({ field }) => (
-              <Input
-                label="Email"
-                placeholder="Email"
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
-          />
-          {errors.email && (
-            <p className="text-xs text-red-700 mb-3 -mt-4 ml-1">{errors.email.message}</p>
-            )}
-
-
-          {/* Password */}
-          <Controller
-            name="password" control={control} render={({ field }) => (
-              <Input
-                label="Password"
-                placeholder="Password"
-                value={field.value}
-                onChange={field.onChange}
-                type="password"
-              />
-            )}
-          />
-          {errors.password && (
-            <p className="text-xs text-red-700 mb-3 -mt-4 ml-1">{errors.password.message}</p>
-            )}
-
-
-          {/* Confirm Password */}
-          <Controller
-            name="confirmPassword" control={control} render={({ field }) => (
-              <Input
-                label="Confirm Password"
-                placeholder="Confirm password"
-                value={field.value}
-                onChange={field.onChange}
-                className="w-full max-w-md"
-                type="password"
-              />
-            )}
-          />
-          {errors.confirmPassword && (
-            <p className="text-xs text-red-700 mb-3 -mt-4 ml-1">{errors.confirmPassword.message}</p>
-            )}
-          
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-blue-900 py-2 text-white font-semibold"
-          >
-            Submit
-          </button>
-          <div className="flex justify-center">
-            <GoogleButton/>
-          </div>
-          <div className="text-center mb-4">
-            <span className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <SignLink
-                text="Sign In"
-                href="/signup"
+          <div className="w-full sm:w-1/2">
+            <Controller
+              name="lastname" control={control} render={({ field }) => (
+                <Input
+                  label="Lastname"
+                  placeholder="Lastname"
+                  {...field}
                 />
-            </span>
-            </div>          
+              )}
+            />
+            {errors.lastname && (
+              <p className="text-xs text-red-700 mt-1 ml-1">{errors.lastname.message}</p>
+            )}
+          </div>
         </div>
+
+        {/* Email */}
+        <Controller
+          name="email" control={control} render={({ field }) => (
+            <Input
+              label="Email"
+              placeholder="Email"
+              {...field}
+              type="email"
+            />
+          )}
+        />
+        {errors.email && (
+          <p className="text-xs text-red-700 -mt-3 ml-1">{errors.email.message}</p>
+        )}
+
+
+        {/* Password */}
+        <Controller
+          name="password" control={control} render={({ field }) => (
+            <Input
+              label="Password"
+              placeholder="Password"
+              {...field}
+              type="password"
+            />
+          )}
+        />
+        {errors.password && (
+          <p className="text-xs text-red-700 -mt-3 ml-1">{errors.password.message}</p>
+        )}
+
+
+        {/* Confirm Password */}
+        <Controller
+          name="confirmPassword" control={control} render={({ field }) => (
+            <Input
+              label="Confirm Password"
+              placeholder="Confirm password"
+              {...field}
+              type="password"
+            />
+          )}
+        />
+        {errors.confirmPassword && (
+          <p className="text-xs text-red-700 -mt-3 ml-1">{errors.confirmPassword.message}</p>
+        )}
+
+        {apiError && (
+          <div className="text-sm text-red-700 bg-red-100 p-3 rounded-lg text-center">
+            {apiError}
+          </div>
+        )}
+        {successMessage && (
+          <div className="text-sm text-green-700 bg-green-100 p-3 rounded-lg text-center">
+            {successMessage}
+          </div>
+        )}
+        
+
+        {/* Submit */}
+        <button
+          type="submit"
+          className="w-full rounded-lg bg-blue-900 py-2.5 text-white font-semibold hover:bg-blue-800 disabled:bg-gray-400"
+          disabled={isLoading} 
+        >
+          {isLoading ? 'Registrando...' : 'Submit'}
+        </button>
+        
+        <div className="flex justify-center">
+          <GoogleButton />
+        </div>
+        <div className="text-center mb-4">
+          <span className="text-sm text-gray-600">
+            Already have an account?{' '}
+            <SignLink
+              text="Sign In"
+              href="/signup"
+            />
+          </span>
+        </div>
+      </div>
     </form>
   );
 };

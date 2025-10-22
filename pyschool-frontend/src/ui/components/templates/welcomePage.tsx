@@ -6,6 +6,7 @@ import BackgroundClouds from "../atoms/backgroundClouds";
 import UserIcon from '../atoms/userIcon';   
 import CustomButton from '../atoms/btnOthers';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type WelcomepageProps = {
   title?: string;
@@ -19,6 +20,36 @@ const Welcomepage: React.FC<WelcomepageProps> = ({
   description = "Wait for your principal page",
 
 }) => {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token');
+
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole'); 
+
+    if (token) {
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const result = await response.json();
+        if (result.success) {
+          console.log('Backend ha cerrado la sesión.');
+        } else {
+          console.warn('Backend no pudo cerrar la sesión, pero el cliente fue limpiado.');
+        }
+      } catch (error) {
+        console.error('Error al notificar al backend (ya estás desconectado localmente):', error);
+      }
+    }
+
+    router.push('/'); 
+    window.location.href = '/';
+  };
   return (
 
     <section
@@ -41,9 +72,10 @@ const Welcomepage: React.FC<WelcomepageProps> = ({
         <UserIcon size={32} />
       </div>
       <div className="absolute top-5 right-18 flex items-center gap-2">
-        <CustomButton 
-        text="Log out" 
-        textColor="#ffffff"
+        <CustomButton
+          text="Log out"
+          textColor="#ffffff"
+          onClick={handleLogout} 
         />
       </div>
       <div className="flex flex-col items-center text-center max-w-md mx-auto">
