@@ -9,12 +9,10 @@ const PORT = config.server.port
 // Iniciar el servidor
 app.listen(PORT, () => {
   console.log(`
-  ╔════════════════════════════════════════╗
-  ║   Virtual School Backend Running       ║
-  ║   🚀 Servidor iniciado en puerto: ${PORT}    ║
-  ║   📝 Ambiente: ${config.server.nodeEnv}          ║
-  ║   📚 Base de datos: PostgreSQL         ║
-  ╚════════════════════════════════════════╝
+  Virtual School Backend Running       
+  Servidor iniciado en puerto: ${PORT} 
+  Ambiente: ${config.server.nodeEnv}   
+  Base de datos: PostgreSQL            
   `)
 })
 

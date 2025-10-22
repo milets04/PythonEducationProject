@@ -1,0 +1,32 @@
+name: CI (lint & tests)
+
+on:
+  push:
+    branches-ignore: [main]   
+  pull_request:
+    branches: [main]         
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: |
+            pyschool-frontend/package-lock.json
+            pyschool-backend/package-lock.json
+
+      - name: Install frontend deps
+        run: cd pyschool-frontend && npm ci
+
+      - name: Run ESLint (frontend)
+        run: cd pyschool-frontend && npx eslint . --ext .ts,.tsx --max-warnings=0
+
+      - name: Install backend deps
+        run: cd pyschool-backend && npm ci
+
+      - name: Run ESLint (backend)
+        run: cd pyschool-backend && npx eslint . --ext .ts,.js --max-warnings=0
