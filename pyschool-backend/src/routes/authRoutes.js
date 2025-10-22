@@ -7,7 +7,12 @@ import {
   login,
   logout,
   getMe,
-  getUsers
+  getUsers,
+  getPending,
+  approveUserController,
+  rejectUserController,
+  bulkApproveController,
+  bulkRejectController
 } from '../controllers/authController.js'
 import { authMiddleware } from '../middleware/authMiddleware.js'
 import { adminMiddleware } from '../middleware/roleMiddleware.js'
@@ -19,11 +24,11 @@ const router = express.Router()
  */
 
 // POST /api/auth/register
-// Registrar un nuevo usuario
+// Registrar un nuevo usuario (queda pendiente de aprobación)
 router.post('/register', register)
 
 // POST /api/auth/login
-// Iniciar sesión
+// Iniciar sesión (solo usuarios aprobados)
 router.post('/login', login)
 
 /**
@@ -38,8 +43,32 @@ router.post('/logout', authMiddleware, logout)
 // Obtener información del usuario autenticado
 router.get('/me', authMiddleware, getMe)
 
+/**
+ * RUTAS DE ADMINISTRACIÓN (solo administrador)
+ */
+
 // GET /api/auth/users
-// Obtener todos los usuarios (solo administrador)
+// Obtener todos los usuarios
 router.get('/users', authMiddleware, adminMiddleware, getUsers)
+
+// GET /api/auth/users/pending
+// Obtener usuarios pendientes de aprobación
+router.get('/users/pending', authMiddleware, adminMiddleware, getPending)
+
+// PUT /api/auth/users/:id/approve
+// Aprobar un usuario y asignarle rol
+router.put('/users/:id/approve', authMiddleware, adminMiddleware, approveUserController)
+
+// PUT /api/auth/users/:id/reject
+// Rechazar un usuario
+router.put('/users/:id/reject', authMiddleware, adminMiddleware, rejectUserController)
+
+// POST /api/auth/users/bulk-approve
+// Aprobar múltiples usuarios
+router.post('/users/bulk-approve', authMiddleware, adminMiddleware, bulkApproveController)
+
+// POST /api/auth/users/bulk-reject
+// Rechazar múltiples usuarios
+router.post('/users/bulk-reject', authMiddleware, adminMiddleware, bulkRejectController)
 
 export default router
