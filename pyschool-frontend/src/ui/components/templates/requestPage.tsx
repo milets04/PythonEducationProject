@@ -1,11 +1,8 @@
 "use client";
 import React from "react";
-import HeaderLandingpage from "@/ui/components/molecules/headerLandinpage";
-import TxtLandingpage from "@/ui/components/molecules/txtLandingpage";
 import BackgroundClouds from "../atoms/backgroundClouds";
 import Table from "../molecules/table";
 import {Button} from "../atoms/button"
-import TitleAndDescr from "../molecules/titDesc";
 import Title from "../atoms/title";
 
 const MockData = [
