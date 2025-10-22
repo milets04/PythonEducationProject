@@ -3,6 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "@/ui/components/atoms/input";
 import TitleAndDescr from "@/ui/components/molecules/titDesc"
+import { useState } from "react";
 import SignLink from '@/ui/components/atoms/txtSign';
 import GoogleButton from "@/ui/components/atoms/btnGoogle";
 
