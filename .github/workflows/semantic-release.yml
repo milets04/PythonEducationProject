@@ -32,12 +32,13 @@ jobs:
     if: needs.detect.outputs.front == 'true' || needs.detect.outputs.back == 'true'
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
+          cache-dependency-path:
+            pyschool-frontend/package-lock.json
+            pyschool-backend/package-lock.json
 
       - name: Install frontend deps if needed
         if: needs.detect.outputs.front == 'true'
