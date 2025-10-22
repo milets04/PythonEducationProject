@@ -584,7 +584,7 @@ Antes de desplegar a producción:
 ## Soporte
 
 ¿Necesitas ayuda? Contacta:
-- Email: soporte@virtualschool.com
+- Email: josueg4rcia@gmail.com
 - Issues: GitHub Issues
 - Documentación: [Link a docs]
 
