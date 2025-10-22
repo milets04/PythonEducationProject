@@ -22,8 +22,15 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        working-directory: ./pyschool-frontend #existen dos package.json en el repositorio
         run: npm ci
 
       - name: Run ESLint
+        working-directory: ./pyschool-frontend 
         run: npm run lint
+
+      - name: Run tests
+        working-directory: ./pyschool-frontend
+        run: npm test
+
 
