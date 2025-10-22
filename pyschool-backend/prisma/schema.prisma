@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 // src/prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
@@ -45,11 +39,20 @@ model User {
   passwordHash String
   roleId      Int
   isActive    Boolean      @default(true)
+  isApproved  Boolean      @default(false)
+  approvedAt  DateTime?
+  approvedBy  Int?
+  rejectedAt  DateTime?
+  rejectedBy  Int?
   
   role        Role         @relation(fields: [roleId], references: [id], onDelete: Restrict)
   teacher     Teacher?
   student     Student?
   userCourses UserCourse[]
+  approvedUsers User[]     @relation("UserApprovals")
+  approver    User?        @relation("UserApprovals", fields: [approvedBy], references: [id])
+  rejectedUsers User[]     @relation("UserRejections")
+  rejecter    User?        @relation("UserRejections", fields: [rejectedBy], references: [id])
   
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt

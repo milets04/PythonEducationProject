@@ -61,6 +61,11 @@ CREATE TABLE users (
     passwordHash VARCHAR(255) NOT NULL,
     roleId INTEGER NOT NULL,
     isActive BOOLEAN DEFAULT TRUE,
+    isApproved BOOLEAN DEFAULT FALSE,
+    approvedAt TIMESTAMP WITH TIME ZONE,
+    approvedBy INTEGER,
+    rejectedAt TIMESTAMP WITH TIME ZONE,
+    rejectedBy INTEGER,
     createdAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     
@@ -68,7 +73,15 @@ CREATE TABLE users (
         FOREIGN KEY (roleId) 
         REFERENCES roles(id)
         ON UPDATE CASCADE
-        ON DELETE RESTRICT 
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_userApprovedBy
+        FOREIGN KEY (approvedBy)
+        REFERENCES users(id)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_userRejectedBy
+        FOREIGN KEY (rejectedBy)
+        REFERENCES users(id)
+        ON DELETE SET NULL
 );
 
 -- Table: userCourses (Many-to-Many relationship)

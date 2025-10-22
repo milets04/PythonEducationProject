@@ -6,19 +6,25 @@ import {
   registerUser,
   loginUser,
   getCurrentUser,
-  getAllUsers
+  getAllUsers,
+  getPendingUsers,
+  approveUser,
+  rejectUser,
+  bulkApproveUsers,
+  bulkRejectUsers
 } from '../services/authService.js'
 
 /**
  * Controlador para registro de nuevos usuarios
  * POST /api/auth/register
+ * NOTA: El usuario queda pendiente de aprobación
  */
 export const register = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, passwordConfirm, roleId } = req.body
+    const { firstName, lastName, email, password, passwordConfirm } = req.body
 
     // Validaciones básicas
-    if (!firstName || !lastName || !email || !password || !passwordConfirm || !roleId) {
+    if (!firstName || !lastName || !email || !password || !passwordConfirm) {
       return res.status(400).json({
         success: false,
         message: 'Todos los campos son obligatorios'
@@ -50,19 +56,18 @@ export const register = async (req, res) => {
       })
     }
 
-    // Llamar al servicio
+    // Llamar al servicio (sin roleId, por defecto será estudiante)
     const result = await registerUser({
       firstName,
       lastName,
       email,
-      password,
-      roleId: parseInt(roleId)
+      password
     })
 
     return res.status(201).json({
       success: true,
-      message: 'Usuario registrado exitosamente',
-      data: result
+      message: result.message,
+      data: result.user
     })
   } catch (error) {
     console.error('Register error:', error)
@@ -168,6 +173,166 @@ export const getUsers = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Error al obtener usuarios'
+    })
+  }
+}
+
+/**
+ * Controlador para obtener usuarios pendientes de aprobación
+ * GET /api/auth/users/pending
+ * Ruta protegida - solo administrador
+ */
+export const getPending = async (req, res) => {
+  try {
+    const pendingUsers = await getPendingUsers()
+
+    return res.status(200).json({
+      success: true,
+      count: pendingUsers.length,
+      data: pendingUsers
+    })
+  } catch (error) {
+    console.error('Get pending users error:', error)
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener usuarios pendientes'
+    })
+  }
+}
+
+/**
+ * Controlador para aprobar un usuario
+ * PUT /api/auth/users/:id/approve
+ * Ruta protegida - solo administrador
+ */
+export const approveUserController = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { roleId } = req.body
+    const adminId = req.user.userId
+
+    // Validaciones
+    if (!roleId) {
+      return res.status(400).json({
+        success: false,
+        message: 'El roleId es obligatorio'
+      })
+    }
+
+    const validRoles = [1, 2, 3, 4]
+    if (!validRoles.includes(parseInt(roleId))) {
+      return res.status(400).json({
+        success: false,
+        message: 'El roleId debe ser 1 (estudiante), 2 (profesor editor), 3 (profesor executor) o 4 (administrador)'
+      })
+    }
+
+    const approvedUser = await approveUser(parseInt(id), parseInt(roleId), adminId)
+
+    return res.status(200).json({
+      success: true,
+      message: 'Usuario aprobado exitosamente',
+      data: approvedUser
+    })
+  } catch (error) {
+    console.error('Approve user error:', error)
+    return res.status(400).json({
+      success: false,
+      message: error.message || 'Error al aprobar el usuario'
+    })
+  }
+}
+
+/**
+ * Controlador para rechazar un usuario
+ * PUT /api/auth/users/:id/reject
+ * Ruta protegida - solo administrador
+ */
+export const rejectUserController = async (req, res) => {
+  try {
+    const { id } = req.params
+    const adminId = req.user.userId
+
+    const rejectedUser = await rejectUser(parseInt(id), adminId)
+
+    return res.status(200).json({
+      success: true,
+      message: 'Usuario rechazado exitosamente',
+      data: rejectedUser
+    })
+  } catch (error) {
+    console.error('Reject user error:', error)
+    return res.status(400).json({
+      success: false,
+      message: error.message || 'Error al rechazar el usuario'
+    })
+  }
+}
+
+/**
+ * Controlador para aprobar múltiples usuarios
+ * POST /api/auth/users/bulk-approve
+ * Body: { approvals: [{userId: 1, roleId: 2}, {userId: 2, roleId: 1}] }
+ * Ruta protegida - solo administrador
+ */
+export const bulkApproveController = async (req, res) => {
+  try {
+    const { approvals } = req.body
+    const adminId = req.user.userId
+
+    if (!Array.isArray(approvals) || approvals.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'El array de aprobaciones es obligatorio y no puede estar vacío'
+      })
+    }
+
+    const results = await bulkApproveUsers(approvals, adminId)
+
+    return res.status(200).json({
+      success: true,
+      message: `${results.approved.length} usuarios aprobados, ${results.failed.length} fallidos`,
+      data: results
+    })
+  } catch (error) {
+    console.error('Bulk approve error:', error)
+    return res.status(400).json({
+      success: false,
+      message: 'Error al aprobar usuarios'
+    })
+  }
+}
+
+/**
+ * Controlador para rechazar múltiples usuarios
+ * POST /api/auth/users/bulk-reject
+ * Body: { userIds: [1, 2, 3] }
+ * Ruta protegida - solo administrador
+ */
+export const bulkRejectController = async (req, res) => {
+  try {
+    const { userIds } = req.body
+    const adminId = req.user.userId
+
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'El array de userIds es obligatorio y no puede estar vacío'
+      })
+    }
+
+    const results = await bulkRejectUsers(userIds, adminId)
+
+    return res.status(200).json({
+      success: true,
+      message: `${results.rejected.length} usuarios rechazados, ${results.failed.length} fallidos`,
+      data: results
+    })
+  } catch (error) {
+    console.error('Bulk reject error:', error)
+    return res.status(400).json({
+      success: false,
+      message: 'Error al rechazar usuarios'
     })
   }
 }
