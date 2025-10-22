@@ -43,7 +43,7 @@ const LoginContainer: React.FC = () => {
 
         <div className="text-center mb-4">
           <span className="text-sm text-gray-600">
-            Don't have an account?{' '}
+            Don&apost have an account?{' '}
             <SignLink
               text="Sign Up"
               href="/signup"

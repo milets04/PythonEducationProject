@@ -1,4 +1,4 @@
-name: semantic-release (frontend + backend)
+name: semantic-release (frontend+backend)
 
 on:
   push:
@@ -26,8 +26,37 @@ jobs:
             back:
               - 'pyschool-backend/**'
 
-  release-frontend:
+  lint:
     needs: detect
+    runs-on: ubuntu-latest
+    if: needs.detect.outputs.front == 'true' || needs.detect.outputs.back == 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install frontend deps if needed
+        if: needs.detect.outputs.front == 'true'
+        run: cd pyschool-frontend && npm ci
+
+      - name: Run ESLint (frontend)
+        if: needs.detect.outputs.front == 'true'
+        run: cd pyschool-frontend && npx eslint . --ext .ts,.tsx
+
+      - name: Install backend deps if needed
+        if: needs.detect.outputs.back == 'true'
+        run: cd pyschool-backend && npm ci
+
+      - name: Run ESLint (backend)
+        if: needs.detect.outputs.back == 'true'
+        run: cd pyschool-backend && npx eslint . --ext .ts,.js
+
+  release-frontend:
+    needs: [detect, lint]
     if: needs.detect.outputs.front == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -37,14 +66,14 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: 'pyschool-frontend/package-lock.json'   
+          cache-dependency-path: 'pyschool-frontend/package-lock.json'
       - run: cd pyschool-frontend && npm ci
       - run: cd pyschool-frontend && npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release-backend:
-    needs: detect
+    needs: [detect, lint]
     if: needs.detect.outputs.back == 'true'
     runs-on: ubuntu-latest
     steps:
