@@ -1,4 +1,4 @@
-name: semantic-release (frontend + backend)
+name: semantic-release (frontend+backend)
 
 on:
   push:
