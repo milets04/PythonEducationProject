@@ -1,46 +1,45 @@
-// __tests__/LoginContainer.test.tsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import LoginContainer from '@/ui/components/organisms/formSignin';
+
+const mockFetch = jest.fn();
+
+beforeAll(() => {
+  Object.defineProperty(window, 'location', {
+    writable: true,
+    value: { href: '', assign: jest.fn() },
+  });
+});
 
 beforeEach(() => {
   localStorage.clear();
   jest.clearAllMocks();
+  global.fetch = mockFetch;
 });
 
 describe('LoginContainer', () => {
   it('realiza login exitoso y guarda token en localStorage', async () => {
-    // Simula la respuesta de fetch
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            data: {
-              token: 'fake-token',
-              user: { role: 'admin' },
-            },
-            message: 'Login exitoso',
-          }),
-      })
-    ) as jest.Mock;
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        data: { token: 'fake-token', user: { role: 'admin' } },
+        message: 'Login exitoso',
+      }),
+    });
 
     render(<LoginContainer />);
 
-    // Completa los campos
     fireEvent.change(screen.getByPlaceholderText(/Enter your Email/i), {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText(/Enter your Password/i), {
       target: { value: 'securepassword' },
     });
-
-    // Envía el formulario
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
     await waitFor(() => {
       expect(localStorage.getItem('token')).toBe('fake-token');
       expect(localStorage.getItem('userRole')).toBe('admin');
-      expect(window.location.href).toBe('/waitPage');
+      expect(window.location.assign).toHaveBeenCalledWith('/waitPage');
     });
   });
 });
