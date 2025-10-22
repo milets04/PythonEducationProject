@@ -88,8 +88,6 @@ const RegisterForm: React.FC = () => {
     }
   };
 
-  const [selected, setSelected] = useState("option1");
-
     return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full max-w-lg bg-white rounded-2xl p-8 shadow-lg space-y-4">
