@@ -79,10 +79,14 @@ const RegisterForm: React.FC = () => {
       // }, 2000);
 
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Capturar errores (de red o de la API)
       console.error('Error en el registro:', error);
-      setApiError(error.message);
+      if (error instanceof Error) {
+        setApiError(error.message);
+      } else {
+        setApiError('Error desconocido');
+      }
     } finally {
       setIsLoading(false);
     }
