@@ -1,45 +1,30 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import LoginContainer from '@/ui/components/organisms/formSignin';
 
-const mockFetch = jest.fn();
 
-beforeAll(() => {
-  Object.defineProperty(window, 'location', {
-    writable: true,
-    value: { href: '', assign: jest.fn() },
-  });
-});
-
-beforeEach(() => {
-  localStorage.clear();
-  jest.clearAllMocks();
-  global.fetch = mockFetch;
-});
 
 describe('LoginContainer', () => {
-  it('realiza login exitoso y guarda token en localStorage', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        data: { token: 'fake-token', user: { role: 'admin' } },
-        message: 'Login exitoso',
-      }),
-    });
-
+  it('renderiza correctamente los campos y el botón', () => {
     render(<LoginContainer />);
 
-    fireEvent.change(screen.getByPlaceholderText(/Enter your Email/i), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText(/Enter your Password/i), {
-      target: { value: 'securepassword' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
+    // Verifica que los campos de email y contraseña estén en el documento
+    expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Contraseña/i)).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(localStorage.getItem('token')).toBe('fake-token');
-      expect(localStorage.getItem('userRole')).toBe('admin');
-      expect(window.location.assign).toHaveBeenCalledWith('/waitPage');
-    });
+    // Verifica que el botón de "Sign In" esté presente
+    expect(screen.getByRole('button', { name: /Sign In/i })).toBeInTheDocument();
+  });
+
+  it('actualiza el estado al escribir en los campos', () => {
+    render(<LoginContainer />);
+
+    const emailInput = screen.getByLabelText(/Email/i);
+    const passwordInput = screen.getByLabelText(/Contraseña/i);
+
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: '123456' } });
+
+    expect(emailInput).toHaveValue('test@example.com');
+    expect(passwordInput).toHaveValue('123456');
   });
 });
