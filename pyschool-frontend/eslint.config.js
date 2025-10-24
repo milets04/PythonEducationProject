@@ -15,7 +15,9 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends("next/core-web-vitals", "next/typescript", "plugin:testing-library/react",
+    "plugin:jest-dom/recommended"
+  ),
 
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],

@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import GoogleButton from '@/ui/components/atoms/btnGoogle';
 import Subtitle from '@/ui/components/atoms/subtLog';
 import SignLink from '@/ui/components/atoms/txtSign';
-import { useRouter } from 'next/navigation';
+//import { useRouter } from 'next/navigation';
 
 const LoginContainer: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -13,7 +13,7 @@ const LoginContainer: React.FC = () => {
 
   const [apiError, setApiError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter(); 
+  //const router = useRouter(); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
@@ -41,9 +41,10 @@ const LoginContainer: React.FC = () => {
       console.log('Login exitoso, token guardado.');
       window.location.href = '/waitPage';
 
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as Error;
       console.error('Error de inicio de sesión:', error);
-      setApiError(error.message);
+      setApiError(err.message); //preguntar a mile si está bien
     } finally {
       setIsLoading(false);
     }
@@ -89,7 +90,7 @@ const LoginContainer: React.FC = () => {
 
       <div className="text-center mb-4">
         <span className="text-sm text-gray-600">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <SignLink
             text="Sign Up"
             href="/signup"
