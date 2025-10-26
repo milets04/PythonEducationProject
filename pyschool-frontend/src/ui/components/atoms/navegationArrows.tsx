@@ -47,34 +47,33 @@ export const NavegationArrows: React.FC<NavegationArrowsProps> = ({
       <style jsx>{`
         .arrow-container {
           display: flex;
-          gap: 12px; /* Espacio entre los botones */
+          gap: 12px; 
         }
 
         .arrow-button {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 44px;  /* Tamaño táctil recomendado */
+          width: 44px;
           height: 44px;
-          background-color: #4A5568; /* Un gris oscuro (similar a tu imagen) */
+          background-color: #4A5568;
           color: white;
           border: none;
-          border-radius: 8px; /* Bordes redondeados */
+          border-radius: 8px; 
           cursor: pointer;
           transition: background-color 0.2s ease-in-out;
         }
 
         .arrow-button:hover {
-          background-color: #2D3748; /* Más oscuro al pasar el mouse */
+          background-color: #2D3748;
         }
 
         .arrow-button:disabled {
-          background-color: #A0AEC0; /* Gris claro para deshabilitado */
+          background-color: #A0AEC0; 
           color: #E2E8F0;
           cursor: not-allowed;
         }
-
-        /* Estilo para el ícono SVG dentro del botón */
+          
         .arrow-button svg {
           width: 20px;
           height: 20px;
