@@ -49,7 +49,7 @@ const RegisterForm: React.FC = () => {
       email: data.email,
       password: data.password,
       passwordConfirm: data.confirmPassword,
-      roleId: 1
+      roleId: 1,
     };
 
     try {
