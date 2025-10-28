@@ -60,7 +60,7 @@ const DropDownMenu: React.FC<DropDownMenuProps> = ({
       {isOpen && (
         <div className="flex flex-col mt-1 ml-5 space-y-1">
           {items.map((item, index) => (
-            <div key={index} className="flex items-center justify-between">
+            <div key={index} className="flex items-center justify-between gap-3">
               <div
                 onClick={item.onClick}
                 className="text-sm text-[#4a3fb3] hover:underline"
