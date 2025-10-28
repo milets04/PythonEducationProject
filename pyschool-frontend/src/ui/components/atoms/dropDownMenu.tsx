@@ -80,7 +80,7 @@ const DropDownMenu: React.FC<DropDownMenuProps> = ({
               onClick={onAdd}
               className="text-sm text-[#4a3fb3] mt-2 hover:underline"
             >
-              + {label}
+              + Topic
             </div>
           )}
         </div>
