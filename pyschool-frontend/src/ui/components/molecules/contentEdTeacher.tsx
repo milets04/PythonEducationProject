@@ -31,15 +31,27 @@ const ContentEdTeacher: React.FC<ContentEdTeacherProps> = ({
               label={unity.label}
               items={unity.topics.map((topic) => ({
                 label: topic.label,
+                onClick: () => onEdit?.("topic"),
+                actions: (
+                  <IconsEdTeacher
+                    onEdit={() => onEdit?.("topic")}
+                    onDelete={() => onDelete?.("topic")}
+                    classNameEdit="text-blue-900"
+                    classNameDelete="text-blue-900"
+                  />
+
+                ),
               }))}
               onAdd={onAddTopic}
+
             />
+            {/*
             <IconsEdTeacher
               onEdit={() => onEdit?.("unity")}
               onDelete={() => onDelete?.("unity")}
               classNameEdit="text-blue-900"
               classNameDelete="text-blue-900"
-            />
+            />*/}
           </div>
         </div>
       ))}

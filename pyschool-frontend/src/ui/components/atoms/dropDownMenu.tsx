@@ -7,12 +7,14 @@ import { FiChevronDown } from "react-icons/fi";
 type SubItem = {
   label: string;
   onClick?: () => void;
+  actions?: React.ReactNode;
 };
 
 type DropDownItem = {
   label: string;
   onClick?: () => void;
   subItems?: SubItem[];
+  actions?: React.ReactNode;
 };
 
 interface DropDownMenuProps {
@@ -58,20 +60,28 @@ const DropDownMenu: React.FC<DropDownMenuProps> = ({
       {isOpen && (
         <div className="flex flex-col mt-1 ml-5 space-y-1">
           {items.map((item, index) => (
-            <div key={index}>
+            <div key={index} className="flex items-center justify-between">
               <div
                 onClick={item.onClick}
                 className="text-sm text-[#4a3fb3] hover:underline"
               >
                 {item.label}
               </div>
+              {item.actions && <div>{item.actions}</div>}
               {item.subItems && (
-                <DropDownMenu
-                  label=""
-                  items={item.subItems}
-                  isNested={true}
-                  icon={Icon}
-                />
+                <div className="flex flex-col mt-1 ml-4 space-y-1">
+                  {item.subItems.map((subItem, subIndex) => (
+                    <div key={subIndex} className="flex items-center justify-between">
+                      <div 
+                        onClick={subItem.onClick}
+                        className="text-sm text-[#4a3fb3] hover:underline"
+                      >
+                        {subItem.label}
+                      </div>
+                      {subItem.actions && <div>{subItem.actions}</div>}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           ))}
