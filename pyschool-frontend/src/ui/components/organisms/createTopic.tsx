@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import ContentInput from '@/ui/components/atoms/contentInput';
+import Textarea from '../atoms/textInput';
 import UploadInput from '@/ui/components/molecules/uploadInput';
 import { Button } from '@/ui/components/atoms/button';
 
@@ -16,7 +17,6 @@ const CreateTopic: React.FC = () => {
     { id: Date.now(), subtitle: '', description: '' },
   ]);
 
-  // 🔹 Manejar cambios en los inputs de cada sección
   const handleChange = (
     id: number,
     field: keyof TopicSection,
@@ -27,7 +27,6 @@ const CreateTopic: React.FC = () => {
     );
   };
 
-  // 🔹 Agregar nueva sección
   const handleAddSection = () => {
     setSections((prev) => [
       ...prev,
@@ -35,7 +34,6 @@ const CreateTopic: React.FC = () => {
     ]);
   };
 
-  // 🔹 (Opcional) Eliminar sección
   const handleRemoveSection = (id: number) => {
     setSections((prev) => prev.filter((s) => s.id !== id));
   };
@@ -81,14 +79,14 @@ const CreateTopic: React.FC = () => {
               )}
             </div>
 
-            <ContentInput
+            <Textarea
               label={`Description ${index + 1}`}
               value={section.description}
               onChange={(e) =>
                 handleChange(section.id, 'description', e.target.value)
               }
               placeholder="Enter description"
-              className="h-24"
+              rows={5}
             />
           </div>
         ))}
