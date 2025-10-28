@@ -43,8 +43,8 @@ const CreateTopic: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#c6d8d7] flex justify-center items-center p-4">
-      <div className="bg-[#c6d8d7] w-full max-w-3xl p-6 rounded-lg space-y-5">
+    <div className="min-h-screen  bg-gradient-to-br bg-fondo flex justify-center items-center p-4">
+      <div className=" bg-gradient-to-br bg-fondo w-full max-w-3xl p-6 rounded-lg space-y-5">
         <h1 className="text-3xl font-semibold text-gray-800 mb-2">Create Topic</h1>
 
         {sections.map((section, index) => (
