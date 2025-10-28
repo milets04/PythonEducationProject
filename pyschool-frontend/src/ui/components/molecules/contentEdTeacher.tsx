@@ -29,7 +29,9 @@ const ContentEdTeacher: React.FC<ContentEdTeacherProps> = ({
           <div className="flex items-center justify-between">
             <DropDownMenu
               label={unity.label}
-              items={unity.topics.map((topic) => ({ label: topic.label }))}
+              items={unity.topics.map((topic) => ({
+                label: topic.label,
+              }))}
               onAdd={onAddTopic}
             />
             <IconsEdTeacher
@@ -39,25 +41,6 @@ const ContentEdTeacher: React.FC<ContentEdTeacherProps> = ({
               classNameDelete="text-blue-900"
             />
           </div>
-          {unity.topics.map((topic, tIndex) => (
-            <div
-              key={tIndex}
-              className="flex items-center justify-between pl-8"
-            >
-              <p
-                className="text-[#2F7CBB] hover:underline cursor-pointer"
-                style={{ fontFamily: "Roboto, sans-serif" }}
-              >
-                {topic.label}
-              </p>
-              <IconsEdTeacher
-                onEdit={() => onEdit?.("topic")}
-                onDelete={() => onDelete?.("topic")}
-                classNameEdit="text-blue-900"
-                classNameDelete="text-blue-900"
-              />
-            </div>
-          ))}
         </div>
       ))}
       <div className="mt-3 flex flex-col gap-1">
