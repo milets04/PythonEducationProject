@@ -28,7 +28,7 @@ const TxtLandingpage: React.FC<TxtLandingpageProps> = ({
         <CoverDescriptionText text={description} size="medium" />
       </div>
       <div className="flex justify-center md:justify-end w-full md:w-auto md:mr-8">
-        <Img src={imageSrc} alt={imageAlt} width={420} height={300} />
+        <Img src={imageSrc} alt={imageAlt} width={420} height={300} priority={true} />
       </div>
     </section>
   );

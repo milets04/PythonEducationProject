@@ -10,6 +10,7 @@ interface ImgProps {
   height?: number;
   className?: string;
   rounded?: boolean;
+  priority?: boolean;
 }
 
 const Img: React.FC<ImgProps> = ({
@@ -19,6 +20,7 @@ const Img: React.FC<ImgProps> = ({
   height = 200,
   className = "",
   rounded = false,
+  priority = false,
 }) => {
   return (
     <div
@@ -34,6 +36,7 @@ const Img: React.FC<ImgProps> = ({
         width={width}
         height={height}
         className="object-cover w-full h-full"
+        priority={priority}
       />
     </div>
   );
