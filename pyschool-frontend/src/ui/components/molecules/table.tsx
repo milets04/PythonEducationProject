@@ -18,22 +18,22 @@ const Table: React.FC<TableProps> = ({ data }) => {
     <div className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-sm p-4 sm:p-6 overflow-x-auto">
       <div className="w-full border-b border-gray-400 pb-2 grid grid-cols-[1.5fr_2fr_1fr_0.5fr] gap-4 text-center">
         <CoverDescriptionText
-          text="Nombre"
+          text="Name"
           size="small"
           className="text-sm font-semibold"
         />
         <CoverDescriptionText
-          text="Correo electrónico"
+          text="Email"
           size="small"
           className="text-sm font-semibold"
         />
         <CoverDescriptionText
-          text="Rol"
+          text="Role"
           size="small"
           className="text-sm font-semibold"
         />
         <CoverDescriptionText
-          text="acciones"
+          text="Actions"
           size="small"
           className="text-sm font-semibold"
         />
@@ -48,7 +48,7 @@ const Table: React.FC<TableProps> = ({ data }) => {
               className="
                 grid grid-cols-[1.5fr_2fr_1fr_0.5fr] gap-4 text-center items-center
                 py-3 sm:py-4
-                hover:bg-gray-50 transition
+                hover:bg-blue-100 transition
               "
             >
               <p

@@ -15,8 +15,8 @@ const requestpageTemplate: React.FC = () => {
   return (
     <main className="relative w-full min-h-screen overflow-hidden bg-transparent flex flex-col">
       <BackgroundClouds />
-      <div className="relative z-10 flex flex-col flex-grow">
-          <section className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 md:px-12 lg:px-20">
+      <div className="relative z-10 flex flex-col grow">
+          <section className="grow flex flex-col items-center justify-center px-4 sm:px-6 md:px-12 lg:px-20">
             <Title text= "Teacher requests" className="text-gray-700 justify-items-start mb-3"></Title>
             <div className="max-w-7xl w-full">
               <Table data={MockData}/>

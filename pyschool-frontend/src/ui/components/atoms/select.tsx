@@ -20,7 +20,6 @@ const Select: React.FC = () => {
           border-none
           text-sm        
           font-normal   
-          text-[#1D1B20]
           cursor-pointer
           pr-5
           focus:outline-none
@@ -34,7 +33,7 @@ const Select: React.FC = () => {
           {role === "Student" ? "Teacher" : "Student"}
         </option>
       </select>
-      <span className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-[#1D1B20] text-[10px]">
+      <span className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-base">
         ▼
       </span>
     </div>
