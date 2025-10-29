@@ -1,42 +1,43 @@
-"use client";
-import React, { useState } from "react";
+// ui/components/atoms/select.tsx
+import React from 'react';
 
-const Select: React.FC = () => {
-  const [role, setRole] = useState<"Student" | "Teacher">("Student");
+interface SelectProps {
+  value?: number;
+  onChange?: (value: number) => void;
+}
 
-  const toggleRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value as "Student" | "Teacher";
-    setRole(value);
+const Select: React.FC<SelectProps> = ({ value = 1, onChange }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (onChange) {
+      onChange(parseInt(e.target.value));
+    }
   };
 
   return (
-    <div className="relative inline-block">
-      <select
-        value={role}
-        onChange={toggleRole}
-        className="
-          appearance-none
-          bg-transparent
-          border-none
-          text-sm        
-          font-normal   
-          cursor-pointer
-          pr-5
-          focus:outline-none
-        "
-        style={{
-          fontFamily: "Roboto, sans-serif",
-        }}
-      >
-        <option value={role}>{role}</option>
-        <option value={role === "Student" ? "Teacher" : "Student"}>
-          {role === "Student" ? "Teacher" : "Student"}
-        </option>
-      </select>
-      <span className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-base">
-        ▼
-      </span>
-    </div>
+    <select
+      value={value}
+      onChange={handleChange}
+      className="
+        px-3 py-2
+        bg-white
+        border border-gray-300
+        rounded-md
+        text-sm
+        text-gray-700
+        focus:outline-none
+        focus:ring-2
+        focus:ring-[#06538D]
+        focus:border-transparent
+        cursor-pointer
+        hover:border-gray-400
+        transition-colors
+      "
+    >
+      <option value={1}>Student</option>
+      <option value={2}>Editor Teacher</option>
+      <option value={3}>Executor Teacher</option>
+      <option value={4}>Administrator</option>
+    </select>
   );
 };
 
