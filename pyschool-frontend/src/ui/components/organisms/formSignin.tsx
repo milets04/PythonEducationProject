@@ -39,7 +39,7 @@ const LoginContainer: React.FC = () => {
       localStorage.setItem('userRole', result.data.user.role);
 
       console.log('Login exitoso, token guardado.');
-      window.location.href = '/waitPage';
+      window.location.href = '/requests';
 
     } catch (error) {
       const err = error as Error;

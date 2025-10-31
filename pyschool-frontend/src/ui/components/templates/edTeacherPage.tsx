@@ -5,12 +5,12 @@ import PyContent from "@/ui/components/organisms/pyContent";
 
 const MOCK_UNITIES = [
   { 
-    label: "Unidad 1: Introducción a Python", 
-    topics: [{ label: "1.1 - ¿Qué es Python?" }, { label: "1.2 - Instalación" }] 
+    label: "Unity 1: Introduction to Python", 
+    topics: [{ label: "1.1 - What is Python?" }, { label: "1.2 - Installation" }] 
   },
   { 
-    label: "Unidad 2: Tipos de Datos", 
-    topics: [{ label: "2.1 - Variables" }, { label: "2.2 - Números y Strings" }] 
+    label: "Unity 2: Data Types", 
+    topics: [{ label: "2.1 - Variables" }, { label: "2.2 - Numbers and Strings" }] 
   }
 ];
 
