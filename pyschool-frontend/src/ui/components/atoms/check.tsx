@@ -14,12 +14,12 @@ const Checkbox: React.FC<CheckboxProps> = ({ checked = false, onChange }) => {
           type="checkbox"
           checked={checked}
           onChange={onChange}
-          className="h-4 w-4 accent-[#06538D] cursor-pointer
-            bg-transparent
-            border-none
-            text-sm        
-            pr-5
-            focus:outline-none
+          className="h-5 w-5 rounded border-2 border-gray-300 
+            text-[#06538D] 
+            focus:ring-2 focus:ring-[#06538D] 
+            cursor-pointer
+            checked:bg-[#06538D]
+            checked:border-[#06538D]
           "
         />
       </label>

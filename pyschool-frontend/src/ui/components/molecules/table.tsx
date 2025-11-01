@@ -4,13 +4,12 @@ import Select from "@/ui/components/atoms/select";
 import CoverDescriptionText from "@/ui/components/atoms/coverDescriptionText";
 import Checkbox from "../atoms/check";
 
-// 🧩 Definimos la interfaz User
 export interface User {
   id: number;
   firstName: string;
   email: string;
-  roleId?: any; // opcional si manejas roles
-  selected?: boolean; // opcional si manejas selección
+  newRoleId?: number; // ← Cambié de roleId a newRoleId
+  isSelected?: boolean; // ← Cambié de selected a isSelected
 }
 
 interface TableProps {
@@ -45,13 +44,13 @@ const Table: React.FC<TableProps> = ({ data, onToggleSelection, onRoleChange }) 
               </p>
               <div className="flex justify-center">
                 <Select
-                  value={item.roleId}
-                  onChange={(e) => onRoleChange(item.id, Number(e.target.value))}
+                  value={item.newRoleId} 
+                  onChange={(value: number) => onRoleChange(item.id, value)}
                 />
               </div>
               <div className="flex justify-center">
                 <Checkbox
-                  checked={item.selected}
+                  checked={item.isSelected}
                   onChange={() => onToggleSelection(item.id)}
                 />
               </div>
