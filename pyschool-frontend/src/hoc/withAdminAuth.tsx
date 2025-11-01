@@ -65,13 +65,13 @@ export function withAdminAuth<P extends object>(
     const redirectByRole = (role: string) => {
       switch (role) {
         case "student":
-          router.push("/student/dashboard");
+          router.push("/waitPage");
           break;
         case "editorTeacher":
-          router.push("/teacher/editor/dashboard");
+          router.push("/teacherPages/addContent");
           break;
         case "executorTeacher":
-          router.push("/teacher/executor/dashboard");
+          router.push("/teacherPages/addContent");
           break;
         default:
           router.push("/");
