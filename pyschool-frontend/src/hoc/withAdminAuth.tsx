@@ -6,11 +6,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 /*interface UserData {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
+ id: number;
+ firstName: string;
+ lastName: string;
+ email: string;
+ role: string;
 }*/
 
 export function withAdminAuth<P extends object>(
@@ -22,61 +22,58 @@ export function withAdminAuth<P extends object>(
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-      checkAuth();
-    }, []);
+      const redirectByRole = (role: string) => {
+        switch (role) {
+          case "student":
+            router.push("/waitPage");
+            break;
+          case "editorTeacher":
+            router.push("/teacherPages/addContent");
+            break;
+          case "executorTeacher":
+            router.push("/teacherPages/addContent");
+            break;
+          default:
+            router.push("/");
+        }
+      };
 
-    const checkAuth = async () => {
-      try {
-        // 1. Verificar si hay token
-        const token = localStorage.getItem("token");
-        if (!token) {
+      const checkAuth = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            router.push("/login");
+            return;
+          }
+
+          const response = await fetch("http://localhost:5000/api/auth/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("No autorizado");
+          }
+
+          const data = await response.json();
+
+          if (data.success && data.data.role === "administrator") {
+            setIsAuthorized(true);
+          } else {
+            redirectByRole(data.data.role); 
+          }
+        } catch (error) {
+          console.error("Error de autenticación:", error);
           router.push("/login");
-          return;
+        } finally {
+          setLoading(false);
         }
+      };
 
-        // 2. Verificar el usuario actual
-        const response = await fetch("http://localhost:5000/api/auth/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+      checkAuth();
 
-        if (!response.ok) {
-          throw new Error("No autorizado");
-        }
-
-        const data = await response.json();
-
-        // 3. Verificar que sea administrador
-        if (data.success && data.data.role === "administrator") {
-          setIsAuthorized(true);
-        } else {
-          // No es admin, redirigir según su rol
-          redirectByRole(data.data.role);
-        }
-      } catch (error) {
-        console.error("Error de autenticación:", error);
-        router.push("/login");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const redirectByRole = (role: string) => {
-      switch (role) {
-        case "student":
-          router.push("/waitPage");
-          break;
-        case "editorTeacher":
-          router.push("/teacherPages/addContent");
-          break;
-        case "executorTeacher":
-          router.push("/teacherPages/addContent");
-          break;
-        default:
-          router.push("/");
-      }
-    };
+    }, [router]);
 
     if (loading) {
       return (
@@ -107,6 +104,3 @@ export function withAdminAuth<P extends object>(
     return <Component {...props} />;
   };
 }
-
-// Uso:
-// export default withAdminAuth(RequestPageTemplate);

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react"; // 1. Importar useCallback
 import { useRouter } from "next/navigation";
 import BackgroundClouds from "../atoms/backgroundClouds";
 import Table from "../molecules/table";
@@ -30,14 +30,7 @@ const RequestPageTemplate: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
 
-  // Verificar que el usuario sea admin al cargar
-  useEffect(() => {
-    checkAdminAccess();
-    fetchPendingUsers();
-  }, []);
-
-  // Verificar acceso de administrador
-  const checkAdminAccess = () => {
+  const checkAdminAccess = useCallback(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/login");
@@ -60,10 +53,9 @@ const RequestPageTemplate: React.FC = () => {
       .catch(() => {
         router.push("/login");
       });
-  };
+  }, [router]);
 
-  // Obtener usuarios pendientes
-  const fetchPendingUsers = async () => {
+  const fetchPendingUsers = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -80,7 +72,6 @@ const RequestPageTemplate: React.FC = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Agregar campos de selección y rol por defecto
         const usersWithSelection: UserWithSelection[] = data.data.map((user: PendingUser) => ({
           ...user,
           isSelected: false,
@@ -96,9 +87,13 @@ const RequestPageTemplate: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]); 
 
-  // Toggle selección de usuario
+  useEffect(() => {
+    checkAdminAccess();
+    fetchPendingUsers();
+  }, [checkAdminAccess, fetchPendingUsers]); 
+
   const handleToggleSelection = (userId: number) => {
     setUsers((prev) =>
       prev.map((user) =>
@@ -107,7 +102,6 @@ const RequestPageTemplate: React.FC = () => {
     );
   };
 
-  // Cambiar rol de un usuario
   const handleRoleChange = (userId: number, newRoleId: number) => {
     setUsers((prev) =>
       prev.map((user) =>
@@ -116,7 +110,6 @@ const RequestPageTemplate: React.FC = () => {
     );
   };
 
-  // Guardar (aprobar todos los usuarios visibles)
   const handleSave = async () => {
     setProcessing(true);
     try {
@@ -126,7 +119,6 @@ const RequestPageTemplate: React.FC = () => {
         return;
       }
 
-      // Preparar array de aprobaciones
       const approvals = users.map((user) => ({
         userId: user.id,
         roleId: user.newRoleId,
@@ -147,7 +139,6 @@ const RequestPageTemplate: React.FC = () => {
         alert(
           ` ${data.data.approved.length} usuarios aprobados exitosamente`
         );
-        // Recargar la lista
         fetchPendingUsers();
       } else {
         alert("Error al aprobar usuarios");
@@ -160,7 +151,6 @@ const RequestPageTemplate: React.FC = () => {
     }
   };
 
-  // Eliminar (rechazar usuarios seleccionados)
   const handleDelete = async () => {
     const selectedUsers = users.filter((user) => user.isSelected);
 
@@ -200,7 +190,6 @@ const RequestPageTemplate: React.FC = () => {
         alert(
           ` ${data.data.rejected.length} usuarios rechazados exitosamente`
         );
-        // Recargar la lista
         fetchPendingUsers();
       } else {
         alert("Error al rechazar usuarios");
@@ -213,7 +202,6 @@ const RequestPageTemplate: React.FC = () => {
     }
   };
 
-  // Verificar si hay usuarios seleccionados
   const hasSelectedUsers = users.some((user) => user.isSelected);
 
   if (loading) {
@@ -264,7 +252,6 @@ const RequestPageTemplate: React.FC = () => {
                 />
               </div>
               <div className="flex justify-end gap-3 mt-4">
-                {/* Botón Delete solo visible si hay usuarios seleccionados */}
                 {hasSelectedUsers && (
                   <Button
                     variant="secondary"

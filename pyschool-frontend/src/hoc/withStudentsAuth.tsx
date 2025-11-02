@@ -1,4 +1,3 @@
-// components/hoc/withStudentAuth.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -12,55 +11,57 @@ export function withStudentAuth<P extends object>(
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-      checkAuth();
-    }, []);
+      const redirectByRole = (role: string) => {
+        switch (role) {
+          case "administrator":
+            router.push("/requests");
+            break;
+          case "editorTeacher":
+          case "executorTeacher":
+            router.push("/teacherPages/addContent");
+            break;
+          default:
+            router.push("/");
+        }
+      };
 
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
+      const checkAuth = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            router.push("/signin");
+            return;
+          }
+
+          const response = await fetch("http://localhost:5000/api/auth/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("No autorizado");
+          }
+
+          const data = await response.json();
+
+          if (data.success && data.data.role === "student") {
+            setIsAuthorized(true);
+          } else {
+            redirectByRole(data.data.role);
+          }
+        } catch (error) {
+          console.error("Error de autenticación:", error);
           router.push("/signin");
-          return;
+        } finally {
+          setLoading(false);
         }
+      };
 
-        const response = await fetch("http://localhost:5000/api/auth/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+      checkAuth();
+      
+    }, [router]);
 
-        if (!response.ok) {
-          throw new Error("No autorizado");
-        }
-
-        const data = await response.json();
-
-        if (data.success && data.data.role === "student") {
-          setIsAuthorized(true);
-        } else {
-          redirectByRole(data.data.role);
-        }
-      } catch (error) {
-        console.error("Error de autenticación:", error);
-        router.push("/signin");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const redirectByRole = (role: string) => {
-      switch (role) {
-        case "administrator":
-          router.push("/requests");
-          break;
-        case "editorTeacher":
-        case "executorTeacher":
-          router.push("/teacherPages/addContent");
-          break;
-        default:
-          router.push("/");
-      }
-    };
 
     if (loading) {
       return (
