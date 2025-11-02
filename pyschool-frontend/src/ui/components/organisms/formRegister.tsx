@@ -6,6 +6,7 @@ import TitleAndDescr from "@/ui/components/molecules/titDesc"
 import { useState } from "react";
 import SignLink from '@/ui/components/atoms/txtSign';
 import GoogleButton from "@/ui/components/atoms/btnGoogle";
+import router from "next/router";
 
 const schema = z.object({
   firstname: z.string().min(3, "Firstname must be at least 3 characters"),
@@ -71,10 +72,9 @@ const RegisterForm: React.FC = () => {
 
       localStorage.setItem('token', result.data.token);
 
-      // Redirigir al usuario al dashboard o al login
-      // setTimeout(() => {
-      //   router.push('/login'); // O '/dashboard'
-      // }, 2000);
+      setTimeout(() => {
+         router.push('/login'); 
+      }, 2000);
 
 
     } catch (error: unknown) {
