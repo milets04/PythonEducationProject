@@ -5,13 +5,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-interface UserData {
+/*interface UserData {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
   role: string;
-}
+}*/
 
 export function withAdminAuth<P extends object>(
   Component: React.ComponentType<P>

@@ -16,7 +16,7 @@ const MOCK_UNITIES = [
 
 export default function EdTeacherPage() {
 
-  const [unities, setUnities] = useState(MOCK_UNITIES);
+  const [unities] = useState(MOCK_UNITIES);
 
   const handleAddUnity = () => {
     console.log('Botón Añadir Unidad presionado');
