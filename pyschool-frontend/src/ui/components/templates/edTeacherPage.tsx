@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import PyContent from "@/ui/components/organisms/pyContent";
+import ModalBox from "../atoms/modalBox";
+import Input from "../atoms/input";
 
 const MOCK_UNITIES = [
   { 
@@ -16,10 +18,30 @@ const MOCK_UNITIES = [
 
 export default function EdTeacherPage() {
 
-  const [unities] = useState(MOCK_UNITIES);
+  const [unities, setUnities] = useState(MOCK_UNITIES);
+  const [showModal, setShowModal] = useState(false);
+  const [newUnityName, setNewUnityName] = useState("");
 
   const handleAddUnity = () => {
-    console.log('Botón Añadir Unidad presionado');
+    setShowModal(true);
+  };
+
+  const handleSaveUnity = () => {
+    if (newUnityName.trim() === "") return;
+    const nextUnityNumber = unities.length +1; //calcula el num de la sig unidad
+    const formattedName = newUnityName.trim().toLowerCase().startsWith("unity")
+    ? newUnityName.trim()
+    : `Unity ${nextUnityNumber}: ${newUnityName.trim()}`;
+
+    const newUnity = { label: formattedName, topics: [] };
+    setUnities([...unities, newUnity]);
+    setNewUnityName("");
+    setShowModal(false);
+  };
+
+  const handleCancel = () => {
+    setShowModal(false);
+    setNewUnityName("");
   };
 
   const handleAddTopic = () => {
@@ -45,6 +67,23 @@ export default function EdTeacherPage() {
           onDelete={handleDelete}
         />
       </div>
+
+      <ModalBox
+      title="Enter the unity name"
+      isOpen={showModal}
+      onClose={handleCancel}
+      onConfirm={handleSaveUnity}
+      confirmText="Save"
+      cancelText="Cancel"
+    >
+
+      <Input
+        id="unity-name"
+        value={newUnityName}
+        onChange={(e) => setNewUnityName(e.target.value)}
+        placeholder="Write unity name..."
+      />
+    </ModalBox>
     </main>
   );
 };
