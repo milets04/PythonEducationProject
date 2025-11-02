@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/milets04/PythonEducationProject/compare/pyschool-frontend-v1.5.0...pyschool-frontend-v1.5.1) (2025-11-02)
+
+
+### Bug Fixes
+
+* ancho estilos del organismo ([bc4af49](https://github.com/milets04/PythonEducationProject/commit/bc4af494894aaa5d070856783e26c6c1f6c431f5))
+
 # [1.5.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-frontend-v1.4.0...pyschool-frontend-v1.5.0) (2025-10-22)
 
 
