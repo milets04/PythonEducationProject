@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import RequestPageTemplate from "@/ui/components/templates/requestPage";
+import { withAdminAuth } from '@/hoc/withAdminAuth';
 
 const RequestsPage: React.FC = () => {
   return (
@@ -27,4 +28,4 @@ const RequestsPage: React.FC = () => {
   );
 };
 
-export default RequestsPage;
+export default withAdminAuth(RequestsPage);

@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+'use client';
+
+import React from 'react';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/ui/components/atoms/button'; 
 
 interface ContentButtonsProps {
@@ -12,41 +15,37 @@ const ContentButtons: React.FC<ContentButtonsProps> = ({
   onActualContent,
   onStudents,
 }) => {
-  const [selected, setSelected] = useState<'add' | 'actual' | 'students'>('actual');
+  const pathname = usePathname();
+  
+  // Determinar qué botón está seleccionado según la ruta actual
+  const isAddContent = pathname === '/teacherPages/addContent';
+  const isActualContent = pathname === '/teacherPages/actualContent';
+  const isStudents = pathname === '/teacherPages/Students';
 
   return (
     <div className="flex flex-col gap-2 w-full max-w-sm">
       <Button
-        variant={selected === 'add' ? 'default' : 'outline'}
+        variant={isAddContent ? 'default' : 'outline'}
         size="lg"
-        onClick={() => {
-          setSelected('add');
-          onAddContent?.();
-        }}
+        onClick={onAddContent}
         className="w-full"
       >
         Add Content
       </Button>
 
       <Button
-        variant={selected === 'actual' ? 'default' : 'outline'}
+        variant={isActualContent ? 'default' : 'outline'}
         size="lg"
-        onClick={() => {
-          setSelected('actual');
-          onActualContent?.();
-        }}
+        onClick={onActualContent}
         className="w-full"
       >
         Actual Content
       </Button>
 
       <Button
-        variant={selected === 'students' ? 'default' : 'outline'}
+        variant={isStudents ? 'default' : 'outline'}
         size="lg"
-        onClick={() => {
-          setSelected('students');
-          onStudents?.();
-        }}
+        onClick={onStudents}
         className="w-full"
       >
         Students

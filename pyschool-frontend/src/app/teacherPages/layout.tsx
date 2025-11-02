@@ -24,13 +24,40 @@ export default function TeacherLayout({
   };
 
   const handleConfiguration = () => {
-    // router.push('/teacherPages/configuration');
     console.log('Configuration clicked');
+    // TODO: Implementar configuración
   };
 
-  const handleLogout = () => {
-    // router.push('/');
-    console.log('Logout clicked');
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (token) {
+        // Llamar al endpoint de logout (opcional según la guía)
+        await fetch('http://localhost:5000/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+      }
+      
+      // Limpiar localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRole');
+      
+      // Redirigir al login
+      router.push('/signin');
+      
+      console.log('Sesión cerrada exitosamente');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      
+      // Aunque falle la petición, limpiar y redirigir
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRole');
+      router.push('/signin');
+    }
   };
 
   return (

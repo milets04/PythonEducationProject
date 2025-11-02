@@ -1,7 +1,6 @@
-import React from 'react';
+'use client';
+
 import EdTeacherPage from '@/ui/components/templates/edTeacherPage';
-export default function AddContentPage() {
-  return (
-    <EdTeacherPage />
-  );
-}
+import { withTeacherAuth } from '@/hoc/withTeachersAuth';
+
+export default withTeacherAuth(EdTeacherPage);
