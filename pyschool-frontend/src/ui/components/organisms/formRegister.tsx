@@ -48,8 +48,7 @@ const RegisterForm: React.FC = () => {
       lastName: data.lastname,       
       email: data.email,
       password: data.password,
-      passwordConfirm: data.confirmPassword,
-      roleId: 1,
+      passwordConfirm: data.confirmPassword
     };
 
     try {
@@ -71,7 +70,6 @@ const RegisterForm: React.FC = () => {
       setSuccessMessage(result.message || '¡Registro exitoso!');
 
       localStorage.setItem('token', result.data.token);
-      localStorage.setItem('userRole', result.data.user.role);
 
       // Redirigir al usuario al dashboard o al login
       // setTimeout(() => {
