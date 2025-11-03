@@ -8,7 +8,7 @@ const CreateTopicLayout: React.FC = () => {
       <div className="w-full bg-gradient-to-br bg-fondo overflow-y-auto">
         <CreateTopicPage />
       </div>
-  );
+  );  
 };
 
 export default CreateTopicLayout;

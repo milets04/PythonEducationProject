@@ -10,7 +10,7 @@ interface ContentEdTeacherProps {
     topics: { label: string }[];
   }[];
   onAddUnity?: () => void;
-  onAddTopic?: (unityIndex: number) => void; // ← Agregado el parámetro
+  onAddTopic?: (unityIndex: number) => void;
   onEdit?: (type: "unity" | "topic") => void;
   onDelete?: (type: "unity" | "topic") => void;
 }
@@ -41,7 +41,14 @@ const ContentEdTeacher: React.FC<ContentEdTeacherProps> = ({
                   />
                 ),
               }))}
-              onAdd={() => onAddTopic?.(index)} // ← Pasa el índice aquí
+              onAdd={() => onAddTopic?.(index)}
+            />
+            {/* Íconos para cada unidad */}
+            <IconsEdTeacher
+              onEdit={() => onEdit?.("unity")}
+              onDelete={() => onDelete?.("unity")}
+              classNameEdit="text-blue-900"
+              classNameDelete="text-blue-900"
             />
           </div>
         </div>
