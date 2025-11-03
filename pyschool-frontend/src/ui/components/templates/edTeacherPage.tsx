@@ -1,53 +1,87 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from 'next/navigation';
 import PyContent from "@/ui/components/organisms/pyContent";
 import ModalBox from "../atoms/modalBox";
 import Input from "../atoms/input";
 
-const MOCK_UNITIES = [
-  { 
-    label: "Unity 1: Introduction to Python", 
-    topics: [{ label: "1.1 - What is Python?" }, { label: "1.2 - Installation" }] 
-  },
-  { 
-    label: "Unity 2: Data Types", 
-    topics: [{ label: "2.1 - Variables" }, { label: "2.2 - Numbers and Strings" }] 
-  }
-];
-
 export default function EdTeacherPage() {
-
-  const [unities, setUnities] = useState(MOCK_UNITIES);
-  const [showModal, setShowModal] = useState(false);
+  const router = useRouter();
+  
+  // Sin unidades por defecto
+  const [unities, setUnities] = useState<Array<{ label: string; topics: { label: string }[] }>>([]);
+  
+  // Modales
+  const [showUnityModal, setShowUnityModal] = useState(false);
+  const [showTopicModal, setShowTopicModal] = useState(false);
+  
+  // Inputs
   const [newUnityName, setNewUnityName] = useState("");
+  const [newTopicName, setNewTopicName] = useState("");
+  
+  // Para saber a qué unidad agregar el topic
+  const [selectedUnityIndex, setSelectedUnityIndex] = useState<number | null>(null);
 
+  // ===== UNITY =====
   const handleAddUnity = () => {
-    setShowModal(true);
+    setShowUnityModal(true);
   };
 
   const handleSaveUnity = () => {
     if (newUnityName.trim() === "") return;
-    const nextUnityNumber = unities.length +1; //calcula el num de la sig unidad
+    
+    const nextUnityNumber = unities.length + 1;
     const formattedName = newUnityName.trim().toLowerCase().startsWith("unity")
-    ? newUnityName.trim()
-    : `Unity ${nextUnityNumber}: ${newUnityName.trim()}`;
+      ? newUnityName.trim()
+      : `Unity ${nextUnityNumber}: ${newUnityName.trim()}`;
 
     const newUnity = { label: formattedName, topics: [] };
     setUnities([...unities, newUnity]);
     setNewUnityName("");
-    setShowModal(false);
+    setShowUnityModal(false);
   };
 
-  const handleCancel = () => {
-    setShowModal(false);
+  const handleCancelUnity = () => {
+    setShowUnityModal(false);
     setNewUnityName("");
   };
 
-  const handleAddTopic = () => {
-    console.log('Botón Añadir Tema presionado');
+  // ===== TOPIC =====
+  const handleAddTopic = (unityIndex: number) => {
+    setSelectedUnityIndex(unityIndex);
+    setShowTopicModal(true);
   };
 
+  const handleSaveTopic = () => {
+    if (newTopicName.trim() === "" || selectedUnityIndex === null) return;
+
+    const updatedUnities = [...unities];
+    const currentTopics = updatedUnities[selectedUnityIndex].topics;
+    const nextTopicNumber = currentTopics.length + 1;
+    
+    // Formato: "1.1 - Topic Name"
+    const unityNumber = selectedUnityIndex + 1;
+    const formattedTopicName = `${unityNumber}.${nextTopicNumber} - ${newTopicName.trim()}`;
+
+    updatedUnities[selectedUnityIndex].topics.push({ label: formattedTopicName });
+    setUnities(updatedUnities);
+    
+    setNewTopicName("");
+    setShowTopicModal(false);
+    setSelectedUnityIndex(null);
+
+    // Redirigir a createTopic
+    router.push('/teacherPages/createTopic');
+  };
+
+  const handleCancelTopic = () => {
+    setShowTopicModal(false);
+    setNewTopicName("");
+    setSelectedUnityIndex(null);
+  };
+
+  // ===== EDIT/DELETE (por implementar) =====
   const handleEdit = (type: "unity" | "topic") => {
     console.log('Botón Editar presionado para:', type);
   };
@@ -68,22 +102,39 @@ export default function EdTeacherPage() {
         />
       </div>
 
+      {/* Modal para Unidad */}
       <ModalBox
-      title="Enter the unity name"
-      isOpen={showModal}
-      onClose={handleCancel}
-      onConfirm={handleSaveUnity}
-      confirmText="Save"
-      cancelText="Cancel"
-    >
+        title="Enter the unity name"
+        isOpen={showUnityModal}
+        onClose={handleCancelUnity}
+        onConfirm={handleSaveUnity}
+        confirmText="Save"
+        cancelText="Cancel"
+      >
+        <Input
+          id="unity-name"
+          value={newUnityName}
+          onChange={(e) => setNewUnityName(e.target.value)}
+          placeholder="Write unity name..."
+        />
+      </ModalBox>
 
-      <Input
-        id="unity-name"
-        value={newUnityName}
-        onChange={(e) => setNewUnityName(e.target.value)}
-        placeholder="Write unity name..."
-      />
-    </ModalBox>
+      {/* Modal para Tópico */}
+      <ModalBox
+        title="Enter the topic name"
+        isOpen={showTopicModal}
+        onClose={handleCancelTopic}
+        onConfirm={handleSaveTopic}
+        confirmText="Save"
+        cancelText="Cancel"
+      >
+        <Input
+          id="topic-name"
+          value={newTopicName}
+          onChange={(e) => setNewTopicName(e.target.value)}
+          placeholder="Write topic name..."
+        />
+      </ModalBox>
     </main>
   );
-};
+}

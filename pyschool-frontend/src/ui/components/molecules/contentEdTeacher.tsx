@@ -10,7 +10,7 @@ interface ContentEdTeacherProps {
     topics: { label: string }[];
   }[];
   onAddUnity?: () => void;
-  onAddTopic?: () => void;
+  onAddTopic?: (unityIndex: number) => void; // ← Agregado el parámetro
   onEdit?: (type: "unity" | "topic") => void;
   onDelete?: (type: "unity" | "topic") => void;
 }
@@ -39,19 +39,10 @@ const ContentEdTeacher: React.FC<ContentEdTeacherProps> = ({
                     classNameEdit="text-blue-900"
                     classNameDelete="text-blue-900"
                   />
-
                 ),
               }))}
-              onAdd={onAddTopic}
-
+              onAdd={() => onAddTopic?.(index)} // ← Pasa el índice aquí
             />
-            {/*
-            <IconsEdTeacher
-              onEdit={() => onEdit?.("unity")}
-              onDelete={() => onDelete?.("unity")}
-              classNameEdit="text-blue-900"
-              classNameDelete="text-blue-900"
-            />*/}
           </div>
         </div>
       ))}
@@ -62,13 +53,6 @@ const ContentEdTeacher: React.FC<ContentEdTeacherProps> = ({
           style={{ fontFamily: "Roboto, sans-serif" }}
         >
           + Unity
-        </button>
-        <button
-          onClick={onAddTopic}
-          className="text-[#2F7CBB] hover:underline text-sm text-left ml-4"
-          style={{ fontFamily: "Roboto, sans-serif" }}
-        >
-          + Topic
         </button>
       </div>
     </div>

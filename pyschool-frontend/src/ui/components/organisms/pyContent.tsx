@@ -13,7 +13,7 @@ interface PyContentProps {
     topics: { label: string }[];
   }[];
   onAddUnity?: () => void;
-  onAddTopic?: () => void;
+  onAddTopic?: (unityIndex: number) => void; // ← Cambiado para recibir el índice
   onEdit?: (type: "unity" | "topic") => void;
   onDelete?: (type: "unity" | "topic") => void;
 }
