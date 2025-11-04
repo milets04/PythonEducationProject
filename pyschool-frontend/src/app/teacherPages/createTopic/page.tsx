@@ -1,8 +1,5 @@
 'use client';
-import CreateTopicLayout from '@/ui/components/templates/createTopicTemplate';
+import CreateTopicLayout from '@/ui/components/templates/createTopicTemplate'; 
+import { withTeacherAuth } from '@/hoc/withTeachersAuth';
 
-export default function createTopicPage() {
-  return (
-    <CreateTopicLayout />
-  );
-}
+export default withTeacherAuth(CreateTopicLayout);

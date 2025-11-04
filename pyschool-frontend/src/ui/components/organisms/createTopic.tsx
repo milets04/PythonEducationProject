@@ -3,15 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ContentInput from '@/ui/components/atoms/contentInput';
-// 1. CORRECCIÓN: Usar la ruta absoluta (alias '@')
 import Textarea from '@/ui/components/atoms/textInput'; 
 import UploadInput from '@/ui/components/molecules/uploadInput';
 import { Button } from '@/ui/components/atoms/button';
-// 2. ERROR ELIMINADO: Ya no importamos de apiService
-
-// =================================================================
-// 3. CÓDIGO DE API INTEGRADO (lo que este archivo necesita)
-// =================================================================
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -92,11 +86,6 @@ export const createTopic = async (data: CreateTopicRequest): Promise<Topic> => {
   const result = await response.json();
   return result.data;
 };
-
-
-// =================================================================
-// 4. LÓGICA DEL COMPONENTE (sin cambios, ya era correcta)
-// =================================================================
 
 interface TopicSection {
   id: number;
@@ -266,7 +255,7 @@ const CreateTopic: React.FC = () => {
         
         // Redirigir a página de selección de plantilla
         // (Asegúrate que esta ruta sea correcta)
-        router.push('/teacherPages/topicTemplate2'); 
+        router.push('/topicTemplates'); 
         return;
       }
 
@@ -287,7 +276,7 @@ const CreateTopic: React.FC = () => {
 
       // Redirigir de vuelta a la página principal
       alert('Tópico creado exitosamente');
-      router.push('/teacherPages/edTeacher');
+      router.push('/teacherPages/addContent');
       
     } catch (error) {
       console.error('Error saving topic:', error);
@@ -300,7 +289,7 @@ const CreateTopic: React.FC = () => {
   const handleCancel = () => {
     if (confirm('¿Estás seguro de cancelar? Se perderán los cambios.')) {
       localStorage.removeItem('newTopic');
-      router.push('/teacherPages/edTeacher');
+      router.push('/teacherPages/addContent');
     }
   };
 

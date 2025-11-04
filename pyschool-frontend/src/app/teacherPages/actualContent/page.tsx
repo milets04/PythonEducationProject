@@ -1,9 +1,5 @@
 'use client';
-import React from 'react';
 import CourseView from '@/ui/components/templates/CourseView';
+import { withTeacherAuth } from '@/hoc/withTeachersAuth';
 
-export default function ActualContentPage() {
-  return (
-    <CourseView />
-  );
-}
+export default withTeacherAuth(CourseView);
