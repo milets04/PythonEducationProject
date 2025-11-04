@@ -5,9 +5,6 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import UnitySelector, { UnityOption } from "@/ui/components/atoms/unitySelector";
 
-// =================================================================
-// 1. FUNCIONES DE API Y TIPOS (Integrados en este archivo)
-// =================================================================
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -101,10 +98,6 @@ const getYouTubeEmbedUrl = (url: string): string | null => {
   }
 };
 
-// =================================================================
-// 2. COMPONENTE PARA RENDERIZAR EL CONTENIDO DEL TÓPICO
-// =================================================================
-
 /**
  * Renderiza un bloque de contenido individual (texto, video, etc.)
  */
@@ -167,9 +160,6 @@ const RenderContentBlock = ({ type, data }: { type: string, data: any }) => {
   }
 };
 
-/**
- * Organiza los bloques de contenido según la plantilla del tópico
- */
 const RenderTopicContent = ({ topic }: { topic: Topic }) => {
   // 1. Coleccionar todos los bloques de contenido
   const blocks: React.ReactNode[] = [];
@@ -182,7 +172,6 @@ const RenderTopicContent = ({ topic }: { topic: Topic }) => {
   if (topic.images && topic.images.length > 0) {
     blocks.push(<RenderContentBlock key="image" type="image" data={topic.images} />);
   }
-  // (Puedes añadir 'audio' y 'presentation' aquí si los necesitas)
 
   // 2. Renderizar según la plantilla
   switch (topic.templateName) {
@@ -224,9 +213,6 @@ const RenderTopicContent = ({ topic }: { topic: Topic }) => {
   }
 };
 
-// =================================================================
-// 3. COMPONENTE PRINCIPAL (CourseView)
-// =================================================================
 
 export default function CourseView() {
   const [courseStructure, setCourseStructure] = useState<UnitWithTopics[]>([]);
