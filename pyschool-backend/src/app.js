@@ -1,44 +1,30 @@
 // src/app.js
-// Configuración principal de Express y middleware global
-
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import authRoutes from './routes/authRoutes.js'
 import protectedRoutes from './routes/protectedRoutes.js'
+import unitRoutes from './routes/unitRoutes.js'
+import topicRoutes from './routes/topicRoutes.js'
 
 const app = express()
 
-/**
- * MIDDLEWARE GLOBAL DE SEGURIDAD Y PARSEO
- */
-
-// Helmet ayuda a asegurar la aplicación estableciendo headers HTTP
+// Middleware
 app.use(helmet())
-
-// CORS permite peticiones desde diferentes dominios
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   credentials: true
 }))
-
-// Body parser - convierte JSON en objetos JavaScript
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-/**
- * RUTAS
- */
-
-// Rutas de autenticación
+// Rutas - EN ESTE ORDEN
 app.use('/api/auth', authRoutes)
-
-// Rutas protegidas de ejemplo
 app.use('/api/protected', protectedRoutes)
+app.use('/api/units', unitRoutes)
+app.use('/api/topics', topicRoutes)
 
-/**
- * RUTA DE PRUEBA
- */
+// Health check
 app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
@@ -47,9 +33,7 @@ app.get('/health', (req, res) => {
   })
 })
 
-/**
- * MANEJO DE RUTAS NO ENCONTRADAS
- */
+// 404
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -57,9 +41,7 @@ app.use((req, res) => {
   })
 })
 
-/**
- * MANEJO GLOBAL DE ERRORES
- */
+// Error handler
 app.use((err, req, res, next) => {
   console.error('Error global:', err)
 
