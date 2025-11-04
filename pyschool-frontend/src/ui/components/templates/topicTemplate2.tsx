@@ -5,9 +5,6 @@ import { useRouter } from "next/navigation";
 import TemplateBox2 from "../molecules/templateBox2";
 import CustomButton from "../atoms/btnOthers";
 
-// =================================================================
-// CÓDIGO DE API (Esto está bien, no hay cambios)
-// =================================================================
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 // Helper para obtener el token
@@ -27,7 +24,6 @@ const getHeaders = (includeContentType = true): HeadersInit => {
   return headers;
 };
 
-// ----- Interfaces de API -----
 export interface Subtitle {
   id?: number;
   title: string;
@@ -85,12 +81,6 @@ export const createTopic = async (data: CreateTopicRequest): Promise<Topic> => {
   return result.data;
 };
 
-// =================================================================
-// 1. NUEVA FUNCIÓN HELPER PARA YOUTUBE
-// =================================================================
-/**
- * Convierte una URL de YouTube (watch?v= o youtu.be/) en una URL de embed.
- */
 const getYouTubeEmbedUrl = (url: string): string | null => {
   try {
     const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -98,15 +88,11 @@ const getYouTubeEmbedUrl = (url: string): string | null => {
     if (match && match[1]) {
       return `https://www.youtube.com/embed/${match[1]}`;
     }
-    return null; // No es una URL de YouTube válida
+    return null; 
   } catch (e) {
     return null;
   }
 };
-
-// =================================================================
-// LÓGICA DEL COMPONENTE DE PLANTILLA
-// =================================================================
 
 type ContentBlock = {
   type: 'subtitles' | 'video' | 'image' | 'audio' | 'presentation';
@@ -121,7 +107,6 @@ export default function TopicTemplate2() {
   const [topicData, setTopicData] = useState<CreateTopicRequest | null>(null);
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([]);
 
-  // Cargar datos desde localStorage (Sin cambios)
   useEffect(() => {
     const storedData = localStorage.getItem('topicData');
     if (!storedData) {
@@ -150,7 +135,6 @@ export default function TopicTemplate2() {
     setContentBlocks(blocks);
   }, [router]);
 
-  // Función de guardado (Sin cambios)
   const handleSaveTemplate = async () => {
     setSaving(true);
     setError(null);
@@ -176,9 +160,6 @@ export default function TopicTemplate2() {
     }
   };
 
-  // =================================================================
-  // 2. FUNCIÓN DE RENDERIZADO (MODIFICADA)
-  // =================================================================
   const renderPreviewBlock = (block: ContentBlock) => {
     let content;
     switch(block.type) {
@@ -200,7 +181,6 @@ export default function TopicTemplate2() {
         const embedUrl = getYouTubeEmbedUrl(videoUrl);
 
         content = (
-          // Se eliminó el <h4>Video</h4>
           // Se añadió lógica de <iframe>
           <div className="p-4 bg-gray-100 rounded-lg h-full flex flex-col">
             {embedUrl ? (
@@ -213,7 +193,6 @@ export default function TopicTemplate2() {
                 allowFullScreen
               ></iframe>
             ) : (
-              // Fallback si no es un video de YouTube
               <p className="text-sm text-gray-600 break-all">
                 (No se puede previsualizar el video): {videoUrl}
               </p>
@@ -223,19 +202,17 @@ export default function TopicTemplate2() {
         break;
       case 'image':
          content = (
-          // Se eliminó el <h4>Imagen</h4>
           <div className="p-4 bg-gray-100 rounded-lg h-full">
             <img 
               src={(block.data as MediaContent[])[0].url} 
               alt="Vista previa" 
-              className="w-full h-full object-cover rounded" // 'h-full' para que llene el espacio
+              className="w-full h-full object-cover rounded" 
               onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/300x150?text=Error+al+cargar+imagen')}
             />
           </div>
         );
         break;
       default:
-        // Se eliminó el <h4>
         content = (
           <div className="p-4 bg-gray-100 rounded-lg h-full">
             <p className="text-sm">{(block.data as MediaContent[])[0].name}</p>
@@ -243,12 +220,10 @@ export default function TopicTemplate2() {
           </div>
         );
     }
-    // 'h-full' es importante para que los bloques llenen el espacio
     return <div className="flex-1 min-h-[200px] h-full">{content}</div>;
   };
     
   return (
-    // ESTA PARTE (JSX) NO TIENE CAMBIOS
     <main
       className="bg-[#C9DDDC] min-h-screen w-full flex flex-col items-center justify-center p-8 gap-6"
       style={{ fontFamily: "Roboto, sans-serif" }}
@@ -260,14 +235,12 @@ export default function TopicTemplate2() {
         defaultLayout={layout}
         onLayoutChange={setLayout}
       >
-        {/* Children[0] */}
         {contentBlocks.length === 2 ? (
           renderPreviewBlock(contentBlocks[0])
         ) : (
           <span className="text-gray-400">Cargando...</span>
         )}
         
-        {/* Children[1] */}
         {contentBlocks.length === 2 ? (
           renderPreviewBlock(contentBlocks[1])
         ) : (

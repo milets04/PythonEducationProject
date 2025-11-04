@@ -161,39 +161,11 @@ const CreateTopic: React.FC = () => {
         { type, url: fileOrUrl, name: fileName }
       ]);
     } else {
-      // TODO: Implementar subida de archivo
       console.log('File upload not implemented yet', fileOrUrl);
       alert('Por favor, ingresa una URL en lugar de subir un archivo');
     }
   };
 
-  // Cuenta el total de elementos de contenido (multimedia)
-  const getContentCount = () => {
-    return uploadedFiles.length;
-  }
-
-  const determineTemplateName = (): string => {
-    const contentCount = getContentCount();
-    
-    // Si solo hay 1 elemento multimedia
-    if (contentCount === 1) {
-      return 'standard'; // Tu lógica: 1 elemento = pantalla completa
-    }
-    
-    // Si hay 2 elementos multimedia
-    if (contentCount === 2) {
-      // Redirige a la página de personalización
-      return 'pending-template'; // Tu lógica: 2 elementos = elegir plantilla
-    }
-    
-    // Si hay 0 elementos multimedia (solo texto)
-    if (contentCount === 0) {
-       return 'standard'; // Asumo que 0 multimedia también usa 'standard'
-    }
-
-    // Para más de 2 elementos, usar multimedia-grid (o lo que decidas)
-    return 'multimedia-grid';
-  };
 
   const handleSave = async () => {
     if (!topicInfo) {
@@ -201,7 +173,6 @@ const CreateTopic: React.FC = () => {
       return;
     }
 
-    // Validar que haya al menos contenido (esta parte ya estaba bien)
     const hasSubtitles = sections.some(s => s.subtitle.trim() || s.description.trim());
     const hasMedia = uploadedFiles.length > 0;
 
@@ -213,7 +184,6 @@ const CreateTopic: React.FC = () => {
     try {
       setSaving(true);
 
-      // Preparar subtítulos
       const subtitles: Subtitle[] = sections
         .filter(s => s.subtitle.trim() || s.description.trim())
         .map(s => ({
@@ -221,7 +191,6 @@ const CreateTopic: React.FC = () => {
           description: s.description.trim() || ''
         }));
 
-      // Agrupar archivos por tipo
       const videos: MediaContent[] = uploadedFiles
         .filter(f => f.type === 'video')
         .map(f => ({ url: f.url, name: f.name }));
@@ -238,9 +207,6 @@ const CreateTopic: React.FC = () => {
         .filter(f => f.type === 'presentation')
         .map(f => ({ url: f.url, name: f.name }));
 
-      // =================================================================
-      // 1. NUEVA LÓGICA DE CONTEO (CORREGIDA)
-      // =================================================================
       // Contamos cuántos *tipos* de contenido existen
       let contentCount = 0;
       if (subtitles.length > 0) contentCount++;
@@ -249,10 +215,8 @@ const CreateTopic: React.FC = () => {
       if (audios.length > 0) contentCount++;
       if (presentations.length > 0) contentCount++;
 
-      // =================================================================
-      // 2. NUEVA LÓGICA DE PLANTILLA (BASADA EN EL CONTEO CORREGIDO)
-      // =================================================================
-      let templateName = 'standard'; // Por defecto es 'standard'
+
+      let templateName = 'standard'; 
 
       if (contentCount === 2) {
         // Si hay 2 tipos (ej: 1 texto y 1 video), redirigir
@@ -263,13 +227,8 @@ const CreateTopic: React.FC = () => {
       }
       // Si es 1 (ej: solo texto o solo video), se queda como 'standard'
 
-      // =================================================================
-      // 3. LA LÓGICA DE GUARDADO/REDIRECCIÓN AHORA FUNCIONA
-      // =================================================================
-
       // Si hay 2 elementos, ir a página de personalización
       if (templateName === 'pending-template') {
-        // Guardar en localStorage para la página de plantillas
         localStorage.setItem('topicData', JSON.stringify({
           name: topicInfo.name,
           unitId: topicInfo.unitId,
@@ -280,16 +239,14 @@ const CreateTopic: React.FC = () => {
           presentations,
         }));
         
-        // Redirigir a página de selección de plantilla
         router.push('/topicTemplates'); 
         return;
       }
 
-      // Crear el tópico (usando la función local)
       await createTopic({
         name: topicInfo.name,
         unitId: topicInfo.unitId,
-        templateName, // 'standard' o 'multimedia-grid'
+        templateName, 
         subtitles: subtitles.length > 0 ? subtitles : undefined,
         videos: videos.length > 0 ? videos : undefined,
         images: images.length > 0 ? images : undefined,
