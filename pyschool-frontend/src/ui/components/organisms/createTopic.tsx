@@ -201,7 +201,7 @@ const CreateTopic: React.FC = () => {
       return;
     }
 
-    // Validar que haya al menos contenido
+    // Validar que haya al menos contenido (esta parte ya estaba bien)
     const hasSubtitles = sections.some(s => s.subtitle.trim() || s.description.trim());
     const hasMedia = uploadedFiles.length > 0;
 
@@ -238,7 +238,34 @@ const CreateTopic: React.FC = () => {
         .filter(f => f.type === 'presentation')
         .map(f => ({ url: f.url, name: f.name }));
 
-      const templateName = determineTemplateName();
+      // =================================================================
+      // 1. NUEVA LÓGICA DE CONTEO (CORREGIDA)
+      // =================================================================
+      // Contamos cuántos *tipos* de contenido existen
+      let contentCount = 0;
+      if (subtitles.length > 0) contentCount++;
+      if (videos.length > 0) contentCount++;
+      if (images.length > 0) contentCount++;
+      if (audios.length > 0) contentCount++;
+      if (presentations.length > 0) contentCount++;
+
+      // =================================================================
+      // 2. NUEVA LÓGICA DE PLANTILLA (BASADA EN EL CONTEO CORREGIDO)
+      // =================================================================
+      let templateName = 'standard'; // Por defecto es 'standard'
+
+      if (contentCount === 2) {
+        // Si hay 2 tipos (ej: 1 texto y 1 video), redirigir
+        templateName = 'pending-template';
+      } else if (contentCount > 2) {
+        // Si hay más de 2, usar 'multimedia-grid' (o lo que definas)
+        templateName = 'multimedia-grid';
+      }
+      // Si es 1 (ej: solo texto o solo video), se queda como 'standard'
+
+      // =================================================================
+      // 3. LA LÓGICA DE GUARDADO/REDIRECCIÓN AHORA FUNCIONA
+      // =================================================================
 
       // Si hay 2 elementos, ir a página de personalización
       if (templateName === 'pending-template') {
@@ -254,7 +281,6 @@ const CreateTopic: React.FC = () => {
         }));
         
         // Redirigir a página de selección de plantilla
-        // (Asegúrate que esta ruta sea correcta)
         router.push('/topicTemplates'); 
         return;
       }
@@ -263,7 +289,7 @@ const CreateTopic: React.FC = () => {
       await createTopic({
         name: topicInfo.name,
         unitId: topicInfo.unitId,
-        templateName,
+        templateName, // 'standard' o 'multimedia-grid'
         subtitles: subtitles.length > 0 ? subtitles : undefined,
         videos: videos.length > 0 ? videos : undefined,
         images: images.length > 0 ? images : undefined,

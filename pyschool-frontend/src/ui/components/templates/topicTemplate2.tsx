@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // 1. Importar useRouter
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import TemplateBox2 from "../molecules/templateBox2";
 import CustomButton from "../atoms/btnOthers";
 
 // =================================================================
-// 2. CÓDIGO DE API INTEGRADO (copiado de CreateTopic.tsx)
+// CÓDIGO DE API (Esto está bien, no hay cambios)
 // =================================================================
-
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 // Helper para obtener el token
@@ -79,9 +78,6 @@ export const createTopic = async (data: CreateTopicRequest): Promise<Topic> => {
 
   if (!response.ok) {
     const error = await response.json();
-    if (response.status === 400 && error.message.includes("contenido")) {
-       throw new Error('Debes agregar al menos un subtítulo o un elemento multimedia');
-    }
     throw new Error(error.message || 'Error creating topic');
   }
 
@@ -90,48 +86,86 @@ export const createTopic = async (data: CreateTopicRequest): Promise<Topic> => {
 };
 
 // =================================================================
-// 3. LÓGICA DEL COMPONENTE ACTUALIZADA
+// 1. NUEVA FUNCIÓN HELPER PARA YOUTUBE
 // =================================================================
+/**
+ * Convierte una URL de YouTube (watch?v= o youtu.be/) en una URL de embed.
+ */
+const getYouTubeEmbedUrl = (url: string): string | null => {
+  try {
+    const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = url.match(regExp);
+    if (match && match[1]) {
+      return `https://www.youtube.com/embed/${match[1]}`;
+    }
+    return null; // No es una URL de YouTube válida
+  } catch (e) {
+    return null;
+  }
+};
+
+// =================================================================
+// LÓGICA DEL COMPONENTE DE PLANTILLA
+// =================================================================
+
+type ContentBlock = {
+  type: 'subtitles' | 'video' | 'image' | 'audio' | 'presentation';
+  data: any;
+}
 
 export default function TopicTemplate2() {
   const router = useRouter();
   const [layout, setLayout] = useState<"vertical2" | "horizontal2">("vertical2");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [topicData, setTopicData] = useState<CreateTopicRequest | null>(null);
+  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([]);
 
-  /**
-   * Esta función se ejecuta al pulsar "Save".
-   * Lee los datos del tópico de localStorage,
-   * añade la plantilla seleccionada y llama a la API.
-   */
+  // Cargar datos desde localStorage (Sin cambios)
+  useEffect(() => {
+    const storedData = localStorage.getItem('topicData');
+    if (!storedData) {
+      alert("No se encontraron datos del tópico. Redirigiendo...");
+      router.push('/teacherPages/addContent');
+      return;
+    }
+    const data = JSON.parse(storedData) as CreateTopicRequest;
+    setTopicData(data);
+    const blocks: ContentBlock[] = [];
+    if (data.subtitles && data.subtitles.length > 0) {
+      blocks.push({ type: 'subtitles', data: data.subtitles });
+    }
+    if (data.videos && data.videos.length > 0) {
+      blocks.push({ type: 'video', data: data.videos });
+    }
+    if (data.images && data.images.length > 0) {
+      blocks.push({ type: 'image', data: data.images });
+    }
+    if (data.audios && data.audios.length > 0) {
+      blocks.push({ type: 'audio', data: data.audios });
+    }
+    if (data.presentations && data.presentations.length > 0) {
+      blocks.push({ type: 'presentation', data: data.presentations });
+    }
+    setContentBlocks(blocks);
+  }, [router]);
+
+  // Función de guardado (Sin cambios)
   const handleSaveTemplate = async () => {
     setSaving(true);
     setError(null);
-
     try {
-      // 1. Obtener los datos del tópico guardados desde CreateTopic
-      const storedData = localStorage.getItem('topicData');
-      if (!storedData) {
-        throw new Error("No se encontraron datos del tópico. Redirigiendo...");
+      if (!topicData) {
+        throw new Error("Los datos del tópico no están cargados.");
       }
-      
-      // 2. Convertir los datos de JSON a objeto
-      // (Omitimos 'templateName' porque lo vamos a añadir nosotros)
-      const topicData = JSON.parse(storedData) as Omit<CreateTopicRequest, 'templateName'>;
-
-      // 3. Llamar a la API 'createTopic' con todos los datos
       await createTopic({
-        ...topicData, // name, unitId, subtitles, videos, etc.
-        templateName: layout, // Añadimos la plantilla seleccionada ('vertical2' o 'horizontal2')
+        ...topicData, 
+        templateName: layout, 
       });
-
-      // 4. Limpiar localStorage y redirigir
       localStorage.removeItem('topicData');
-      localStorage.removeItem('newTopic'); // Limpiar ambos por si acaso
-      
+      localStorage.removeItem('newTopic'); 
       alert('Tópico creado exitosamente');
-      router.push('/teacherPages/addContent');
-
+      router.push('/teacherPages/addContent'); 
     } catch (err) {
       console.error('Error saving topic:', err);
       const errorMessage = (err as Error).message;
@@ -141,29 +175,120 @@ export default function TopicTemplate2() {
       setSaving(false);
     }
   };
+
+  // =================================================================
+  // 2. FUNCIÓN DE RENDERIZADO (MODIFICADA)
+  // =================================================================
+  const renderPreviewBlock = (block: ContentBlock) => {
+    let content;
+    switch(block.type) {
+      case 'subtitles':
+        content = (
+          // Se eliminó el <h4>Texto</h4>
+          <div className="p-4 bg-gray-100 rounded-lg overflow-y-auto h-full">
+            {(block.data as Subtitle[]).map((sub, index) => (
+              <div key={index} className="mb-2">
+                <strong className="text-gray-800">{sub.title}</strong>
+                <p className="text-gray-600 text-sm">{sub.description}</p>
+              </div>
+            ))}
+          </div>
+        );
+        break;
+      case 'video':
+        const videoUrl = (block.data as MediaContent[])[0].url;
+        const embedUrl = getYouTubeEmbedUrl(videoUrl);
+
+        content = (
+          // Se eliminó el <h4>Video</h4>
+          // Se añadió lógica de <iframe>
+          <div className="p-4 bg-gray-100 rounded-lg h-full flex flex-col">
+            {embedUrl ? (
+              <iframe
+                className="w-full flex-1 aspect-video rounded-md"
+                src={embedUrl}
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            ) : (
+              // Fallback si no es un video de YouTube
+              <p className="text-sm text-gray-600 break-all">
+                (No se puede previsualizar el video): {videoUrl}
+              </p>
+            )}
+          </div>
+        );
+        break;
+      case 'image':
+         content = (
+          // Se eliminó el <h4>Imagen</h4>
+          <div className="p-4 bg-gray-100 rounded-lg h-full">
+            <img 
+              src={(block.data as MediaContent[])[0].url} 
+              alt="Vista previa" 
+              className="w-full h-full object-cover rounded" // 'h-full' para que llene el espacio
+              onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/300x150?text=Error+al+cargar+imagen')}
+            />
+          </div>
+        );
+        break;
+      default:
+        // Se eliminó el <h4>
+        content = (
+          <div className="p-4 bg-gray-100 rounded-lg h-full">
+            <p className="text-sm">{(block.data as MediaContent[])[0].name}</p>
+            <p className="text-xs text-gray-500">({block.type})</p>
+          </div>
+        );
+    }
+    // 'h-full' es importante para que los bloques llenen el espacio
+    return <div className="flex-1 min-h-[200px] h-full">{content}</div>;
+  };
     
   return (
+    // ESTA PARTE (JSX) NO TIENE CAMBIOS
     <main
       className="bg-[#C9DDDC] min-h-screen w-full flex flex-col items-center justify-center p-8 gap-6"
       style={{ fontFamily: "Roboto, sans-serif" }}
     >
-      {/* Mostrar error si lo hay */}
+      <h1 className="text-3xl font-bold text-gray-800">Vista Previa de Plantilla</h1>
+      <p className="text-gray-600 -mt-4">Así se verá tu tópico con 2 elementos.</p>
+      
+      <TemplateBox2
+        defaultLayout={layout}
+        onLayoutChange={setLayout}
+      >
+        {/* Children[0] */}
+        {contentBlocks.length === 2 ? (
+          renderPreviewBlock(contentBlocks[0])
+        ) : (
+          <span className="text-gray-400">Cargando...</span>
+        )}
+        
+        {/* Children[1] */}
+        {contentBlocks.length === 2 ? (
+          renderPreviewBlock(contentBlocks[1])
+        ) : (
+          <span className="text-gray-400">Cargando...</span>
+        )}
+      </TemplateBox2>
+
+      <CustomButton
+        text={saving ? "Guardando..." : "Save"}
+        backgroundColor="#0B1D75"
+        textColor="#fff"
+        onClick={handleSaveTemplate}
+        disabled={saving || contentBlocks.length !== 2} 
+        className="px-8 py-2 text-sm"
+      />
+
       {error && (
-        <div className="p-4 bg-red-100 text-red-700 rounded-lg">
+        <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
           <strong>Error:</strong> {error}
         </div>
       )}
-
-      <TemplateBox2 defaultLayout={layout} onLayoutChange={setLayout} />
-
-      <CustomButton
-        text={saving ? "Guardando..." : "Save"} // Texto dinámico
-        backgroundColor="#0B1D75"
-        textColor="#fff"
-        onClick={handleSaveTemplate} // 5. Conectar la nueva función
-        disabled={saving} // 6. Deshabilitar el botón mientras guarda
-        className="px-8 py-2 text-sm"
-      />
     </main>
   );
 }

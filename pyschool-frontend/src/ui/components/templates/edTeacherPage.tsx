@@ -6,19 +6,13 @@ import PyContent from "@/ui/components/organisms/pyContent";
 import ModalBox from "../atoms/modalBox";
 import Input from "../atoms/input";
 
-// =================================================================
-// 1. FUNCIONES E INTERFACES DEL ANTIGUO apiService.ts INTEGRADAS
-// =================================================================
-
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-// Helper para obtener el token
 const getAuthToken = (): string | null => {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem('token');
 };
 
-// Helper para headers
 const getHeaders = (includeContentType = true): HeadersInit => {
   const headers: HeadersInit = {
     'Authorization': `Bearer ${getAuthToken()}`,
@@ -28,8 +22,6 @@ const getHeaders = (includeContentType = true): HeadersInit => {
   }
   return headers;
 };
-
-// ----- INTERFACES -----
 
 export interface Unit {
   id?: number;
@@ -87,8 +79,6 @@ export interface CreateTopicRequest {
   presentations?: MediaContent[];
 }
 
-// ----- FUNCIONES API UNIDADES -----
-
 export const createUnit = async (data: CreateUnitRequest): Promise<Unit> => {
   const response = await fetch(`${API_BASE_URL}/units`, {
     method: 'POST',
@@ -129,8 +119,6 @@ export const deleteUnit = async (id: number): Promise<void> => {
     throw new Error('Error deleting unit');
   }
 };
-
-// ----- FUNCIONES API TÓPICOS -----
 
 export const createTopic = async (data: CreateTopicRequest): Promise<Topic> => {
   const response = await fetch(`${API_BASE_URL}/topics`, {
@@ -173,10 +161,6 @@ export const deleteTopic = async (id: number): Promise<void> => {
   }
 };
 
-// =================================================================
-// 2. COMPONENTE DE LA PÁGINA (CON LA CORRECCIÓN)
-// =================================================================
-
 interface UnityWithTopics {
   id: number;
   label: string;
@@ -185,7 +169,7 @@ interface UnityWithTopics {
 
 export default function EdTeacherPage() {
   const router = useRouter();
-  const courseId = 1; // TODO: Obtener del contexto o props
+  const courseId = 1;
   
   const [unities, setUnities] = useState<UnityWithTopics[]>([]);
   const [loading, setLoading] = useState(true);
@@ -199,7 +183,6 @@ export default function EdTeacherPage() {
   
   const [selectedUnityIndex, setSelectedUnityIndex] = useState<number | null>(null);
 
-  // Cargar unidades y tópicos al montar el componente
   useEffect(() => {
     loadCourseStructure();
   }, []);
@@ -209,10 +192,8 @@ export default function EdTeacherPage() {
       setLoading(true);
       setError(null);
       
-      // 1. Obtener unidades del curso (usando la función local)
       const units: Unit[] = await getUnitsByCourse(courseId);
       
-      // 2. Para cada unidad, obtener sus tópicos (usando la función local)
       const unitiesWithTopics: UnityWithTopics[] = await Promise.all(
         units.map(async (unit: Unit) => {
           const topics: Topic[] = await getTopicsByUnit(unit.id!);
@@ -236,7 +217,6 @@ export default function EdTeacherPage() {
     }
   };
 
-  // ===== UNITY =====
   const handleAddUnity = () => {
     setShowUnityModal(true);
   };
@@ -250,7 +230,6 @@ export default function EdTeacherPage() {
         ? newUnityName.trim()
         : `Unity ${position}: ${newUnityName.trim()}`;
 
-      // Usando la función local
       const newUnit = await createUnit({
         name: unitName,
         courseId: courseId,
@@ -293,7 +272,6 @@ export default function EdTeacherPage() {
     }
   };
 
-  // ===== TOPIC =====
   const handleAddTopic = (unityIndex: number) => {
     setSelectedUnityIndex(unityIndex);
     setShowTopicModal(true);
