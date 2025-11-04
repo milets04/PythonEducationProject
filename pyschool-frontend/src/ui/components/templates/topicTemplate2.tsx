@@ -6,7 +6,7 @@ import CustomButton from "../atoms/btnOthers";
 
 export default function TopicTemplate2() {
   const [layout, setLayout] = useState<"vertical2" | "horizontal2">("vertical2");
-
+    
   return (
     <main
       className="bg-[#C9DDDC] min-h-screen w-full flex flex-col items-center justify-center p-8 gap-6"

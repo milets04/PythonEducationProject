@@ -3,7 +3,7 @@ import { Button } from '@/ui/components/atoms/button'; // tu botón reutilizable
 
 interface UploadInputProps {
   label: string;
-  onUpload: (file: File | null) => void;
+  onUpload: (fileOrURrl: File | string | null) => void;
 }
 
 const UploadInput: React.FC<UploadInputProps> = ({ label, onUpload }) => {
@@ -25,9 +25,34 @@ const UploadInput: React.FC<UploadInputProps> = ({ label, onUpload }) => {
     }
   };
 
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value.trim();
+    setFileName(url);
+    onUpload(url || null);
+  };
+
   return (
     <div className="w-full">
       <label className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
+      {label === "Videos" ? (
+        //URL para videos
+        <div className="flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 bg-white">
+        <input
+          type="url"
+          value={fileName}
+          onChange={handleUrlChange}
+          placeholder="Enter video URL (e.g., https://youtu.be/...)"
+          className="w-full text-sm text-gray-700 bg-transparent focus:outline-none"
+        />
+        <Button
+          type="button"
+          onClick={() => setFileName("")}
+          className="bg-gray-100 text-gray-600 hover:bg-gray-200 ml-2"
+        >
+          Clear
+        </Button>
+      </div>
+      ) : (
       <div className="flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 bg-white">
         <span className="text-gray-500 text-sm truncate w-2/3">{fileName || "No file chosen"}</span>
         <input
@@ -36,9 +61,7 @@ const UploadInput: React.FC<UploadInputProps> = ({ label, onUpload }) => {
           onChange={handleChange}
           className="hidden"
           accept={
-            label === "Videos"
-              ? "video/*"
-              : label === "Images"
+              label === "Images"
               ? "image/*"
               : label === "Audio"
               ? "audio/*"
@@ -55,6 +78,7 @@ const UploadInput: React.FC<UploadInputProps> = ({ label, onUpload }) => {
           {fileName ? "Change" : "Upload"}
         </Button>
       </div>
+      )}
     </div>
   );
 };

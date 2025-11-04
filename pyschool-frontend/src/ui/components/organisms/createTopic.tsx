@@ -17,6 +17,7 @@ const CreateTopic: React.FC = () => {
     { id: Date.now(), subtitle: '', description: '' },
   ]);
 
+
   const handleChange = (
     id: number,
     field: keyof TopicSection,
@@ -38,9 +39,17 @@ const CreateTopic: React.FC = () => {
     setSections((prev) => prev.filter((s) => s.id !== id));
   };
 
-  const handleUpload = (file: File | null) => {
-    console.log('Archivo seleccionado:', file);
+  const handleUpload = (fileOrUrl: File | string | null) => {
+    console.log('Archivo seleccionado:', fileOrUrl);
   };
+
+   /*logica 2 archivos
+  const handleSave = () => {
+    if (uploadedFiles.length >= 2){
+      localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
+      router.push('/TopicTemplate2')
+    }
+  }*/
 
   return (
     <div className="min-h-screen  bg-gradient-to-br bg-fondo flex items-center p-4">
