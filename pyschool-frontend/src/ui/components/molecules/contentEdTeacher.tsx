@@ -12,7 +12,9 @@ interface ContentEdTeacherProps {
   onAddUnity?: () => void;
   onAddTopic?: (unityIndex: number) => void;
   onEdit?: (type: "unity" | "topic") => void;
-  onDelete?: (type: "unity" | "topic") => void;
+  // 1. Reemplazamos 'onDelete' con dos props específicas
+  onDeleteUnity?: (unityIndex: number) => void;
+  onDeleteTopic?: (unityIndex: number, topicIndex: number) => void;
 }
 
 const ContentEdTeacher: React.FC<ContentEdTeacherProps> = ({
@@ -20,22 +22,27 @@ const ContentEdTeacher: React.FC<ContentEdTeacherProps> = ({
   onAddUnity,
   onAddTopic,
   onEdit,
-  onDelete,
+  // 2. Recibimos las nuevas props
+  onDeleteUnity,
+  onDeleteTopic,
 }) => {
   return (
     <div className="w-full bg-white rounded-xl shadow-md p-6 flex flex-col gap-2 max-w-4xl mx-auto">
+      {/* 'index' aquí es el 'unityIndex' */}
       {unities.map((unity, index) => (
         <div key={index} className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
             <DropDownMenu
               label={unity.label}
-              items={unity.topics.map((topic) => ({
+              // 3. Añadimos 'topicIndex' al map para poder pasarlo
+              items={unity.topics.map((topic, topicIndex) => ({
                 label: topic.label,
                 onClick: () => onEdit?.("topic"),
                 actions: (
                   <IconsEdTeacher
                     onEdit={() => onEdit?.("topic")}
-                    onDelete={() => onDelete?.("topic")}
+                    // 4. Usamos 'onDeleteTopic' con ambos índices
+                    onDelete={() => onDeleteTopic?.(index, topicIndex)}
                     classNameEdit="text-blue-900"
                     classNameDelete="text-blue-900"
                   />
@@ -46,7 +53,8 @@ const ContentEdTeacher: React.FC<ContentEdTeacherProps> = ({
             {/* Íconos para cada unidad */}
             <IconsEdTeacher
               onEdit={() => onEdit?.("unity")}
-              onDelete={() => onDelete?.("unity")}
+              // 5. Usamos 'onDeleteUnity' con el 'unityIndex'
+              onDelete={() => onDeleteUnity?.(index)}
               classNameEdit="text-blue-900"
               classNameDelete="text-blue-900"
             />

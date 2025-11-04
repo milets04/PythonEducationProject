@@ -9,13 +9,16 @@ interface PyContentProps {
   courseTitle?: string;
   contentTitle?: string;
   unities: {
+    id?: number;
     label: string;
-    topics: { label: string }[];
+    topics: { id?: number; label: string }[];
   }[];
   onAddUnity?: () => void;
-  onAddTopic?: (unityIndex: number) => void; // ← Cambiado para recibir el índice
+  onAddTopic?: (unityIndex: number) => void;
   onEdit?: (type: "unity" | "topic") => void;
-  onDelete?: (type: "unity" | "topic") => void;
+  // 1. Renombramos 'onDelete' a 'onDeleteUnity' para claridad
+  onDeleteUnity?: (unityIndex: number) => void; 
+  onDeleteTopic?: (unityIndex: number, topicIndex: number) => void;
 }
 
 const PyContent: React.FC<PyContentProps> = ({
@@ -25,7 +28,9 @@ const PyContent: React.FC<PyContentProps> = ({
   onAddUnity,
   onAddTopic,
   onEdit,
-  onDelete,
+  // 2. Usamos la prop renombrada
+  onDeleteUnity, 
+  onDeleteTopic,
 }) => {
   return (
     <div className="flex flex-col w-full h-full bg-[#C9DDDC] p-6 rounded-lg">
@@ -49,7 +54,9 @@ const PyContent: React.FC<PyContentProps> = ({
           onAddUnity={onAddUnity}
           onAddTopic={onAddTopic}
           onEdit={onEdit}
-          onDelete={onDelete}
+          // 3. Pasamos las props correctas al hijo
+          onDeleteUnity={onDeleteUnity} 
+          onDeleteTopic={onDeleteTopic}
         />
       </div>
     </div>

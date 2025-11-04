@@ -1,50 +1,296 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import PyContent from "@/ui/components/organisms/pyContent";
 import ModalBox from "../atoms/modalBox";
 import Input from "../atoms/input";
 
+// =================================================================
+// 1. FUNCIONES E INTERFACES DEL ANTIGUO apiService.ts INTEGRADAS
+// =================================================================
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+// Helper para obtener el token
+const getAuthToken = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('token');
+};
+
+// Helper para headers
+const getHeaders = (includeContentType = true): HeadersInit => {
+  const headers: HeadersInit = {
+    'Authorization': `Bearer ${getAuthToken()}`,
+  };
+  if (includeContentType) {
+    headers['Content-Type'] = 'application/json';
+  }
+  return headers;
+};
+
+// ----- INTERFACES -----
+
+export interface Unit {
+  id?: number;
+  name: string;
+  courseId: number;
+  position?: number;
+  topicCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateUnitRequest {
+  name: string;
+  courseId: number;
+  position?: number;
+}
+
+export interface Subtitle {
+  id?: number;
+  title: string;
+  description: string;
+}
+
+export interface MediaContent {
+  id?: number;
+  url: string;
+  name: string;
+  type?: string;
+}
+
+export interface Topic {
+  id?: number;
+  name: string;
+  unitId: number;
+  templateName: string;
+  position?: number;
+  subtitles?: Subtitle[];
+  videos?: MediaContent[];
+  images?: MediaContent[];
+  audios?: MediaContent[];
+  presentations?: MediaContent[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateTopicRequest {
+  name: string;
+  unitId: number;
+  templateName: string;
+  position?: number;
+  subtitles?: Subtitle[];
+  videos?: MediaContent[];
+  images?: MediaContent[];
+  audios?: MediaContent[];
+  presentations?: MediaContent[];
+}
+
+// ----- FUNCIONES API UNIDADES -----
+
+export const createUnit = async (data: CreateUnitRequest): Promise<Unit> => {
+  const response = await fetch(`${API_BASE_URL}/units`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Error creating unit');
+  }
+
+  const result = await response.json();
+  return result.data;
+};
+
+export const getUnitsByCourse = async (courseId: number): Promise<Unit[]> => {
+  const response = await fetch(`${API_BASE_URL}/units/course/${courseId}`, {
+    method: 'GET',
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error('Error fetching units');
+  }
+
+  const result = await response.json();
+  return result.data;
+};
+
+export const deleteUnit = async (id: number): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/units/${id}`, {
+    method: 'DELETE',
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error('Error deleting unit');
+  }
+};
+
+// ----- FUNCIONES API TÓPICOS -----
+
+export const createTopic = async (data: CreateTopicRequest): Promise<Topic> => {
+  const response = await fetch(`${API_BASE_URL}/topics`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Error creating topic');
+  }
+
+  const result = await response.json();
+  return result.data;
+};
+
+export const getTopicsByUnit = async (unitId: number): Promise<Topic[]> => {
+  const response = await fetch(`${API_BASE_URL}/topics/unit/${unitId}`, {
+    method: 'GET',
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error('Error fetching topics');
+  }
+
+  const result = await response.json();
+  return result.data;
+};
+
+export const deleteTopic = async (id: number): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/topics/${id}`, {
+    method: 'DELETE',
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error('Error deleting topic');
+  }
+};
+
+// =================================================================
+// 2. COMPONENTE DE LA PÁGINA (CON LA CORRECCIÓN)
+// =================================================================
+
+interface UnityWithTopics {
+  id: number;
+  label: string;
+  topics: { id: number; label: string }[];
+}
+
 export default function EdTeacherPage() {
   const router = useRouter();
+  const courseId = 1; // TODO: Obtener del contexto o props
   
-  // Sin unidades por defecto
-  const [unities, setUnities] = useState<Array<{ label: string; topics: { label: string }[] }>>([]);
+  const [unities, setUnities] = useState<UnityWithTopics[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // Modales
   const [showUnityModal, setShowUnityModal] = useState(false);
   const [showTopicModal, setShowTopicModal] = useState(false);
   
-  // Inputs
   const [newUnityName, setNewUnityName] = useState("");
   const [newTopicName, setNewTopicName] = useState("");
   
-  // Para saber a qué unidad agregar el topic
   const [selectedUnityIndex, setSelectedUnityIndex] = useState<number | null>(null);
+
+  // Cargar unidades y tópicos al montar el componente
+  useEffect(() => {
+    loadCourseStructure();
+  }, []);
+
+  const loadCourseStructure = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // 1. Obtener unidades del curso (usando la función local)
+      const units: Unit[] = await getUnitsByCourse(courseId);
+      
+      // 2. Para cada unidad, obtener sus tópicos (usando la función local)
+      const unitiesWithTopics: UnityWithTopics[] = await Promise.all(
+        units.map(async (unit: Unit) => {
+          const topics: Topic[] = await getTopicsByUnit(unit.id!);
+          return {
+            id: unit.id!,
+            label: unit.name,
+            topics: topics.map((topic: Topic) => ({
+              id: topic.id!,
+              label: topic.name
+            }))
+          };
+        })
+      );
+      
+      setUnities(unitiesWithTopics);
+    } catch (err) {
+      console.error('Error loading course structure:', err);
+      setError('Error al cargar el contenido del curso');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // ===== UNITY =====
   const handleAddUnity = () => {
     setShowUnityModal(true);
   };
 
-  const handleSaveUnity = () => {
+  const handleSaveUnity = async () => {
     if (newUnityName.trim() === "") return;
     
-    const nextUnityNumber = unities.length + 1;
-    const formattedName = newUnityName.trim().toLowerCase().startsWith("unity")
-      ? newUnityName.trim()
-      : `Unity ${nextUnityNumber}: ${newUnityName.trim()}`;
+    try {
+      const position = unities.length + 1;
+      const unitName = newUnityName.trim().toLowerCase().startsWith("unity")
+        ? newUnityName.trim()
+        : `Unity ${position}: ${newUnityName.trim()}`;
 
-    const newUnity = { label: formattedName, topics: [] };
-    setUnities([...unities, newUnity]);
-    setNewUnityName("");
-    setShowUnityModal(false);
+      // Usando la función local
+      const newUnit = await createUnit({
+        name: unitName,
+        courseId: courseId,
+        position: position
+      });
+
+      setUnities([...unities, {
+        id: newUnit.id!,
+        label: newUnit.name,
+        topics: []
+      }]);
+      
+      setNewUnityName("");
+      setShowUnityModal(false);
+    } catch (err) {
+      console.error('Error creating unity:', err);
+      alert('Error al crear la unidad');
+    }
   };
 
   const handleCancelUnity = () => {
     setShowUnityModal(false);
     setNewUnityName("");
+  };
+
+  const handleDeleteUnity = async (unityIndex: number) => {
+    const unity = unities[unityIndex];
+    
+    if (!confirm(`¿Estás seguro de eliminar "${unity.label}" y todos sus tópicos?`)) {
+      return;
+    }
+
+    try {
+      // Usando la función local
+      await deleteUnit(unity.id);
+      setUnities(unities.filter((_, index) => index !== unityIndex));
+    } catch (err) {
+      console.error('Error deleting unity:', err);
+      alert('Error al eliminar la unidad');
+    }
   };
 
   // ===== TOPIC =====
@@ -56,16 +302,17 @@ export default function EdTeacherPage() {
   const handleSaveTopic = () => {
     if (newTopicName.trim() === "" || selectedUnityIndex === null) return;
 
-    const updatedUnities = [...unities];
-    const currentTopics = updatedUnities[selectedUnityIndex].topics;
-    const nextTopicNumber = currentTopics.length + 1;
-    
-    // Formato: "1.1 - Topic Name"
+    const unity = unities[selectedUnityIndex];
+    const topicCount = unity.topics.length + 1;
     const unityNumber = selectedUnityIndex + 1;
-    const formattedTopicName = `${unityNumber}.${nextTopicNumber} - ${newTopicName.trim()}`;
+    const formattedTopicName = `${unityNumber}.${topicCount} - ${newTopicName.trim()}`;
 
-    updatedUnities[selectedUnityIndex].topics.push({ label: formattedTopicName });
-    setUnities(updatedUnities);
+    // Guardar información del tópico en localStorage para usar en createTopic
+    localStorage.setItem('newTopic', JSON.stringify({
+      name: formattedTopicName,
+      unitId: unity.id,
+      unitIndex: selectedUnityIndex
+    }));
     
     setNewTopicName("");
     setShowTopicModal(false);
@@ -81,14 +328,50 @@ export default function EdTeacherPage() {
     setSelectedUnityIndex(null);
   };
 
-  // ===== EDIT/DELETE (por implementar) =====
-  const handleEdit = (type: "unity" | "topic") => {
-    console.log('Botón Editar presionado para:', type);
+  const handleDeleteTopic = async (unityIndex: number, topicIndex: number) => {
+    const unity = unities[unityIndex];
+    const topic = unity.topics[topicIndex];
+    
+    if (!confirm(`¿Estás seguro de eliminar "${topic.label}"?`)) {
+      return;
+    }
+
+    try {
+      // Usando la función local
+      await deleteTopic(topic.id);
+      
+      const updatedUnities = [...unities];
+      updatedUnities[unityIndex].topics = updatedUnities[unityIndex].topics.filter(
+        (_, index) => index !== topicIndex
+      );
+      setUnities(updatedUnities);
+    } catch (err) {
+      console.error('Error deleting topic:', err);
+      alert('Error al eliminar el tópico');
+    }
   };
 
-  const handleDelete = (type: "unity" | "topic") => {
-    console.log('Botón Eliminar presionado para:', type);
+  // ===== EDIT (por implementar) =====
+  const handleEdit = (type: "unity" | "topic") => {
+    console.log('Botón Editar presionado para:', type);
+    // TODO: Implementar edición
   };
+
+  if (loading) {
+    return (
+      <main className="flex-1 bg-[#C9DDDC] p-8 flex items-center justify-center">
+        <div className="text-lg">Cargando...</div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="flex-1 bg-[#C9DDDC] p-8 flex items-center justify-center">
+        <div className="text-red-600">{error}</div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex-1 bg-[#C9DDDC] p-8 overflow-y-auto">
@@ -98,7 +381,9 @@ export default function EdTeacherPage() {
           onAddUnity={handleAddUnity}
           onAddTopic={handleAddTopic}
           onEdit={handleEdit}
-          onDelete={handleDelete}
+          // 3. AQUÍ ESTÁ LA CORRECCIÓN: 'onDelete' ahora es 'onDeleteUnity'
+          onDeleteUnity={handleDeleteUnity}
+          onDeleteTopic={handleDeleteTopic}
         />
       </div>
 
