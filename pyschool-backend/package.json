@@ -6,7 +6,8 @@
     "dev": "nodemon server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",
@@ -23,16 +24,17 @@
     "prisma": "^6.17.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.6",
     "conventional-changelog-conventionalcommits": "^9.1.0",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
     "nodemon": "^3.1.10",
     "semantic-release": "^24.2.9",
-    "standard": "^17.1.2"
-  },
-  "eslintConfig": {
-    "extends": "standard"
+    "standard": "^17.1.2",
+    "typescript-eslint": "^8.46.3"
   },
   "name": "pyson-backend",
   "version": "1.0.0",

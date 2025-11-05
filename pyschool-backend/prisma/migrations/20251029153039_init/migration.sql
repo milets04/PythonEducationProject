@@ -29,6 +29,11 @@ CREATE TABLE "users" (
     "passwordHash" TEXT NOT NULL,
     "roleId" INTEGER NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "isApproved" BOOLEAN NOT NULL DEFAULT false,
+    "approvedAt" TIMESTAMP(3),
+    "approvedBy" INTEGER,
+    "rejectedAt" TIMESTAMP(3),
+    "rejectedBy" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -243,6 +248,12 @@ CREATE UNIQUE INDEX "students_userId_key" ON "students"("userId");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "users" ADD CONSTRAINT "users_approvedBy_fkey" FOREIGN KEY ("approvedBy") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "users" ADD CONSTRAINT "users_rejectedBy_fkey" FOREIGN KEY ("rejectedBy") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "userCourses" ADD CONSTRAINT "userCourses_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
