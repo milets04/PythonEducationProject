@@ -87,7 +87,7 @@ export const getTopicsByUnit = async (unitId: number): Promise<Topic[]> => {
 // --- Helper de YouTube ---
 const getYouTubeEmbedUrl = (url: string): string | null => {
   try {
-    const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const match = url.match(regExp);
     if (match && match[1]) {
       return `https://www.youtube.com/embed/${match[1]}`;
@@ -105,13 +105,15 @@ const RenderContentBlock = ({ type, data }: { type: string, data: any }) => {
   switch(type) {
     case 'subtitles':
       return (
-        <div className="p-4 rounded-lg overflow-y-auto">
-          {(data as Subtitle[]).map((sub, index) => (
-            <div key={index} className="mb-4">
-              <h3 className="text-xl font-bold text-gray-800 mb-1">{sub.title}</h3>
-              <p className="text-gray-700 whitespace-pre-wrap">{sub.description}</p>
-            </div>
-          ))}
+        <div className="p-4 rounded-lg h-full flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto">
+            {(data as Subtitle[]).map((sub, index) => (
+              <div key={index} className="mb-4">
+                <h3 className="text-xl font-bold text-gray-800 mb-1">{sub.title}</h3>
+                <p className="text-gray-700 whitespace-pre-wrap">{sub.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       );
     
@@ -119,10 +121,15 @@ const RenderContentBlock = ({ type, data }: { type: string, data: any }) => {
       const video = (data as MediaContent[])[0];
       const embedUrl = getYouTubeEmbedUrl(video.url);
       return (
-        <div className="p-4 rounded-lg h-full flex flex-col items-center">
+        <div className="p-4 rounded-lg h-full flex items-center justify-center">
           {embedUrl ? (
             <iframe
-              className="w-full aspect-video rounded-md shadow-lg"
+              className="rounded-md shadow-lg max-w-full max-h-full"
+              style={{
+                aspectRatio: '16/9',
+                width: 'auto',
+                height: 'auto'
+              }}
               src={embedUrl}
               title={video.name}
               frameBorder="0"
@@ -138,22 +145,22 @@ const RenderContentBlock = ({ type, data }: { type: string, data: any }) => {
       
     case 'image':
       return (
-        <div className="p-4 rounded-lg h-full relative w-full">
-          <Image 
-            src={(data as MediaContent[])[0].url} 
-            alt={(data as MediaContent[])[0].name || 'Imagen del tópico'}
-            layout="responsive"
-            width={16}
-            height={9}
-            objectFit="contain"
-            className="rounded-lg shadow-lg"
-          />
+        <div className="p-4 rounded-lg h-full flex items-center justify-center">
+          <div className="relative w-full h-full">
+            <Image 
+              src={(data as MediaContent[])[0].url} 
+              alt={(data as MediaContent[])[0].name || 'Imagen del tópico'}
+              layout="fill"
+              objectFit="contain"
+              className="rounded-lg shadow-lg"
+            />
+          </div>
         </div>
       );
       
     default:
       return (
-        <div className="p-4 rounded-lg h-full">
+        <div className="p-4 rounded-lg h-full flex items-center justify-center">
           <p className="text-sm">Contenido '{type}' no soportado aún.</p>
         </div>
       );
@@ -177,25 +184,25 @@ const RenderTopicContent = ({ topic }: { topic: Topic }) => {
   switch (topic.templateName) {
     case 'vertical2':
       return (
-        <div className="flex-1 flex flex-col gap-4 overflow-y-auto">
-          <div className="flex-1 min-h-[300px]">{blocks[0]}</div>
-          <div className="flex-1 min-h-[300px]">{blocks[1]}</div>
+        <div className="h-full flex flex-col gap-4">
+          <div className="flex-1 min-h-0 overflow-hidden">{blocks[0]}</div>
+          <div className="flex-1 min-h-0 overflow-hidden">{blocks[1]}</div>
         </div>
       );
     
     case 'horizontal2':
       return (
-        <div className="flex-1 flex flex-row gap-4 overflow-y-auto">
-          <div className="flex-1 min-h-[300px]">{blocks[0]}</div>
-          <div className="flex-1 min-h-[300px]">{blocks[1]}</div>
+        <div className="h-full flex flex-row gap-4">
+          <div className="flex-1 min-w-0 overflow-hidden">{blocks[0]}</div>
+          <div className="flex-1 min-w-0 overflow-hidden">{blocks[1]}</div>
         </div>
       );
     
     case 'multimedia-grid':
       return (
-        <div className="flex-1 grid grid-cols-2 gap-4 overflow-y-auto">
+        <div className="h-full grid grid-cols-2 gap-4">
           {blocks.map((block, index) => (
-            <div key={index} className="min-h-[300px]">{block}</div>
+            <div key={index} className="min-h-0 overflow-hidden">{block}</div>
           ))}
         </div>
       );
@@ -204,9 +211,11 @@ const RenderTopicContent = ({ topic }: { topic: Topic }) => {
     default:
       // Un solo bloque de contenido, o múltiples en una sola columna
       return (
-        <div className="flex-1 flex flex-col gap-4 overflow-y-auto">
+        <div className="h-full flex flex-col gap-4">
           {blocks.map((block, index) => (
-            <div key={index}>{block}</div>
+            <div key={index} className={blocks.length === 1 ? "h-full" : "flex-1 min-h-0 overflow-hidden"}>
+              {block}
+            </div>
           ))}
         </div>
       );
@@ -303,9 +312,9 @@ export default function CourseView() {
   }
 
   return (
-    <main className="flex-1 flex flex-col" style={{ backgroundColor: '#C9DDDC' }}>
+    <main className="flex-1 flex flex-col overflow-hidden" style={{ backgroundColor: '#C9DDDC' }}>
       
-      <div className="px-6 py-4">
+      <div className="px-6 py-4 flex-shrink-0">
         <UnitySelector
           value={currentUnit?.id?.toString() || ""}
           options={unitOptions}
@@ -313,10 +322,10 @@ export default function CourseView() {
         />
       </div>
 
-      <div className="flex-1 px-6 pb-6 overflow-auto">
+      <div className="flex-1 px-6 pb-6 min-h-0">
         <div className="bg-white rounded-lg shadow-sm h-full p-6 flex flex-col">
           
-          <div className="flex flex-row justify-between items-center mb-4">
+          <div className="flex flex-row justify-between items-center mb-4 flex-shrink-0">
             <h2 className="text-2xl font-bold whitespace-nowrap">
               {currentTopic ? currentTopic.name : (currentUnit ? "Esta unidad no tiene tópicos" : "Curso vacío")}
             </h2>
@@ -330,7 +339,7 @@ export default function CourseView() {
               )}
           </div>
           
-          <div className="bg-gray-100 flex-1 rounded-lg overflow-y-auto p-2 md:p-4">
+          <div className="bg-gray-100 flex-1 rounded-lg overflow-hidden p-2 md:p-4 min-h-0">
             {currentTopic ? (
               <RenderTopicContent topic={currentTopic} />
             ) : (
