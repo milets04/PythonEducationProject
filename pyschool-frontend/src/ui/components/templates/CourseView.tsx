@@ -87,7 +87,7 @@ export const getTopicsByUnit = async (unitId: number): Promise<Topic[]> => {
 // --- Helper de YouTube ---
 const getYouTubeEmbedUrl = (url: string): string | null => {
   try {
-    const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const match = url.match(regExp);
     if (match && match[1]) {
       return `https://www.youtube.com/embed/${match[1]}`;
@@ -101,7 +101,7 @@ const getYouTubeEmbedUrl = (url: string): string | null => {
 /**
  * Renderiza un bloque de contenido individual (texto, video, etc.)
  */
-const RenderContentBlock = ({ type, data }: { type: string, data: any }) => {
+const RenderContentBlock = ({ type, data }: { type: string, data: Subtitle[] | MediaContent[] }) => {
   switch(type) {
     case 'subtitles':
       return (
@@ -161,7 +161,7 @@ const RenderContentBlock = ({ type, data }: { type: string, data: any }) => {
     default:
       return (
         <div className="p-4 rounded-lg h-full flex items-center justify-center">
-          <p className="text-sm">Contenido '{type}' no soportado aún.</p>
+          <p className="text-sm">Contenido {type} no soportado aún.</p>
         </div>
       );
   }
