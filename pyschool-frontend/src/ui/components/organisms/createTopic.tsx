@@ -68,7 +68,7 @@ export interface CreateTopicRequest {
 }
 
 // ----- Función de API -----
-export const createTopic = async (data: CreateTopicRequest): Promise<Topic> => {
+export const callCreateTopicApi = async (data: CreateTopicRequest): Promise<Topic> => { 
   const response = await fetch(`${API_BASE_URL}/topics`, {
     method: 'POST',
     headers: getHeaders(),
@@ -243,7 +243,7 @@ const CreateTopic: React.FC = () => {
         return;
       }
 
-      await createTopic({
+      await callCreateTopicApi({
         name: topicInfo.name,
         unitId: topicInfo.unitId,
         templateName, 
