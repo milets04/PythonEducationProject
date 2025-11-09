@@ -109,14 +109,14 @@ export const update = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Unidad actualizada exitosamente',
+      message: 'Unit updated succesfully',
       data: unit
     })
   } catch (error) {
     console.error('Update unit error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error al actualizar la unidad'
+      message: error.message || 'Error at updating unit'
     })
   }
 }
@@ -136,7 +136,7 @@ export const remove = async (req, res) => {
     console.error('Delete unit error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error al eliminar la unidad'
+      message: error.message || 'Error at updating unit'
     })
   }
 }
