@@ -1,10 +1,12 @@
 "use client";
 
-import React from 'react';
-import LandingpageTemplate from '@/ui/components/templates/landingpageTemplate';
+import React from "react";
+import LandingpageTemplate from "@/ui/components/templates/landingpageTemplate";
 
-export default function Page(){
+export default function Page() {
   return (
-    <LandingpageTemplate/>
+    <div className="min-h-screen bg-[#C9DDDC] flex items-center justify-center">
+      <LandingpageTemplate />
+    </div>
   );
 }
