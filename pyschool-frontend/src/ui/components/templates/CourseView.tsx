@@ -2,7 +2,6 @@
 
 import NavegationArrows from "@/ui/components/atoms/navegationArrows";
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import UnitySelector, { UnityOption } from "@/ui/components/atoms/unitySelector";
 
 
@@ -98,6 +97,61 @@ const getYouTubeEmbedUrl = (url: string): string | null => {
   }
 };
 
+// --- Helper de Canva ---
+const getCanvaEmbedUrl = (url: string): string | null => {
+  try {
+    const designMatch = url.match(/canva\.com\/design\/([a-zA-Z0-9_-]+)/);
+    if (designMatch && designMatch[1]) {
+      return `https://www.canva.com/design/${designMatch[1]}/view?embed`;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+// --- Helper de ImgBB ---
+const getImgbbDirectUrl = (url: string): string | null => {
+  try {
+    if (/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(url)) {
+      return url;
+    }
+    const imgbbMatch = url.match(/ibb\.co\/([a-zA-Z0-9]+)/);
+    if (imgbbMatch && imgbbMatch[1]) {
+      return `https://i.ibb.co/${imgbbMatch[1]}.png`;
+    }
+    return url;
+  } catch {
+    return null;
+  }
+};
+
+// --- Helper de Audio ---
+const getAudioEmbedUrl = (url: string): { type: 'soundcloud' | 'vocaroo' | 'direct'; url: string } | null => {
+  try {
+    if (url.includes('soundcloud.com')) {
+      return {
+        type: 'soundcloud',
+        url: `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`
+      };
+    }
+    // Vocaroo puede ser voca.ro o vocaroo.com
+    const vocarooMatch = url.match(/(?:voca\.ro|vocaroo\.com)\/([a-zA-Z0-9]+)/);
+    if (vocarooMatch && vocarooMatch[1]) {
+      return {
+        type: 'vocaroo',
+        url: `https://vocaroo.com/embed/${vocarooMatch[1]}`
+      };
+    }
+    if (/\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(url)) {
+      return { type: 'direct', url: url };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
 /**
  * Renderiza un bloque de contenido individual (texto, video, etc.)
  */
@@ -125,11 +179,7 @@ const RenderContentBlock = ({ type, data }: { type: string, data: Subtitle[] | M
           {embedUrl ? (
             <iframe
               className="rounded-md shadow-lg max-w-full max-h-full"
-              style={{
-                aspectRatio: '16/9',
-                width: 'auto',
-                height: 'auto'
-              }}
+              style={{ aspectRatio: '16/9', width: 'auto', height: 'auto' }}
               src={embedUrl}
               title={video.name}
               frameBorder="0"
@@ -143,25 +193,92 @@ const RenderContentBlock = ({ type, data }: { type: string, data: Subtitle[] | M
       );
     }
       
-    case 'image':
+    case 'image': {
+      const image = (data as MediaContent[])[0];
+      const directUrl = getImgbbDirectUrl(image.url);
       return (
         <div className="p-4 rounded-lg h-full flex items-center justify-center">
-          <div className="relative w-full h-full">
-            <Image 
-              src={(data as MediaContent[])[0].url} 
-              alt={(data as MediaContent[])[0].name || 'Imagen del tópico'}
-              layout="fill"
-              objectFit="contain"
-              className="rounded-lg shadow-lg"
-            />
+          <div className="relative w-full h-full flex items-center justify-center">
+            {directUrl ? (
+              <img 
+                src={directUrl} 
+                alt={image.name || 'Imagen del tópico'}
+                className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/300x150?text=Error+al+cargar+imagen';
+                  (e.currentTarget as HTMLImageElement).onerror = null;
+                }}
+              />
+            ) : (
+              <p className="text-sm text-gray-600">No se puede mostrar la imagen</p>
+            )}
           </div>
         </div>
       );
+    }
+    
+    case 'audio': {
+      const audio = (data as MediaContent[])[0];
+      const audioEmbed = getAudioEmbedUrl(audio.url);
+      return (
+        <div className="p-4 rounded-lg h-full flex items-center justify-center">
+          {audioEmbed ? (
+            audioEmbed.type === 'direct' ? (
+              <audio controls className="w-full max-w-md">
+                <source src={audioEmbed.url} />
+                Tu navegador no soporta el elemento de audio.
+              </audio>
+            ) : (
+              <iframe
+                className="w-full max-w-md rounded-md shadow-lg"
+                height="166"
+                src={audioEmbed.url}
+                title={audio.name}
+                frameBorder="0"
+                allow="autoplay"
+              ></iframe>
+            )
+          ) : (
+            <p className="text-sm text-gray-600">Audio no soportado: {audio.url}</p>
+          )}
+        </div>
+      );
+    }
+    
+    case 'presentation': {
+      const presentation = (data as MediaContent[])[0];
+      const embedUrl = getCanvaEmbedUrl(presentation.url);
+      return (
+        <div className="p-4 rounded-lg h-full flex items-center justify-center">
+          {embedUrl ? (
+            <iframe
+              className="w-full h-full rounded-md shadow-lg"
+              src={embedUrl}
+              title={presentation.name}
+              frameBorder="0"
+              allowFullScreen
+            ></iframe>
+          ) : (
+            <div className="text-center">
+              <p className="text-sm text-gray-600 mb-2">Vista previa de presentación</p>
+              <a 
+                href={presentation.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline text-sm break-all"
+              >
+                Abrir presentación en nueva pestaña
+              </a>
+            </div>
+          )}
+        </div>
+      );
+    }
       
     default:
       return (
         <div className="p-4 rounded-lg h-full flex items-center justify-center">
-          <p className="text-sm">Contenido {type} no soportado aún.</p>
+          <p className="text-sm">Contenido '{type}' no soportado aún.</p>
         </div>
       );
   }
@@ -178,6 +295,12 @@ const RenderTopicContent = ({ topic }: { topic: Topic }) => {
   }
   if (topic.images && topic.images.length > 0) {
     blocks.push(<RenderContentBlock key="image" type="image" data={topic.images} />);
+  }
+  if (topic.audios && topic.audios.length > 0) {
+    blocks.push(<RenderContentBlock key="audio" type="audio" data={topic.audios} />);
+  }
+  if (topic.presentations && topic.presentations.length > 0) {
+    blocks.push(<RenderContentBlock key="presentation" type="presentation" data={topic.presentations} />);
   }
 
   // 2. Renderizar según la plantilla
