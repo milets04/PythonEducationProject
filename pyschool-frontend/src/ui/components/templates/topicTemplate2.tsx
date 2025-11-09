@@ -237,42 +237,50 @@ export default function TopicTemplate2() {
   
  return (
   <main
-   className="bg-[#C9DDDC] min-h-screen w-full flex flex-col items-center justify-center p-8 gap-6"
+   className="bg-[#C9DDDC] h-screen w-full flex flex-col items-center justify-center p-4 md:p-6 overflow-hidden"
    style={{ fontFamily: "Roboto, sans-serif" }}
   >
-   <h1 className="text-3xl font-bold text-gray-800">Vista Previa de Plantilla</h1>
-   <p className="text-gray-600 -mt-4">Así se verá tu tópico con 2 elementos.</p>
-   
-   <TemplateBox2
-    defaultLayout={layout}
-    onLayoutChange={setLayout}
-   >
-    {contentBlocks.length === 2 ? (
-     renderPreviewBlock(contentBlocks[0])
-    ) : (
-     <span className="text-gray-400">Cargando...</span>
-    )} 
-    {contentBlocks.length === 2 ? (
-     renderPreviewBlock(contentBlocks[1])
-    ) : (
-     <span className="text-gray-400">Cargando...</span>
-    )}
-   </TemplateBox2>
-
-   <CustomButton
-    text={saving ? "Guardando..." : "Save"}
-    backgroundColor="#0B1D75"
-    textColor="#fff"
-    onClick={handleSaveTemplate}
-    disabled={saving || contentBlocks.length !== 2} 
-    className="px-8 py-2 text-sm"
-   />
-
-   {error && (
-    <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
-     <strong>Error:</strong> {error}
+   <div className="flex flex-col items-center gap-3 md:gap-4 w-full max-w-7xl flex-1 min-h-0">
+    <div className="flex-shrink-0">
+     <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Vista Previa de Plantilla</h1>
+     <p className="text-gray-600 text-sm md:text-base text-center">Así se verá tu tópico con 2 elementos.</p>
     </div>
-   )}
+    
+    <div className="flex-1 w-full min-h-0">
+     <TemplateBox2
+      defaultLayout={layout}
+      onLayoutChange={setLayout}
+     >
+      {contentBlocks.length === 2 ? (
+       renderPreviewBlock(contentBlocks[0])
+      ) : (
+       <span className="text-gray-400">Cargando...</span>
+      )} 
+      {contentBlocks.length === 2 ? (
+       renderPreviewBlock(contentBlocks[1])
+      ) : (
+       <span className="text-gray-400">Cargando...</span>
+      )}
+     </TemplateBox2>
+    </div>
+
+    <div className="flex-shrink-0">
+     <CustomButton
+      text={saving ? "Guardando..." : "Save"}
+      backgroundColor="#0B1D75"
+      textColor="#fff"
+      onClick={handleSaveTemplate}
+      disabled={saving || contentBlocks.length !== 2} 
+      className="px-8 py-2 text-sm"
+     />
+    </div>
+
+    {error && (
+     <div className="flex-shrink-0 p-3 bg-red-100 text-red-700 rounded-lg max-w-2xl">
+      <strong>Error:</strong> {error}
+     </div>
+    )}
+   </div>
   </main>
  );
 }

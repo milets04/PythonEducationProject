@@ -23,13 +23,13 @@ const TemplateBox2: React.FC<TemplateBox2Props> = ({
 
  return (
   <div
-   className="bg-white rounded-xl p-6 shadow-lg w-full max-w-6xl flex flex-col"
+   className="bg-white rounded-xl p-4 md:p-6 shadow-lg w-full h-full flex flex-col"
    style={{ fontFamily: "Roboto, sans-serif" }}
   >
    <div
     className={`bg-gray-200 rounded-md relative overflow-hidden flex ${
      layout === "vertical2" ? "flex-row" : "flex-col"
-    } transition-all duration-300 p-4 gap-4 h-[500px]`}
+    } transition-all duration-300 p-3 md:p-4 gap-3 md:gap-4 flex-1 min-h-0`}
    >
     <div className="flex-1 bg-gray-100 rounded-md overflow-hidden min-w-0 min-h-0">
      {children[0] ?? <div className="h-full flex items-center justify-center"><span className="text-gray-400">Add content here</span></div>}
@@ -48,7 +48,7 @@ const TemplateBox2: React.FC<TemplateBox2Props> = ({
     </div>
    </div>
 
-   <div className="flex gap-3 mt-4">
+   <div className="flex gap-3 mt-3 md:mt-4 flex-shrink-0">
     <TemplateSelectorButton2
      isActive={layout === "vertical2"}
      onClick={() => handleLayoutChange("vertical2")}
