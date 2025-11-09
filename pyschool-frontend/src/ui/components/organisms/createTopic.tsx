@@ -8,14 +8,11 @@ import UploadInput from '@/ui/components/molecules/uploadInput';
 import { Button } from '@/ui/components/atoms/button';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-
-// Helper para obtener el token
 const getAuthToken = (): string | null => {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem('token');
 };
 
-// Helper para headers
 const getHeaders = (includeContentType = true): HeadersInit => {
   const headers: HeadersInit = {
     'Authorization': `Bearer ${getAuthToken()}`,
@@ -26,7 +23,6 @@ const getHeaders = (includeContentType = true): HeadersInit => {
   return headers;
 };
 
-// ----- Interfaces de API -----
 export interface Subtitle {
   id?: number;
   title: string;
@@ -39,7 +35,6 @@ export interface MediaContent {
   name: string;
   type?: string;
 }
-
 export interface Topic {
   id?: number;
   name: string;
@@ -54,7 +49,6 @@ export interface Topic {
   createdAt?: string;
   updatedAt?: string;
 }
-
 export interface CreateTopicRequest {
   name: string;
   unitId: number;
@@ -67,7 +61,6 @@ export interface CreateTopicRequest {
   presentations?: MediaContent[];
 }
 
-// ----- Función de API -----
 export const callCreateTopicApi = async (data: CreateTopicRequest): Promise<Topic> => { 
   const response = await fetch(`${API_BASE_URL}/topics`, {
     method: 'POST',
@@ -115,13 +108,11 @@ const CreateTopic: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [saving, setSaving] = useState(false);
 
-  // Cargar información del tópico desde localStorage
   useEffect(() => {
     const storedTopic = localStorage.getItem('newTopic');
     if (storedTopic) {
       setTopicInfo(JSON.parse(storedTopic));
     } else {
-      // Si no hay información, redirigir de vuelta
       router.push('/teacherPages/edTeacher');
     }
   }, [router]);
@@ -151,9 +142,6 @@ const CreateTopic: React.FC = () => {
     type: 'video' | 'image' | 'audio' | 'presentation'
   ) => (fileOrUrl: File | string | null) => {
     if (!fileOrUrl) return;
-
-    // Si es un File, necesitarías subirlo a un servidor primero
-    // Por ahora, asumimos que es una URL
     if (typeof fileOrUrl === 'string') {
       const fileName = `${type}_${Date.now()}`;
       setUploadedFiles((prev) => [
@@ -207,7 +195,6 @@ const CreateTopic: React.FC = () => {
         .filter(f => f.type === 'presentation')
         .map(f => ({ url: f.url, name: f.name }));
 
-      // Contamos cuántos *tipos* de contenido existen
       let contentCount = 0;
       if (subtitles.length > 0) contentCount++;
       if (videos.length > 0) contentCount++;
@@ -273,7 +260,6 @@ const CreateTopic: React.FC = () => {
     return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
   }
 
-  // El resto de tu JSX (renderizado)
   return (
     <div className="min-h-screen bg-gradient-to-br bg-fondo flex items-center p-4">
       <div className="bg-gradient-to-br bg-fondo w-full max-w-5xl p-6 rounded-lg space-y-5">
@@ -282,7 +268,6 @@ const CreateTopic: React.FC = () => {
           <p className="text-gray-600">{topicInfo.name}</p>
         </div>
 
-        {/* Secciones de subtítulos */}
         {sections.map((section, index) => (
           <div key={section.id} className="space-y-3 border-b border-gray-300 pb-4">
             <div className="flex flex-col md:flex-row md:items-end gap-2">
@@ -325,8 +310,7 @@ const CreateTopic: React.FC = () => {
             />
           </div>
         ))}
-
-        {/* Upload sections */}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <UploadInput label="Videos" onUpload={handleUpload('video')} />
           <UploadInput label="Images" onUpload={handleUpload('image')} />
