@@ -79,6 +79,7 @@ export const createTopic = async (data: CreateTopicRequest): Promise<Topic> => {
  return result.data;
 };
 
+// Helpers para procesar diferentes tipos de URLs
 const getYouTubeEmbedUrl = (url: string): string | null => {
  try {
   const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -87,6 +88,57 @@ const getYouTubeEmbedUrl = (url: string): string | null => {
    return `https://www.youtube.com/embed/${match[1]}`;
   }
   return null; 
+ } catch {
+  return null;
+ }
+};
+
+const getCanvaEmbedUrl = (url: string): string | null => {
+ try {
+  const designMatch = url.match(/canva\.com\/design\/([a-zA-Z0-9_-]+)/);
+  if (designMatch && designMatch[1]) {
+   return `https://www.canva.com/design/${designMatch[1]}/view?embed`;
+  }
+  return null;
+ } catch {
+  return null;
+ }
+};
+
+const getImgbbDirectUrl = (url: string): string | null => {
+ try {
+  if (/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(url)) {
+   return url;
+  }
+  const imgbbMatch = url.match(/ibb\.co\/([a-zA-Z0-9]+)/);
+  if (imgbbMatch && imgbbMatch[1]) {
+   return `https://i.ibb.co/${imgbbMatch[1]}.png`;
+  }
+  return url;
+ } catch {
+  return null;
+ }
+};
+
+const getAudioEmbedUrl = (url: string): { type: 'soundcloud' | 'vocaroo' | 'direct'; url: string } | null => {
+ try {
+  if (url.includes('soundcloud.com')) {
+   return {
+    type: 'soundcloud',
+    url: `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`
+   };
+  }
+  const vocarooMatch = url.match(/vocaroo\.com\/([a-zA-Z0-9]+)/);
+  if (vocarooMatch && vocarooMatch[1]) {
+   return {
+    type: 'vocaroo',
+    url: `https://vocaroo.com/embed/${vocarooMatch[1]}`
+   };
+  }
+  if (/\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(url)) {
+   return { type: 'direct', url: url };
+  }
+  return null;
  } catch {
   return null;
  }
