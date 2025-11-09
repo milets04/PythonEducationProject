@@ -219,15 +219,11 @@ const CreateTopic: React.FC = () => {
       let templateName = 'standard'; 
 
       if (contentCount === 2) {
-        // Si hay 2 tipos (ej: 1 texto y 1 video), redirigir
         templateName = 'pending-template';
       } else if (contentCount > 2) {
-        // Si hay más de 2, usar 'multimedia-grid' (o lo que definas)
         templateName = 'multimedia-grid';
       }
-      // Si es 1 (ej: solo texto o solo video), se queda como 'standard'
 
-      // Si hay 2 elementos, ir a página de personalización
       if (templateName === 'pending-template') {
         localStorage.setItem('topicData', JSON.stringify({
           name: topicInfo.name,
@@ -253,11 +249,8 @@ const CreateTopic: React.FC = () => {
         audios: audios.length > 0 ? audios : undefined,
         presentations: presentations.length > 0 ? presentations : undefined,
       });
-
-      // Limpiar localStorage
       localStorage.removeItem('newTopic');
 
-      // Redirigir de vuelta a la página principal
       alert('Tópico creado exitosamente');
       router.push('/teacherPages/addContent');
       

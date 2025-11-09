@@ -2,19 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image"; // 1. Importar Image de Next.js
+import Image from "next/image";
 import TemplateBox2 from "../molecules/templateBox2";
 import CustomButton from "../atoms/btnOthers";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-// Helper para obtener el token
 const getAuthToken = (): string | null => {
  if (typeof window === 'undefined') return null;
  return localStorage.getItem('token');
 };
 
-// Helper para headers
 const getHeaders = (includeContentType = true): HeadersInit => {
  const headers: HeadersInit = {
   'Authorization': `Bearer ${getAuthToken()}`,
@@ -65,7 +63,6 @@ export interface CreateTopicRequest {
  presentations?: MediaContent[];
 }
 
-// ----- Función de API -----
 export const createTopic = async (data: CreateTopicRequest): Promise<Topic> => {
  const response = await fetch(`${API_BASE_URL}/topics`, {
   method: 'POST',
@@ -84,22 +81,19 @@ export const createTopic = async (data: CreateTopicRequest): Promise<Topic> => {
 
 const getYouTubeEmbedUrl = (url: string): string | null => {
  try {
-    // 2. CORRECCIÓN (no-useless-escape): 
-    // Se quitó la barra invertida \ antes de / dentro de [^...]
   const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
   const match = url.match(regExp);
   if (match && match[1]) {
    return `https://www.youtube.com/embed/${match[1]}`;
   }
   return null; 
- } catch { // 3. CORRECCIÓN (no-unused-vars): Se eliminó (e)
+ } catch {
   return null;
  }
 };
 
 type ContentBlock = {
  type: 'subtitles' | 'video' | 'image' | 'audio' | 'presentation';
-  // 4. CORRECCIÓN (no-explicit-any): Se especificó el tipo
  data: Subtitle[] | MediaContent[]; 
 }
 
@@ -168,33 +162,38 @@ export default function TopicTemplate2() {
   let content;
   switch(block.type) {
    case 'subtitles':
-     content = (
-     <div className="p-4 bg-gray-100 rounded-lg overflow-y-auto h-full">
-      {(block.data as Subtitle[]).map((sub, index) => (
-       <div key={index} className="mb-2">
-        <strong className="text-gray-800">{sub.title}</strong>
-        <p className="text-gray-600 text-sm">{sub.description}</p>
-       </div>
-      ))}
+    content = (
+     <div className="p-4 rounded-lg h-full flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+       {(block.data as Subtitle[]).map((sub, index) => (
+        <div key={index} className="mb-4">
+         <h3 className="text-xl font-bold text-gray-800 mb-1">{sub.title}</h3>
+         <p className="text-gray-700 whitespace-pre-wrap">{sub.description}</p>
+        </div>
+       ))}
+      </div>
      </div>
     );
     break;
-      // 5. CORRECCIÓN (no-case-declarations):
-      // Se añadieron llaves { ... } para crear un scope
    case 'video': { 
     const videoUrl = (block.data as MediaContent[])[0].url;
     const embedUrl = getYouTubeEmbedUrl(videoUrl);
-     content = (
-     <div className="p-4 bg-gray-100 rounded-lg h-full flex flex-col">
-       {embedUrl ? (
+    content = (
+     <div className="p-4 rounded-lg h-full flex items-center justify-center">
+      {embedUrl ? (
        <iframe
-        className="w-full flex-1 aspect-video rounded-md"
+        className="rounded-md shadow-lg max-w-full max-h-full"
+        style={{
+         aspectRatio: '16/9',
+         width: 'auto',
+         height: 'auto'
+        }}
         src={embedUrl}
         title="YouTube video player"
         frameBorder="0"
-       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-       allowFullScreen
-     ></iframe>
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+       ></iframe>
       ) : (
        <p className="text-sm text-gray-600 break-all">
         (No se puede previsualizar el video): {videoUrl}
@@ -202,37 +201,38 @@ export default function TopicTemplate2() {
       )}
      </div>
     );
-   break;
-      }
-      // 6. CORRECCIÓN (no-img-element):
-      // Se reemplazó <img> por <Image> de Next.js
+    break;
+   }
    case 'image':
     content = (
-          // Se añadió 'relative' para que 'fill' funcione
-     <div className="p-4 bg-gray-100 rounded-lg h-full relative">
-      <Image 
-       src={(block.data as MediaContent[])[0].url} 
-       alt="Vista previa" 
-              fill={true} // Se usa 'fill' para llenar el contenedor
-              style={{ objectFit: 'cover', borderRadius: '4px' }} // Se usa 'style' para objectFit
-       onError={(e) => {
-                // Se añade un fallback más robusto
-                (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/300x150?text=Error+al+cargar+imagen';
-                (e.currentTarget as HTMLImageElement).onerror = null; // Previene loops
-              }}
-      />
+     <div className="p-4 rounded-lg h-full flex items-center justify-center">
+      <div className="relative w-full h-full">
+       <Image 
+        src={(block.data as MediaContent[])[0].url} 
+        alt="Vista previa" 
+        fill={true}
+        style={{ objectFit: 'contain', borderRadius: '4px' }}
+        className="rounded-lg shadow-lg"
+        onError={(e) => {
+         (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/300x150?text=Error+al+cargar+imagen';
+         (e.currentTarget as HTMLImageElement).onerror = null;
+        }}
+       />
+      </div>
      </div>
     );
     break;
    default:
     content = (
-     <div className="p-4 bg-gray-100 rounded-lg h-full">
-      <p className="text-sm">{(block.data as MediaContent[])[0].name}</p>
-      <p className="text-xs text-gray-500">({block.type})</p>
+     <div className="p-4 bg-gray-100 rounded-lg h-full flex items-center justify-center">
+      <div>
+       <p className="text-sm">{(block.data as MediaContent[])[0].name}</p>
+       <p className="text-xs text-gray-500">({block.type})</p>
+      </div>
      </div>
     );
   }
-  return <div className="flex-1 min-h-[200px] h-full">{content}</div>;
+  return <div className="h-full overflow-hidden">{content}</div>;
  };
   
  return (
@@ -272,7 +272,7 @@ export default function TopicTemplate2() {
     <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
      <strong>Error:</strong> {error}
     </div>
-)}
+   )}
   </main>
  );
 }
