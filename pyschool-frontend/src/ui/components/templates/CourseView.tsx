@@ -299,7 +299,6 @@ const RenderContentBlock = ({ type, data }: { type: string, data: Subtitle[] | M
 };
 
 const RenderTopicContent = ({ topic }: { topic: Topic }) => {
-  // 1. Coleccionar todos los bloques de contenido
   const blocks: React.ReactNode[] = [];
   if (topic.subtitles && topic.subtitles.length > 0) {
     blocks.push(<RenderContentBlock key="subtitles" type="subtitles" data={topic.subtitles} />);
@@ -343,7 +342,69 @@ const RenderTopicContent = ({ topic }: { topic: Topic }) => {
           ))}
         </div>
       );
+    
+    case 'vertical3':
+      return (
+      <div className="h-full flex flex-col gap-4">
+      <div className="flex-1 min-h-0 overflow-hidden">{blocks[0]}</div>
+      <div className="flex-1 min-h-0 overflow-hidden">{blocks[1]}</div>
+      <div className="flex-1 min-h-0 overflow-hidden">{blocks[2]}</div>
+      </div>
+    );
 
+    case 'horizontal3':
+      return (
+        <div className="h-full flex flex-row gap-4">
+        <div className="flex-1 min-w-0 overflow-hidden">{blocks[0]}</div>
+        <div className="flex-1 min-w-0 overflow-hidden">{blocks[1]}</div>
+        <div className="flex-1 min-w-0 overflow-hidden">{blocks[2]}</div>
+        </div>
+      );
+
+    case 'horizontal3-2': // 1 arriba, 2 abajo
+      return (
+        <div className="h-full flex flex-col gap-4">
+        <div className="flex-1 min-h-0 overflow-hidden">{blocks[0]}</div>
+        <div className="flex-1 min-h-0 flex flex-row gap-4">
+          <div className="flex-1 min-w-0 overflow-hidden">{blocks[1]}</div>
+          <div className="flex-1 min-w-0 overflow-hidden">{blocks[2]}</div>
+        </div>
+        </div>
+      );
+  
+    case 'horizontal2-3': // 2 arriba, 1 abajo
+      return (
+        <div className="h-full flex flex-col gap-4">
+        <div className="flex-1 min-h-0 flex flex-row gap-4">
+          <div className="flex-1 min-w-0 overflow-hidden">{blocks[0]}</div>
+          <div className="flex-1 min-w-0 overflow-hidden">{blocks[1]}</div>
+        </div>
+        <div className="flex-1 min-h-0 overflow-hidden">{blocks[2]}</div>
+        </div>
+      );
+
+    case 'vertical2-3': // 2 izquierda, 1 derecha
+      return (
+        <div className="h-full flex flex-row gap-4">
+        <div className="flex-1 min-w-0 flex flex-col gap-4">
+          <div className="flex-1 min-h-0 overflow-hidden">{blocks[0]}</div>
+          <div className="flex-1 min-h-0 overflow-hidden">{blocks[1]}</div>
+        </div>
+        <div className="flex-1 min-w-0 overflow-hidden">{blocks[2]}</div>
+        </div>
+      );
+
+    case 'vertical3-2': // 1 izquierda, 2 derecha
+      return (
+        <div className="h-full flex flex-row gap-4">
+        <div className="flex-1 min-w-0 overflow-hidden">{blocks[0]}</div>
+        <div className="flex-1 min-w-0 flex flex-col gap-4">
+          <div className="flex-1 min-h-0 overflow-hidden">{blocks[1]}</div>
+          <div className="flex-1 min-h-0 overflow-hidden">{blocks[2]}</div>
+        </div>
+        </div>
+      );
+    
     case 'standard':
     default:
       // Un solo bloque de contenido, o múltiples en una sola columna
