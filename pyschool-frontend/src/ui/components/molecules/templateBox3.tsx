@@ -108,13 +108,13 @@ const TemplateBox3: React.FC<TemplateBox3Props> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-lg w-full max-w-6xl flex flex-col" style={{ fontFamily: "Roboto, sans-serif" }}>
+    <div className="bg-white rounded-xl p-6 shadow-lg w-full max-w-6xl flex flex-col h-full" style={{ fontFamily: "Roboto, sans-serif" }}>
       
       <div className="mb-3">
         <p className="text-sm text-gray-600">{title}</p>
       </div>
 
-      <div className="flex-1 min-h-[360px]">{renderGrid()}</div>
+      <div className="flex-1 min-h-0">{renderGrid()}</div>
 
       <div className="flex gap-3 mt-4 items-center">
         <TemplateSelectorButton2
