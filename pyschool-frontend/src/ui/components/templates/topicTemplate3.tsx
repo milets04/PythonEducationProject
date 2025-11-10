@@ -231,7 +231,7 @@ export default function TopicTemplate3() {
               src={(block.data as MediaContent[])[0].url}
               alt="Vista previa"
               fill
-              style={{ objectFit: "cover", borderRadius: "4px" }}
+              style={{ objectFit: "contain", borderRadius: "4px" }}
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).src =
                   "https://via.placeholder.com/300x150?text=Error+al+cargar+imagen";
@@ -304,28 +304,26 @@ export default function TopicTemplate3() {
       style={{ fontFamily: "Roboto, sans-serif" }}
     >
       <h1 className="text-3xl font-bold text-gray-800">Vista de Plantilla</h1>
-
-      <TemplateBox3
-        defaultLayout={layout}
-        onLayoutChange={setLayout}
-      >
-        {contentBlocks.length === 3 ? (
-          renderPreviewBlock(contentBlocks[0])
-        ) : (
-          <span className="text-gray-400">Add content here</span>
-        )} 
-        {contentBlocks.length === 3 ? (
-          renderPreviewBlock(contentBlocks[1])
-        ) : (
-          <span className="text-gray-400">Add content here</span>
-        )}
-        {contentBlocks.length === 3 ? (
-          renderPreviewBlock(contentBlocks[2])
-        ) : (
-          <span className="text-gray-400">Add content here</span>
-        )}
-      </TemplateBox3>
-
+        <TemplateBox3
+          defaultLayout={layout}
+          onLayoutChange={setLayout}
+        >
+          {contentBlocks.length === 3 ? (
+            renderPreviewBlock(contentBlocks[0])
+          ) : (
+            <span className="text-gray-400">Add content here</span>
+          )} 
+          {contentBlocks.length === 3 ? (
+            renderPreviewBlock(contentBlocks[1])
+          ) : (
+            <span className="text-gray-400">Add content here</span>
+          )}
+          {contentBlocks.length === 3 ? (
+            renderPreviewBlock(contentBlocks[2])
+          ) : (
+            <span className="text-gray-400">Add content here</span>
+          )}
+        </TemplateBox3>
       <CustomButton
         text={saving ? "Guardando..." : "Save"}
         backgroundColor="#0B1D75"
