@@ -100,11 +100,23 @@ const getYouTubeEmbedUrl = (url: string): string | null => {
 // --- Helper de Canva ---
 const getCanvaEmbedUrl = (url: string): string | null => {
   try {
-    const designMatch = url.match(/canva\.com\/design\/([a-zA-Z0-9_-]+)/);
+    const designMatch = url.match(/canva\.com\/design\/([a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+)/);
+    
     if (designMatch && designMatch[1]) {
       return `https://www.canva.com/design/${designMatch[1]}/view?embed`;
     }
-    return null;
+
+    if (url.includes('canva.com') && url.includes('embed')) {
+      return url;
+    }
+    
+    if (url.includes('canva.com/design/')) {
+        const urlObj = new URL(url);
+        urlObj.searchParams.set("embed", ""); 
+        return urlObj.toString();
+    }
+
+    return null; 
   } catch {
     return null;
   }
