@@ -93,16 +93,28 @@ const getYouTubeEmbedUrl = (url: string): string | null => {
  }
 };
 
+// --- Helper de Canva ---
 const getCanvaEmbedUrl = (url: string): string | null => {
- try {
-  const designMatch = url.match(/canva\.com\/design\/([a-zA-Z0-9_-]+)/);
-  if (designMatch && designMatch[1]) {
-   return `https://www.canva.com/design/${designMatch[1]}/view?embed`;
+  try {
+    const designMatch = url.match(/canva\.com\/design\/([a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+)/);
+    
+    if (designMatch && designMatch[1]) {
+      return `https://www.canva.com/design/${designMatch[1]}/view?embed`;
+    }
+
+    if (url.includes('canva.com') && url.includes('embed')) {
+      return url;
+    }
+    
+    if (url.includes('canva.com/design/')) {
+        const urlObj = new URL(url);
+        urlObj.searchParams.set("embed", ""); 
+        return urlObj.toString();
+    }
+    return null; 
+  } catch {
+    return null;
   }
-  return null;
- } catch {
-  return null;
- }
 };
 
 const getImgbbDirectUrl = (url: string): string | null => {
@@ -121,27 +133,33 @@ const getImgbbDirectUrl = (url: string): string | null => {
 };
 
 const getAudioEmbedUrl = (url: string): { type: 'soundcloud' | 'vocaroo' | 'direct'; url: string } | null => {
- try {
-  if (url.includes('soundcloud.com')) {
-   return {
-    type: 'soundcloud',
-    url: `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`
-   };
+  try {
+    if (url.includes('soundcloud.com')) {
+      return {
+        type: 'soundcloud',
+        url: `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`
+      };
+    }
+    
+    // ESTA ES LA LÍNEA CORREGIDA
+    // Añade (?:voca\.ro|vocaroo\.com) para que coincida con ambos dominios
+    const vocarooMatch = url.match(/(?:voca\.ro|vocaroo\.com)\/([a-zA-Z0-9]+)/);
+    
+    if (vocarooMatch && vocarooMatch[1]) {
+      return {
+        type: 'vocaroo',
+        url: `https://vocaroo.com/embed/${vocarooMatch[1]}`
+      };
+    }
+    
+    if (/\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(url)) {
+      return { type: 'direct', url: url };
+    }
+    
+    return null;
+  } catch {
+    return null;
   }
-  const vocarooMatch = url.match(/vocaroo\.com\/([a-zA-Z0-9]+)/);
-  if (vocarooMatch && vocarooMatch[1]) {
-   return {
-    type: 'vocaroo',
-    url: `https://vocaroo.com/embed/${vocarooMatch[1]}`
-   };
-  }
-  if (/\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(url)) {
-   return { type: 'direct', url: url };
-  }
-  return null;
- } catch {
-  return null;
- }
 };
 
 type ContentBlock = {
@@ -274,6 +292,67 @@ export default function TopicTemplate2() {
      </div>
     );
     break;
+    case 'audio': {
+     const audio = (block.data as MediaContent[])[0];
+     const audioEmbed = getAudioEmbedUrl(audio.url);
+     content = (
+       <div className="p-4 rounded-lg h-full flex items-center justify-center">
+         {audioEmbed ? (
+           audioEmbed.type === 'direct' ? (
+             <audio controls className="w-full max-w-md">
+               <source src={audioEmbed.url} />
+               Tu navegador no soporta el elemento de audio.
+             </audio>
+           ) : (
+             <iframe
+               className="w-full max-w-md rounded-md shadow-lg"
+               height="166"
+               src={audioEmbed.url}
+               title={audio.name}
+               frameBorder="0"
+               allow="autoplay"
+             ></iframe>
+           )
+         ) : (
+           <p className="text-sm text-gray-600">Audio no soportado: {audio.url}</p>
+         )}
+       </div>
+     );
+     break;
+   }
+   
+   case 'presentation': {
+     const presentation = (block.data as MediaContent[])[0];
+     // Usará la función 'getCanvaEmbedUrl' que arreglaremos en el paso 2
+     const embedUrl = getCanvaEmbedUrl(presentation.url); 
+     content = (
+       <div className="p-4 rounded-lg h-full flex items-center justify-center">
+         {embedUrl ? (
+           <iframe
+             className="w-full h-full rounded-md shadow-lg"
+             src={embedUrl}
+             title={presentation.name}
+             frameBorder="0"
+             allowFullScreen
+             referrerPolicy="strict-origin-when-cross-origin" // Buena práctica
+           ></iframe>
+         ) : (
+           <div className="text-center">
+             <p className="text-sm text-gray-600 mb-2">Vista previa de presentación</p>
+             <a 
+               href={presentation.url} 
+               target="_blank" 
+               rel="noopener noreferrer"
+               className="text-blue-600 hover:underline text-sm break-all"
+             >
+               Abrir presentación en nueva pestaña
+             </a>
+           </div>
+         )}
+       </div>
+     );
+     break;
+   }
    default:
     content = (
      <div className="p-4 bg-gray-100 rounded-lg h-full flex items-center justify-center">
