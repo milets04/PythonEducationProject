@@ -140,9 +140,6 @@ const getAudioEmbedUrl = (url: string): { type: 'soundcloud' | 'vocaroo' | 'dire
         url: `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`
       };
     }
-    
-    // ESTA ES LA LÍNEA CORREGIDA
-    // Añade (?:voca\.ro|vocaroo\.com) para que coincida con ambos dominios
     const vocarooMatch = url.match(/(?:voca\.ro|vocaroo\.com)\/([a-zA-Z0-9]+)/);
     
     if (vocarooMatch && vocarooMatch[1]) {
