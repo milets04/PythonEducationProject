@@ -210,7 +210,6 @@ const RenderContentBlock = ({ type, data }: { type: string, data: Subtitle[] | M
       const directUrl = getImgbbDirectUrl(image.url);
       return (
         <div className="p-4 rounded-lg h-full flex items-center justify-center">
-              {/* VERSIÓN CORREGIDA */}
         <div className="relative w-full h-full"> 
           {directUrl ? (
           <Image 

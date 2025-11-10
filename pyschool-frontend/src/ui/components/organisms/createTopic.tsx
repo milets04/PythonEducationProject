@@ -202,16 +202,8 @@ const CreateTopic: React.FC = () => {
       if (audios.length > 0) contentCount++;
       if (presentations.length > 0) contentCount++;
 
-
-      let templateName = 'standard'; 
-
-      if (contentCount === 2) {
-        templateName = 'pending-template';
-      } else if (contentCount > 2) {
-        templateName = 'multimedia-grid';
-      }
-
-      if (templateName === 'pending-template') {
+      if (contentCount === 2 || contentCount === 3) {
+        
         localStorage.setItem('topicData', JSON.stringify({
           name: topicInfo.name,
           unitId: topicInfo.unitId,
@@ -222,8 +214,18 @@ const CreateTopic: React.FC = () => {
           presentations,
         }));
         
-        router.push('/topicTemplates'); 
-        return;
+        if (contentCount === 2) {
+          router.push('/topicTemplates2'); 
+        } else if (contentCount === 3) {
+          router.push('/topicTemplates3'); 
+        }
+        
+        return; 
+      }
+
+      let templateName = 'standard'; 
+      if (contentCount > 3) {
+        templateName = 'multimedia-grid'; 
       }
 
       await callCreateTopicApi({
@@ -236,8 +238,8 @@ const CreateTopic: React.FC = () => {
         audios: audios.length > 0 ? audios : undefined,
         presentations: presentations.length > 0 ? presentations : undefined,
       });
-      localStorage.removeItem('newTopic');
 
+      localStorage.removeItem('newTopic');
       alert('Tópico creado exitosamente');
       router.push('/teacherPages/addContent');
       
