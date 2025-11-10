@@ -117,21 +117,6 @@ const getCanvaEmbedUrl = (url: string): string | null => {
   }
 };
 
-const getImgbbDirectUrl = (url: string): string | null => {
- try {
-  if (/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(url)) {
-   return url;
-  }
-  const imgbbMatch = url.match(/ibb\.co\/([a-zA-Z0-9]+)/);
-  if (imgbbMatch && imgbbMatch[1]) {
-   return `https://i.ibb.co/${imgbbMatch[1]}.png`;
-  }
-  return url;
- } catch {
-  return null;
- }
-};
-
 const getAudioEmbedUrl = (url: string): { type: 'soundcloud' | 'vocaroo' | 'direct'; url: string } | null => {
   try {
     if (url.includes('soundcloud.com')) {

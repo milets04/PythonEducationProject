@@ -2,6 +2,7 @@
 
 import NavegationArrows from "@/ui/components/atoms/navegationArrows";
 import React, { useState, useEffect } from 'react';
+import Image from "next/image";
 import UnitySelector, { UnityOption } from "@/ui/components/atoms/unitySelector";
 
 
@@ -209,24 +210,27 @@ const RenderContentBlock = ({ type, data }: { type: string, data: Subtitle[] | M
       const directUrl = getImgbbDirectUrl(image.url);
       return (
         <div className="p-4 rounded-lg h-full flex items-center justify-center">
-          <div className="relative w-full h-full flex items-center justify-center">
-            {directUrl ? (
-              <img 
-                src={directUrl} 
-                alt={image.name || 'Imagen del tópico'}
-                className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/300x150?text=Error+al+cargar+imagen';
-                  (e.currentTarget as HTMLImageElement).onerror = null;
-                }}
-              />
-            ) : (
-              <p className="text-sm text-gray-600">No se puede mostrar la imagen</p>
-            )}
-          </div>
+              {/* VERSIÓN CORREGIDA */}
+        <div className="relative w-full h-full"> 
+          {directUrl ? (
+          <Image 
+            src={directUrl} 
+            alt={image.name || 'Imagen del tópico'}
+            fill={true}
+                    style={{ objectFit: 'contain' }}
+              className="rounded-lg shadow-lg"
+            onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/300x150?text=Error+al+cargar+imagen';
+            (e.currentTarget as HTMLImageElement).onerror = null;
+            }}
+          />
+          ) : (
+          <p className="text-sm text-gray-600">No se puede mostrar la imagen</p>
+          )}
+        </div>
         </div>
       );
-    }
+      }
     
     case 'audio': {
       const audio = (data as MediaContent[])[0];
@@ -289,7 +293,7 @@ const RenderContentBlock = ({ type, data }: { type: string, data: Subtitle[] | M
     default:
       return (
         <div className="p-4 rounded-lg h-full flex items-center justify-center">
-          <p className="text-sm">Contenido '{type}' no soportado aún.</p>
+          <p className="text-sm">Contenido {type} no soportado aún.</p>
         </div>
       );
   }
