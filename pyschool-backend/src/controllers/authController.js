@@ -47,7 +47,7 @@ export const register = async (req, res) => {
       })
     }
 
-    // Validar formato de email básico
+    // Validar formato de email básico. Acepta cualquier dominio
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return res.status(400).json({
