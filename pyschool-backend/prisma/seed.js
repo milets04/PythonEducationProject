@@ -37,9 +37,9 @@ async function main () {
   })
 
   if (existingAdmin) {
-    console.log('   Ya existe un administrador en el sistema:')
+    console.log('   There is already an administrator in the system.:')
     console.log(`   Email: ${existingAdmin.email}`)
-    console.log('   No se creará uno nuevo.')
+    console.log('   A new one will not be created.')
     return
   }
 
@@ -59,7 +59,7 @@ async function main () {
     }
   })
 
-  console.log('✅ Administrador creado exitosamente:')
+  console.log('   Administrator created succesfully:')
   console.log(`   Email: ${admin.email}`)
   console.log(`   Password: ${adminPassword}`)
   console.log('   IMPORTANTE: Cambia esta contraseña después del primer login')
@@ -72,12 +72,12 @@ async function main () {
     }
   })
 
-  console.log('✅ Curso de ejemplo creado:', course.name)
+  console.log('Example course created:', course.name)
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Error en seed:', e)
+    console.error('Error en seed:', e)
     process.exit(1)
   })
   .finally(async () => {
