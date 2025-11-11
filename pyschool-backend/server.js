@@ -1,18 +1,14 @@
-// server.js
-// Punto de entrada principal de la aplicación
-
 import app from './src/app.js'
 import { config } from './src/config/environment.js'
 
 const PORT = config.server.port
 
-// Iniciar el servidor
 app.listen(PORT, () => {
   console.log(`
-  Virtual School Backend Running       
-  Servidor iniciado en puerto: ${PORT} 
-  Ambiente: ${config.server.nodeEnv}   
-  Base de datos: PostgreSQL            
+  Pyson Backend Running       
+  Server running at port: ${PORT} 
+  Environment: ${config.server.nodeEnv}   
+  Data base: PostgreSQL            
   `)
 })
 
