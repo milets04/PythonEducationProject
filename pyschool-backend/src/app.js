@@ -28,7 +28,7 @@ app.use('/api/topics', topicRoutes)
 app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Servidor funcionando correctamente',
+    message: 'Server is working',
     timestamp: new Date().toISOString()
   })
 })
@@ -37,17 +37,17 @@ app.get('/health', (req, res) => {
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    message: `Ruta no encontrada: ${req.method} ${req.path}`
+    message: `Route not founded: ${req.method} ${req.path}`
   })
 })
 
 // Error handler
 app.use((err, req, res) => {
-  console.error('Error global:', err)
+  console.error('Global error:', err)
 
   res.status(err.status || 500).json({
     success: false,
-    message: err.message || 'Error interno del servidor',
+    message: err.message || 'Server internal error',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   })
 })
