@@ -54,6 +54,9 @@ model User {
   rejectedUsers User[]     @relation("UserRejections")
   rejecter    User?        @relation("UserRejections", fields: [rejectedBy], references: [id])
   
+  // CORRECCIÓN: Se añade el campo inverso TopicVersion[] para la relación "TopicVersions"
+  topicVersions TopicVersion[] @relation("TopicVersions")
+  
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -120,15 +123,37 @@ model Topic {
   id                 Int                @id @default(autoincrement())
   contentExternalId  String?
   name               String
+  currentVersion     Int                @default(1)
   
   transcriptTopics   TranscriptTopic[]
   topicMultimedias   TopicMultimedia[]
   contents           Content[]
+  versions           TopicVersion[]
   
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
   @@map("topics")
+}
+
+model TopicVersion {
+  id            Int      @id @default(autoincrement())
+  topicId       Int
+  versionNumber Int
+  name          String
+  templateName  String
+  contentData   Json
+  changeType    String
+  changeDescription String?
+  modifiedBy    Int
+  modifiedAt    DateTime @default(now())
+  
+  topic         Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  // CORRECCIÓN: Se mantiene el nombre de relación explícito ("TopicVersions")
+  modifier      User     @relation("TopicVersions", fields: [modifiedBy], references: [id])
+  
+  @@unique([topicId, versionNumber])
+  @@map("topicVersions")
 }
 
 model Multimedia {
