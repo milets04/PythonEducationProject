@@ -275,6 +275,14 @@ export const rejectUserController = async (req, res) => {
  * Body: { approvals: [{userId: 1, roleId: 2}, {userId: 2, roleId: 1}] }
  * Ruta protegida - solo administrador
  */
+
+/**
+ * Delete this in production (only for commits)
+ * Controlador para aprobar múltiples usuarios
+ * POST /api/auth/users/bulk-approve
+ * Body: { approvals: [{userId: 1, roleId: 2}, {userId: 2, roleId: 1}] }
+ * Ruta protegida - solo administrador
+ */
 export const bulkApproveController = async (req, res) => {
   try {
     const { approvals } = req.body
