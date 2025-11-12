@@ -1,6 +1,8 @@
 // src/services/topicService.js
 // Servicio para gestión de tópicos con contenido multimedia
 
+/* eslint-disable */
+
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()

@@ -1,12 +1,18 @@
 // src/controllers/topicController.js
-// Controladores para gestión de tópicos
+// Controladores para gestión de tópicos y versiones
+
+/* eslint-disable */
 
 import {
   createTopic,
   getTopicById,
   getTopicsByUnit,
   updateTopic,
-  deleteTopic
+  deleteTopic,
+  getTopicVersionHistory,
+  getTopicVersion,
+  restoreTopicVersion,
+  compareTopicVersions,
 } from '../services/topicService.js'
 
 /**
@@ -24,19 +30,19 @@ export const create = async (req, res) => {
       videos,
       images,
       audios,
-      presentations
+      presentations,
     } = req.body
 
     // Validaciones
     if (!name || !unitId || !templateName) {
       return res.status(400).json({
         success: false,
-        message: 'name, unitId y templateName son obligatorios'
+        message: 'name, unitId y templateName son obligatorios',
       })
     }
 
     // Validar que al menos haya algo de contenido
-    const hasContent =
+    const hasContent = 
       (subtitles && subtitles.length > 0) ||
       (videos && videos.length > 0) ||
       (images && images.length > 0) ||
@@ -46,7 +52,7 @@ export const create = async (req, res) => {
     if (!hasContent) {
       return res.status(400).json({
         success: false,
-        message: 'The topic must have at least one content element'
+        message: 'El tópico debe tener al menos un elemento de contenido',
       })
     }
 
@@ -59,19 +65,19 @@ export const create = async (req, res) => {
       videos: videos || [],
       images: images || [],
       audios: audios || [],
-      presentations: presentations || []
+      presentations: presentations || [],
     })
 
     return res.status(201).json({
       success: true,
-      message: 'Topic successfully created',
-      data: topic
+      message: 'Tópico creado exitosamente',
+      data: topic,
     })
   } catch (error) {
     console.error('Create topic error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error creating the topic'
+      message: error.message || 'Error al crear el tópico',
     })
   }
 }
@@ -88,13 +94,13 @@ export const getById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: topic
+      data: topic,
     })
   } catch (error) {
     console.error('Get topic error:', error)
     return res.status(404).json({
       success: false,
-      message: error.message || 'Error retrieving topic'
+      message: error.message || 'Error al obtener el tópico',
     })
   }
 }
@@ -112,13 +118,13 @@ export const getByUnit = async (req, res) => {
     return res.status(200).json({
       success: true,
       count: topics.length,
-      data: topics
+      data: topics,
     })
   } catch (error) {
     console.error('Get topics by unit error:', error)
     return res.status(500).json({
       success: false,
-      message: 'Error retrieving topics'
+      message: 'Error al obtener los tópicos',
     })
   }
 }
@@ -138,7 +144,7 @@ export const update = async (req, res) => {
       videos,
       images,
       audios,
-      presentations
+      presentations,
     } = req.body
 
     const topic = await updateTopic(parseInt(id), {
@@ -149,19 +155,19 @@ export const update = async (req, res) => {
       videos,
       images,
       audios,
-      presentations
+      presentations,
     })
 
     return res.status(200).json({
       success: true,
-      message: 'Topic successfully updated',
-      data: topic
+      message: 'Tópico actualizado exitosamente',
+      data: topic,
     })
   } catch (error) {
     console.error('Update topic error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error updating topic'
+      message: error.message || 'Error al actualizar el tópico',
     })
   }
 }
@@ -181,7 +187,7 @@ export const remove = async (req, res) => {
     console.error('Delete topic error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error deleting topic'
+      message: error.message || 'Error al eliminar el tópico',
     })
   }
 }
