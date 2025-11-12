@@ -33,7 +33,7 @@ const Version: React.FC<VersionProps> = ({ versionNumber, createdAt }) => {
       </p>
 
       <p className="text-xs text-blue-500 italic">
-        // url
+        url
       </p>
     </div>
   );

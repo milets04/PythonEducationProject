@@ -124,7 +124,7 @@ describe(' CreateTopic UI', () => {
 
     await waitFor(() => {
       expect(alertSpy).toHaveBeenCalledWith(
-        'Debes agregar al menos un subtítulo o un elemento multimedia'
+        'You must add at least one subtitle or multimedia element'
       );
     });
 
