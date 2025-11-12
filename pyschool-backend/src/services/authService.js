@@ -23,7 +23,7 @@ export const registerUser = async (userData) => {
   })
 
   if (existingUser) {
-    throw new Error('El email ya está registrado')
+    throw new Error('The email is already registered')
   }
 
   // Hashear la contraseña
@@ -59,7 +59,7 @@ export const registerUser = async (userData) => {
       role: user.role.name,
       isApproved: user.isApproved
     },
-    message: 'Usuario registrado. Espera la aprobación del administrador para acceder al sistema.'
+    message: 'Registered user. Awaiting administrator approval to access the system.'
   }
 }
 
@@ -85,24 +85,24 @@ export const loginUser = async (email, password) => {
   })
 
   if (!user) {
-    throw new Error('Email o contraseña incorrectos')
+    throw new Error('Incorrect email or password')
   }
 
   // Verificar que el usuario esté activo
   if (!user.isActive) {
-    throw new Error('El usuario ha sido desactivado')
+    throw new Error('The user has been deactivated')
   }
 
   // Verificar que el usuario esté aprobado
   if (!user.isApproved) {
-    throw new Error('Tu cuenta aún no ha sido aprobada por el administrador')
+    throw new Error('Your account has not yet been approved by the administrator')
   }
 
   // Comparar la contraseña proporcionada con el hash almacenado
   const passwordMatch = await comparePassword(password, user.passwordHash)
 
   if (!passwordMatch) {
-    throw new Error('Email o contraseña incorrectos')
+    throw new Error('Incorrect email or password')
   }
 
   // Generar token JWT
@@ -155,7 +155,7 @@ export const getCurrentUser = async (userId) => {
   })
 
   if (!user) {
-    throw new Error('Usuario no encontrado')
+    throw new Error('User not found')
   }
 
   return {
@@ -245,15 +245,15 @@ export const approveUser = async (userId, newRoleId, adminId) => {
   })
 
   if (!user) {
-    throw new Error('Usuario no encontrado')
+    throw new Error('User not found')
   }
 
   if (user.isApproved) {
-    throw new Error('El usuario ya está aprobado')
+    throw new Error('The user is already approved')
   }
 
   if (user.rejectedAt) {
-    throw new Error('El usuario fue rechazado previamente')
+    throw new Error('The user was previously rejected')
   }
 
   // Validar que el roleId sea válido
@@ -262,7 +262,7 @@ export const approveUser = async (userId, newRoleId, adminId) => {
   })
 
   if (!roleExists) {
-    throw new Error('El rol especificado no existe')
+    throw new Error('The specified role does not exist.')
   }
 
   // Aprobar el usuario y actualizar su rol
@@ -325,15 +325,15 @@ export const rejectUser = async (userId, adminId) => {
   })
 
   if (!user) {
-    throw new Error('Usuario no encontrado')
+    throw new Error('User not found')
   }
 
   if (user.isApproved) {
-    throw new Error('No se puede rechazar un usuario ya aprobado')
+    throw new Error('You cannot reject a user who has already been approved')
   }
 
   if (user.rejectedAt) {
-    throw new Error('El usuario ya fue rechazado')
+    throw new Error('The user has already been rejected')
   }
 
   // Marcar como rechazado (soft delete)

@@ -16,7 +16,7 @@ export const authMiddleware = (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Token no proporcionado. Use el formato: Bearer <token>'
+        message: 'Token not provided. Use the format: Bearer <token>'
       })
     }
 
@@ -26,7 +26,7 @@ export const authMiddleware = (req, res, next) => {
     if (!decoded) {
       return res.status(401).json({
         success: false,
-        message: 'Token inválido o expirado'
+        message: 'Invalid or expired token'
       })
     }
 
@@ -36,7 +36,7 @@ export const authMiddleware = (req, res, next) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: 'Error en la verificación del token',
+      message: 'Token verification error',
       error: error.message
     })
   }

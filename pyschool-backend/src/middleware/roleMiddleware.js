@@ -14,7 +14,7 @@ export const roleMiddleware = (allowedRoles) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: 'Usuario no autenticado'
+        message: 'Unauthenticated user'
       })
     }
 
@@ -22,7 +22,7 @@ export const roleMiddleware = (allowedRoles) => {
     if (!allowedRoles.includes(req.user.roleId)) {
       return res.status(403).json({
         success: false,
-        message: 'No tienes permiso para acceder a este recurso'
+        message: 'You do not have permission to access this resource'
       })
     }
 

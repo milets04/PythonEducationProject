@@ -29,7 +29,7 @@ export const createTopic = async (topicData) => {
   })
 
   if (!unit) {
-    throw new Error('La unidad especificada no existe')
+    throw new Error('The specified unit does not exist.')
   }
 
   // Crear el tópico con todo su contenido en una transacción
@@ -159,7 +159,7 @@ export const getTopicById = async (topicId) => {
   })
 
   if (!topic) {
-    throw new Error('Tópico no encontrado')
+    throw new Error('Topic not found')
   }
 
   // Formatear la respuesta para facilitar su uso en el frontend
@@ -225,7 +225,7 @@ export const updateTopic = async (topicId, updateData) => {
   })
 
   if (!existingTopic) {
-    throw new Error('Tópico no encontrado')
+    throw new Error('Topic not found')
   }
 
   const updatedTopic = await prisma.$transaction(async (tx) => {
@@ -382,7 +382,7 @@ export const deleteTopic = async (topicId) => {
   })
 
   if (!topic) {
-    throw new Error('Tópico no encontrado')
+    throw new Error('Topic not found')
   }
 
   // Prisma eliminará automáticamente las relaciones por CASCADE
@@ -392,7 +392,7 @@ export const deleteTopic = async (topicId) => {
 
   return {
     success: true,
-    message: 'Tópico eliminado exitosamente',
+    message: 'Topic successfully removed',
     deletedTopicId: topicId
   }
 }

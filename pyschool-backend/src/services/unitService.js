@@ -19,7 +19,7 @@ export const createUnit = async (unitData) => {
   })
 
   if (!course) {
-    throw new Error('El curso especificado no existe')
+    throw new Error('The specified course does not exist.')
   }
 
   // Si no se proporciona posición, calcular la siguiente
@@ -94,7 +94,7 @@ export const getUnitById = async (unitId) => {
   })
 
   if (!unit) {
-    throw new Error('Unidad no encontrada')
+    throw new Error('Drive not found')
   }
 
   return {
@@ -146,7 +146,7 @@ export const updateUnit = async (unitId, updateData) => {
   })
 
   if (!existingUnit) {
-    throw new Error('Unidad no encontrada')
+    throw new Error('Drive not found')
   }
 
   const updatedUnit = await prisma.unit.update({
@@ -182,7 +182,7 @@ export const deleteUnit = async (unitId) => {
   })
 
   if (!unit) {
-    throw new Error('Unidad no encontrada')
+    throw new Error('Drive not found')
   }
 
   // Prisma eliminará automáticamente los contents y sus relaciones por CASCADE
@@ -192,7 +192,7 @@ export const deleteUnit = async (unitId) => {
 
   return {
     success: true,
-    message: 'Unidad eliminada exitosamente',
+    message: 'Unit successfully removed',
     deletedUnitId: unitId,
     deletedTopicsCount: unit.contents.length
   }
@@ -214,7 +214,7 @@ export const reorderUnits = async (courseId, newOrder) => {
   })
 
   if (units.length !== newOrder.length) {
-    throw new Error('Algunas unidades no pertenecen al curso especificado')
+    throw new Error('Some units do not belong to the specified course.')
   }
 
   // Actualizar posiciones en transacción
