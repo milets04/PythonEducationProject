@@ -157,6 +157,32 @@ CREATE TABLE topics (
     updatedAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE topicVersions (
+    id SERIAL PRIMARY KEY,
+    topicId INTEGER NOT NULL,
+    versionNumber INTEGER NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    templateName VARCHAR(100) NOT NULL,
+    contentData JSONB NOT NULL,
+    changeType VARCHAR(50) NOT NULL,
+    changeDescription TEXT,
+    modifiedBy INTEGER NOT NULL,
+    modifiedAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_topicVersion_topic
+        FOREIGN KEY (topicId)
+        REFERENCES topics(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_topicVersion_user
+        FOREIGN KEY (modifiedBy)
+        REFERENCES users(id)
+        ON DELETE RESTRICT,
+    CONSTRAINT unique_topic_version
+        UNIQUE (topicId, versionNumber)
+)
+
+ALTER TABLE topics ADD COLUMN currentVersion INTEGER DEFAULT 1
+
 -- Table: multimedia
 CREATE TABLE multimedia (
     id SERIAL PRIMARY KEY,
