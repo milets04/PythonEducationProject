@@ -65,10 +65,10 @@ const RegisterForm: React.FC = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Error al registrar. Inténtalo de nuevo.');
+        throw new Error(result.message || 'Registration failed. Please try again..');
       }
-      console.log('Usuario registrado:', result);
-      setSuccessMessage(result.message || '¡Registro exitoso!');
+      console.log('Registered user:', result);
+      setSuccessMessage(result.message || 'Registration successful!');
 
       localStorage.setItem('token', result.data.token);
 
@@ -79,11 +79,11 @@ const RegisterForm: React.FC = () => {
 
     } catch (error: unknown) {
       // Capturar errores (de red o de la API)
-      console.error('Error en el registro:', error);
+      console.error('Registration error:', error);
       if (error instanceof Error) {
         setApiError(error.message);
       } else {
-        setApiError('Error desconocido');
+        setApiError('Unknown error');
       }
     } finally {
       setIsLoading(false);
