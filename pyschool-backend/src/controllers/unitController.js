@@ -22,7 +22,7 @@ export const create = async (req, res) => {
     if (!name || !courseId) {
       return res.status(400).json({
         success: false,
-        message: 'name y courseId son obligatorios'
+        message: 'name and courseId are required'
       })
     }
 
@@ -34,14 +34,14 @@ export const create = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: 'Unidad creada exitosamente',
+      message: 'Drive created successfully',
       data: unit
     })
   } catch (error) {
     console.error('Create unit error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error al crear la unidad'
+      message: error.message || 'Error creating unit'
     })
   }
 }
@@ -64,7 +64,7 @@ export const getById = async (req, res) => {
     console.error('Get unit error:', error)
     return res.status(404).json({
       success: false,
-      message: error.message || 'Error al obtener la unidad'
+      message: error.message || 'Error obtaining the unit'
     })
   }
 }
@@ -88,7 +88,7 @@ export const getByCourse = async (req, res) => {
     console.error('Get units by course error:', error)
     return res.status(500).json({
       success: false,
-      message: 'Error al obtener las unidades'
+      message: 'Error obtaining units'
     })
   }
 }
@@ -145,6 +145,17 @@ export const remove = async (req, res) => {
  * Reordenar unidades de un curso
  * PUT /api/units/course/:courseId/reorder
  */
+/**
+ * Reordenar unidades de un curso
+ * PUT /api/units/course/:courseId/reorder
+ */
+
+
+
+/**
+ * Reordenar unidades de un curso
+ * PUT /api/units/course/:courseId/reorder
+ */
 export const reorder = async (req, res) => {
   try {
     const { courseId } = req.params
@@ -162,14 +173,14 @@ export const reorder = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Unidades reordenadas exitosamente',
+      message: 'Units successfully reordered',
       data: units
     })
   } catch (error) {
     console.error('Reorder units error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error al reordenar unidades'
+      message: error.message || 'Error reordering units'
     })
   }
 }
