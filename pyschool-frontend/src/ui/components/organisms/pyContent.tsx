@@ -54,7 +54,6 @@ const PyContent: React.FC<PyContentProps> = ({
           onAddUnity={onAddUnity}
           onAddTopic={onAddTopic}
           onEdit={onEdit}
-          // 3. Pasamos las props correctas al hijo
           onDeleteUnity={onDeleteUnity} 
           onDeleteTopic={onDeleteTopic}
         />
