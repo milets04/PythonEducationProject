@@ -46,7 +46,7 @@ export const create = async (req, res) => {
     if (!hasContent) {
       return res.status(400).json({
         success: false,
-        message: 'El tópico debe tener al menos un elemento de contenido'
+        message: 'The topic must have at least one content element'
       })
     }
 
@@ -64,14 +64,14 @@ export const create = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: 'Tópico creado exitosamente',
+      message: 'Topic successfully created',
       data: topic
     })
   } catch (error) {
     console.error('Create topic error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error al crear el tópico'
+      message: error.message || 'Error creating the topic'
     })
   }
 }
@@ -94,7 +94,7 @@ export const getById = async (req, res) => {
     console.error('Get topic error:', error)
     return res.status(404).json({
       success: false,
-      message: error.message || 'Error al obtener el tópico'
+      message: error.message || 'Error retrieving topic'
     })
   }
 }
@@ -118,7 +118,7 @@ export const getByUnit = async (req, res) => {
     console.error('Get topics by unit error:', error)
     return res.status(500).json({
       success: false,
-      message: 'Error al obtener los tópicos'
+      message: 'Error retrieving topics'
     })
   }
 }
@@ -154,14 +154,14 @@ export const update = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Tópico actualizado exitosamente',
+      message: 'Topic successfully updated',
       data: topic
     })
   } catch (error) {
     console.error('Update topic error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error al actualizar el tópico'
+      message: error.message || 'Error updating topic'
     })
   }
 }
@@ -181,7 +181,7 @@ export const remove = async (req, res) => {
     console.error('Delete topic error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error al eliminar el tópico'
+      message: error.message || 'Error deleting topic'
     })
   }
 }

@@ -27,7 +27,7 @@ export const register = async (req, res) => {
     if (!firstName || !lastName || !email || !password || !passwordConfirm) {
       return res.status(400).json({
         success: false,
-        message: 'Todos los campos son obligatorios'
+        message: 'All fields are required'
       })
     }
 
@@ -35,7 +35,7 @@ export const register = async (req, res) => {
     if (password !== passwordConfirm) {
       return res.status(400).json({
         success: false,
-        message: 'Las contraseñas no coinciden'
+        message: 'The passwords do not match'
       })
     }
 
@@ -43,7 +43,7 @@ export const register = async (req, res) => {
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: 'La contraseña debe tener al menos 6 caracteres'
+        message: 'The password must be at least 6 characters long'
       })
     }
 
@@ -52,7 +52,7 @@ export const register = async (req, res) => {
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
-        message: 'El formato del email es inválido'
+        message: 'The email format is invalid.'
       })
     }
 
@@ -73,7 +73,7 @@ export const register = async (req, res) => {
     console.error('Register error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error al registrar el usuario'
+      message: error.message || 'Error registering user'
     })
   }
 }
@@ -90,7 +90,7 @@ export const login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email y contraseña son obligatorios'
+        message: 'Email and password are required'
       })
     }
 
@@ -99,14 +99,14 @@ export const login = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Inicio de sesión exitoso',
+      message: 'Successful login',
       data: result
     })
   } catch (error) {
     console.error('Login error:', error)
     return res.status(401).json({
       success: false,
-      message: error.message || 'Error al iniciar sesión'
+      message: error.message || 'Login error'
     })
   }
 }
@@ -121,13 +121,13 @@ export const logout = async (req, res) => {
   try {
     return res.status(200).json({
       success: true,
-      message: 'Sesión cerrada exitosamente. Elimina el token del lado del cliente.'
+      message: 'Session successfully closed. Removes the token from the client side.'
     })
   } catch (error) {
     console.error('Logout error:', error)
     return res.status(500).json({
       success: false,
-      message: 'Error al cerrar sesión'
+      message: 'Logout error'
     })
   }
 }
@@ -150,7 +150,7 @@ export const getMe = async (req, res) => {
     console.error('Get me error:', error)
     return res.status(404).json({
       success: false,
-      message: error.message || 'Error al obtener información del usuario'
+      message: error.message || 'Error retrieving user information'
     })
   }
 }
@@ -172,7 +172,7 @@ export const getUsers = async (req, res) => {
     console.error('Get users error:', error)
     return res.status(500).json({
       success: false,
-      message: 'Error al obtener usuarios'
+      message: 'Error getting users'
     })
   }
 }
@@ -195,7 +195,7 @@ export const getPending = async (req, res) => {
     console.error('Get pending users error:', error)
     return res.status(500).json({
       success: false,
-      message: 'Error al obtener usuarios pendientes'
+      message: 'Error retrieving pending users'
     })
   }
 }
@@ -215,7 +215,7 @@ export const approveUserController = async (req, res) => {
     if (!roleId) {
       return res.status(400).json({
         success: false,
-        message: 'El roleId es obligatorio'
+        message: 'The roleId is required'
       })
     }
 
@@ -223,7 +223,7 @@ export const approveUserController = async (req, res) => {
     if (!validRoles.includes(parseInt(roleId))) {
       return res.status(400).json({
         success: false,
-        message: 'El roleId debe ser 1 (estudiante), 2 (profesor editor), 3 (profesor executor) o 4 (administrador)'
+        message: 'The roleId must be 1 (student), 2 (editing professor), 3 (executing professor) or 4 (administrator)'
       })
     }
 
@@ -231,14 +231,14 @@ export const approveUserController = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Usuario aprobado exitosamente',
+      message: 'Successfully approved user',
       data: approvedUser
     })
   } catch (error) {
     console.error('Approve user error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error al aprobar el usuario'
+      message: error.message || 'Error approving user'
     })
   }
 }
@@ -257,14 +257,14 @@ export const rejectUserController = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Usuario rechazado exitosamente',
+      message: 'User successfully rejected',
       data: rejectedUser
     })
   } catch (error) {
     console.error('Reject user error:', error)
     return res.status(400).json({
       success: false,
-      message: error.message || 'Error al rechazar el usuario'
+      message: error.message || 'Error rejecting user'
     })
   }
 }
@@ -283,7 +283,7 @@ export const bulkApproveController = async (req, res) => {
     if (!Array.isArray(approvals) || approvals.length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'El array de aprobaciones es obligatorio y no puede estar vacío'
+        message: 'The approval array is mandatory and cannot be empty.'
       })
     }
 
@@ -291,14 +291,14 @@ export const bulkApproveController = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `${results.approved.length} usuarios aprobados, ${results.failed.length} fallidos`,
+      message: `${results.approved.length} approved users, ${results.failed.length} failed`,
       data: results
     })
   } catch (error) {
     console.error('Bulk approve error:', error)
     return res.status(400).json({
       success: false,
-      message: 'Error al aprobar usuarios'
+      message: 'Error approving users'
     })
   }
 }
@@ -317,7 +317,7 @@ export const bulkRejectController = async (req, res) => {
     if (!Array.isArray(userIds) || userIds.length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'El array de userIds es obligatorio y no puede estar vacío'
+        message: 'The userIds array is required and cannot be empty.'
       })
     }
 
@@ -325,14 +325,14 @@ export const bulkRejectController = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `${results.rejected.length} usuarios rechazados, ${results.failed.length} fallidos`,
+      message: `${results.rejected.length} rejected users, ${results.failed.length} failed`,
       data: results
     })
   } catch (error) {
     console.error('Bulk reject error:', error)
     return res.status(400).json({
       success: false,
-      message: 'Error al rechazar usuarios'
+      message: 'Error rejecting users'
     })
   }
 }
