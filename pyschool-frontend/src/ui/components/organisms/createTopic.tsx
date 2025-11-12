@@ -71,7 +71,7 @@ export const callCreateTopicApi = async (data: CreateTopicRequest): Promise<Topi
   if (!response.ok) {
     const error = await response.json();
     if (response.status === 400 && error.message.includes("contenido")) {
-       throw new Error('Debes agregar al menos un subtítulo o un elemento multimedia');
+       throw new Error('You must add at least one subtitle or multimedia element');
     }
     throw new Error(error.message || 'Error creating topic');
   }
@@ -150,14 +150,14 @@ const CreateTopic: React.FC = () => {
       ]);
     } else {
       console.log('File upload not implemented yet', fileOrUrl);
-      alert('Por favor, ingresa una URL en lugar de subir un archivo');
+      alert('Please enter a URL instead of uploading a file');
     }
   };
 
 
   const handleSave = async () => {
     if (!topicInfo) {
-      alert('No hay información del tópico');
+      alert('There is no information on the topic');
       return;
     }
 
@@ -165,7 +165,7 @@ const CreateTopic: React.FC = () => {
     const hasMedia = uploadedFiles.length > 0;
 
     if (!hasSubtitles && !hasMedia) {
-      alert('Debes agregar al menos un subtítulo o un elemento multimedia');
+      alert('You must add at least one subtitle or multimedia element');
       return;
     }
 
@@ -240,19 +240,19 @@ const CreateTopic: React.FC = () => {
       });
 
       localStorage.removeItem('newTopic');
-      alert('Tópico creado exitosamente');
+      alert('Topic successfully created');
       router.push('/teacherPages/addContent');
       
     } catch (error) {
       console.error('Error saving topic:', error);
-      alert('Error al guardar el tópico: ' + (error as Error).message);
+      alert('Error saving topic: ' + (error as Error).message);
     } finally {
       setSaving(false);
     }
   };
 
   const handleCancel = () => {
-    if (confirm('¿Estás seguro de cancelar? Se perderán los cambios.')) {
+    if (confirm('¿Are you sure you want to cancel? The changes will be lost.')) {
       localStorage.removeItem('newTopic');
       router.push('/teacherPages/addContent');
     }
