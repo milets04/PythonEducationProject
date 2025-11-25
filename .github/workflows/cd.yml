@@ -1,0 +1,45 @@
+name: CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: GCloud Setup
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: '${{ secrets.GCP_PROJECT_ID }}'
+
+      - name: Build Docker image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/app-image ./pyschool-backend
+
+
+      - name: Authenticate Docker to GCR
+        run: |
+          gcloud auth configure-docker --quiet
+
+      - name: Push to GCR
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/app-image
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        service: pyson-service
+        with:
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/app-image
+          region: southamerica-east1
+          allow-unauthenticated: true
+
