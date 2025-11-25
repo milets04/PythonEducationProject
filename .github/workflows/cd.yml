@@ -22,24 +22,40 @@ jobs:
         with:
           project_id: '${{ secrets.GCP_PROJECT_ID }}'
 
-      - name: Build Docker image
+      # --- BACKEND ---
+      - name: Build backend
         run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/app-image ./pyschool-backend
-
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-backend ./pyschool-backend
 
       - name: Authenticate Docker to GCR
         run: |
           gcloud auth configure-docker --quiet
 
-      - name: Push to GCR
+      - name: Push backend
         run: |
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/app-image
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-backend
 
-      - name: Deploy to Cloud Run
+      - name: Deploy backend
         uses: google-github-actions/deploy-cloudrun@v2
-        service: pyson-service
         with:
-          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/app-image
+          service: pyson-backend
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-backend
           region: southamerica-east1
           allow-unauthenticated: true
 
+      # --- FRONTEND ---
+      - name: Build frontend
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-frontend ./pyschool-frontend
+
+      - name: Push frontend
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-frontend
+
+      - name: Deploy frontend
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: pyson-frontend
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-frontend
+          region: southamerica-east1
+          allow-unauthenticated: true
