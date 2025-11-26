@@ -1,0 +1,61 @@
+name: CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: GCloud Setup
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: '${{ secrets.GCP_PROJECT_ID }}'
+
+      # --- BACKEND ---
+      - name: Build backend
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-backend ./pyschool-backend
+
+      - name: Authenticate Docker to GCR
+        run: |
+          gcloud auth configure-docker --quiet
+
+      - name: Push backend
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-backend
+
+      - name: Deploy backend
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: pyson-backend
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-backend
+          region: southamerica-east1
+          allow-unauthenticated: true
+
+      # --- FRONTEND ---
+      - name: Build frontend
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-frontend ./pyschool-frontend
+
+      - name: Push frontend
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-frontend
+
+      - name: Deploy frontend
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: pyson-frontend
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-frontend
+          region: southamerica-east1
+          allow-unauthenticated: true
