@@ -1,8 +1,6 @@
 // src/controllers/topicController.js
 // Controladores para gestión de tópicos y versiones
 
-/* eslint-disable */
-
 import {
   createTopic,
   getTopicById,
@@ -32,6 +30,8 @@ export const create = async (req, res) => {
       audios,
       presentations,
     } = req.body
+
+    const userId = req.user.userId
 
     // Validaciones
     if (!name || !unitId || !templateName) {
@@ -66,7 +66,7 @@ export const create = async (req, res) => {
       images: images || [],
       audios: audios || [],
       presentations: presentations || [],
-    })
+    }, userId)
 
     return res.status(201).json({
       success: true,
@@ -145,7 +145,10 @@ export const update = async (req, res) => {
       images,
       audios,
       presentations,
+      changeDescription,
     } = req.body
+
+    const userId = req.user.userId
 
     const topic = await updateTopic(parseInt(id), {
       name,
@@ -156,7 +159,8 @@ export const update = async (req, res) => {
       images,
       audios,
       presentations,
-    })
+      changeDescription,
+    }, userId)
 
     return res.status(200).json({
       success: true,
@@ -168,6 +172,117 @@ export const update = async (req, res) => {
     return res.status(400).json({
       success: false,
       message: error.message || 'Error al actualizar el tópico',
+    })
+  }
+}
+
+/**
+ * Obtener historial de versiones de un tópico
+ * GET /api/topics/:id/versions
+ */
+export const getVersionHistory = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const versions = await getTopicVersionHistory(parseInt(id))
+
+    return res.status(200).json({
+      success: true,
+      count: versions.length,
+      data: versions,
+    })
+  } catch (error) {
+    console.error('Get version history error:', error)
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener el historial de versiones',
+    })
+  }
+}
+
+/**
+ * Obtener una versión específica de un tópico
+ * GET /api/topics/:id/versions/:versionNumber
+ */
+export const getSpecificVersion = async (req, res) => {
+  try {
+    const { id, versionNumber } = req.params
+
+    const version = await getTopicVersion(parseInt(id), parseInt(versionNumber))
+
+    return res.status(200).json({
+      success: true,
+      data: version,
+    })
+  } catch (error) {
+    console.error('Get specific version error:', error)
+    return res.status(404).json({
+      success: false,
+      message: error.message || 'Error al obtener la versión',
+    })
+  }
+}
+
+/**
+ * Restaurar una versión anterior de un tópico
+ * POST /api/topics/:id/versions/:versionNumber/restore
+ */
+export const restoreVersion = async (req, res) => {
+  try {
+    const { id, versionNumber } = req.params
+    const userId = req.user.userId
+
+    const topic = await restoreTopicVersion(
+      parseInt(id),
+      parseInt(versionNumber),
+      userId
+    )
+
+    return res.status(200).json({
+      success: true,
+      message: `Versión ${versionNumber} restaurada exitosamente`,
+      data: topic,
+    })
+  } catch (error) {
+    console.error('Restore version error:', error)
+    return res.status(400).json({
+      success: false,
+      message: error.message || 'Error al restaurar la versión',
+    })
+  }
+}
+
+/**
+ * Comparar dos versiones de un tópico
+ * GET /api/topics/:id/versions/compare?v1=1&v2=2
+ */
+export const compareVersions = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { v1, v2 } = req.query
+
+    if (!v1 || !v2) {
+      return res.status(400).json({
+        success: false,
+        message: 'Se requieren los parámetros v1 y v2',
+      })
+    }
+
+    const comparison = await compareTopicVersions(
+      parseInt(id),
+      parseInt(v1),
+      parseInt(v2)
+    )
+
+    return res.status(200).json({
+      success: true,
+      data: comparison,
+    })
+  } catch (error) {
+    console.error('Compare versions error:', error)
+    return res.status(400).json({
+      success: false,
+      message: error.message || 'Error al comparar versiones',
     })
   }
 }
