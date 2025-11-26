@@ -13,9 +13,16 @@ COPY package.json ./
 RUN npm install
 
 # --- CORRECCIÓN: Fijamos Prisma a la v5 para evitar errores de la v7 ---
+# 5. Instalar Prisma
 RUN npm install prisma@5.22.0 @prisma/client@5.22.0
 
-# 6. Copiar código fuente
+# --- CACHE BUSTER ---
+# Agregamos un argumento que NUNCA está en caché si cambia su valor al construir,
+# lo cual invalida el paso siguiente (COPY) y todos los posteriores.
+ARG CACHE_BUSTER=V1_CACHE_BUSTER # <-- CAMBIA ESTE VALOR EN CADA RECONSTRUCCIÓN IMPORTANTE
+# Si cambias 'V1_CACHE_BUSTER' a 'V2_CACHE_BUSTER', se forzará la reconstrucción.
+
+# 6. Copiar código fuente (Este paso NO usará caché si el ARG anterior cambió)
 COPY . .
 
 # 7. Variable ficticia
