@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/milets04/PythonEducationProject/compare/pyschool-backend-v1.3.0...pyschool-backend-v1.3.1) (2025-11-09)
+
+
+### Bug Fixes
+
+* ancho estilos del organismo ([bc4af49](https://github.com/milets04/PythonEducationProject/commit/bc4af494894aaa5d070856783e26c6c1f6c431f5))
+
 # [1.3.0](https://github.com/milets04/PythonEducationProject/compare/pyschool-backend-v1.2.0...pyschool-backend-v1.3.0) (2025-10-22)
 
 
