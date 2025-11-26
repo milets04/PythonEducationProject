@@ -4,6 +4,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { API_URL } from '@/hoc/config';
 
 /*interface UserData {
  id: number;
@@ -46,7 +47,7 @@ export function withAdminAuth<P extends object>(
             return;
           }
 
-          const response = await fetch("http://localhost:5000/api/auth/me", {
+          const response = await fetch(`${API_URL}/api/auth/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

@@ -7,6 +7,7 @@ import { useState } from "react";
 import SignLink from '@/ui/components/atoms/txtSign';
 import GoogleButton from "@/ui/components/atoms/btnGoogle";
 import router from "next/router";
+import { API_URL } from '@/hoc/config';
 
 const schema = z.object({
   firstname: z.string().min(3, "Firstname must be at least 3 characters"),
@@ -53,7 +54,7 @@ const RegisterForm: React.FC = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

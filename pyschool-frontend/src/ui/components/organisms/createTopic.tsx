@@ -6,8 +6,9 @@ import ContentInput from '@/ui/components/atoms/contentInput';
 import Textarea from '@/ui/components/atoms/textInput'; 
 import UploadInput from '@/ui/components/molecules/uploadInput';
 import { Button } from '@/ui/components/atoms/button';
+import { API_URL } from '@/hoc/config';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = `${API_URL}/api`
 const getAuthToken = (): string | null => {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem('token');

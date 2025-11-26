@@ -4,9 +4,9 @@ import NavegationArrows from "@/ui/components/atoms/navegationArrows";
 import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 import UnitySelector, { UnityOption } from "@/ui/components/atoms/unitySelector";
+import { API_URL } from '@/hoc/config';
 
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = `${API_URL}/api`;
 
 // --- Helpers de API ---
 const getAuthToken = (): string | null => {

@@ -5,6 +5,7 @@ import BackgroundClouds from "../atoms/backgroundClouds";
 import Table from "../molecules/table";
 import { Button } from "../atoms/button";
 import Title from "../atoms/title";
+import { API_URL } from '@/hoc/config';
 
 interface PendingUser {
   id: number;
@@ -38,7 +39,7 @@ const RequestPageTemplate: React.FC = () => {
     }
 
     // Verificar rol del usuario actual
-    fetch("http://localhost:5000/api/auth/me", {
+    fetch(`${API_URL}/api/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -63,7 +64,7 @@ const RequestPageTemplate: React.FC = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/auth/users/pending", {
+      const response = await fetch(`${API_URL}/api/auth/users/pending`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -124,7 +125,7 @@ const RequestPageTemplate: React.FC = () => {
         roleId: user.newRoleId,
       }));
 
-      const response = await fetch("http://localhost:5000/api/auth/users/bulk-approve", {
+      const response = await fetch(`${API_URL}/api/auth/users/bulk-approve`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -175,7 +176,7 @@ const RequestPageTemplate: React.FC = () => {
 
       const userIds = selectedUsers.map((user) => user.id);
 
-      const response = await fetch("http://localhost:5000/api/auth/users/bulk-reject", {
+      const response = await fetch(`${API_URL}/api/auth/users/bulk-reject`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -7,6 +7,7 @@ import UserIcon from '../atoms/userIcon';
 import CustomButton from '../atoms/btnOthers';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { API_URL } from '@/hoc/config';
 
 type WelcomepageProps = {
   title?: string;
@@ -30,7 +31,7 @@ const Welcomepage: React.FC<WelcomepageProps> = ({
 
     if (token) {
       try {
-        const response = await fetch('http://localhost:5000/api/auth/logout', {
+        const response = await fetch(`${API_URL}/api/auth/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

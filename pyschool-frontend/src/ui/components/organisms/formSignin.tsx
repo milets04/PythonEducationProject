@@ -6,6 +6,7 @@ import GoogleButton from '@/ui/components/atoms/btnGoogle';
 import Subtitle from '@/ui/components/atoms/subtLog';
 import SignLink from '@/ui/components/atoms/txtSign';
 import { useRouter } from 'next/navigation';
+import { API_URL } from '@/hoc/config';
 
 const LoginContainer: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -20,7 +21,7 @@ const LoginContainer: React.FC = () => {
     setApiError(null);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation'; 
 import Sidebar from '@/ui/components/organisms/sidebar'; 
+import { API_URL } from '@/hoc/config';
 
 export default function TeacherLayout({
   children,
@@ -34,7 +35,7 @@ export default function TeacherLayout({
       
       if (token) {
         // Llamar al endpoint de logout (opcional según la guía)
-        await fetch('http://localhost:5000/api/auth/logout', {
+        await fetch(`${API_URL}/api/auth/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

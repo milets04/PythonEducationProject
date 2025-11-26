@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import TemplateBox2 from "../molecules/templateBox2";
 import CustomButton from "../atoms/btnOthers";
+import { API_URL } from '@/hoc/config';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = `${API_URL}/api`;
 
 const getAuthToken = (): string | null => {
  if (typeof window === 'undefined') return null;
