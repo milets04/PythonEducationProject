@@ -41,9 +41,12 @@ jobs:
           service: pyson-backend
           image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-backend
           region: southamerica-east1
-          allow-unauthenticated: true
+          flags: '--allow-unauthenticated'
+          env_vars: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
 
       # --- FRONTEND ---
+      
       - name: Build frontend
         run: |
           docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-frontend ./pyschool-frontend
@@ -58,4 +61,4 @@ jobs:
           service: pyson-frontend
           image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/pyson-frontend
           region: southamerica-east1
-          allow-unauthenticated: true
+          flags: '--allow-unauthenticated'
