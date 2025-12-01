@@ -105,6 +105,7 @@ const RegisterForm: React.FC = () => {
                   label="Firstname"
                   placeholder="Firstname"
                   {...field}
+                  value={field.value || ''} 
                 />
               )}
             />
@@ -119,6 +120,7 @@ const RegisterForm: React.FC = () => {
                   label="Lastname"
                   placeholder="Lastname"
                   {...field}
+                  value={field.value || ''} 
                 />
               )}
             />
@@ -135,6 +137,7 @@ const RegisterForm: React.FC = () => {
               label="Email"
               placeholder="Email"
               {...field}
+              value={field.value || ''} 
               type="email"
             />
           )}
@@ -151,6 +154,7 @@ const RegisterForm: React.FC = () => {
               label="Password"
               placeholder="Password"
               {...field}
+              value={field.value || ''} 
               type="password"
             />
           )}
@@ -167,6 +171,7 @@ const RegisterForm: React.FC = () => {
               label="Confirm Password"
               placeholder="Confirm password"
               {...field}
+              value={field.value || ''} 
               type="password"
             />
           )}
