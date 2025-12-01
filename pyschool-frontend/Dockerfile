@@ -32,7 +32,7 @@ ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npx prisma generate
 
 # 9. Build de Next.js
-RUN npm run build
+RUN NEXT_PUBLIC_API_URL=https://pyson-backend-992032626162.southamerica-east1.run.app npm run build
 
 # 10. Exponer puerto
 EXPOSE 3000
