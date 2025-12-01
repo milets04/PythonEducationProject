@@ -1,7 +1,3 @@
-// src/services/authService.js
-// Contiene la lógica de negocios para autenticación
-// La capa Service es donde va la lógica principal, separada de los endpoints
-
 import { PrismaClient } from '@prisma/client'
 import { hashPassword, comparePassword } from '../utils/passwordUtils.js'
 import { generateToken } from '../utils/tokenUtils.js'

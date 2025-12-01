@@ -12,7 +12,6 @@ app.listen(PORT, () => {
   `)
 })
 
-// Manejo de errores no capturados
 process.on('unhandledRejection', (error) => {
   console.error('Unhandled Rejection:', error)
   process.exit(1)
